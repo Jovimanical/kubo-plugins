@@ -1,0 +1,12 @@
+{
+    "name": "houseafrica/kubo-plugins",
+    "type": "project",
+    "authors": [
+        {
+            "name": "samshal",
+            "email": "samueladeshina73@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

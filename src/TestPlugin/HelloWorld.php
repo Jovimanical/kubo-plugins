@@ -4,9 +4,9 @@ Namespace KuboPlugin\TestPlugin;
 
 class HelloWorld {
 
-	public function getMessage(string $message = "Hello World!"){
+	public function getMessage(array $options = ["message"=>"Hello World"]){
 		return [
-			"message"=>$message,
+			"message"=>$options["message"],
 			"timestamp"=>time()
 		];
 	}

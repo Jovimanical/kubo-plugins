@@ -4,13 +4,11 @@ Namespace KuboPlugin\TestPlugin;
 
 class HelloWorld {
 
-	protected string $message = "";
-
-	public function __construct(string $message = "Hello World!"){
-		$this->message = $message;
+	public function getMessage(string $message = "Hello World!"){
+		return [
+			"message"=>$message,
+			"timestamp"=>time()
+		];
 	}
-
-	public function getMessage(){
-		return $this->message;
-	}
+	
 }

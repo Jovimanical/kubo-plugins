@@ -9,14 +9,14 @@
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  *
  */
-namespace KuboPlugin\Users\UserAccount;
+namespace KuboPlugin\User\UserAccount;
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
 use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 
 /**
- * class KuboPlugin\Users\UserAccount\AccountType.
+ * class KuboPlugin\User\UserAccount\AccountType.
  *
  * User Account Type Controller
  *

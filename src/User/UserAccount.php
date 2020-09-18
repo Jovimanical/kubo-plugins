@@ -9,10 +9,10 @@
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  *
  */
-namespace KuboPlugin\Users;
+namespace KuboPlugin\User;
 
 /**
- * class KuboPlugin\Users\UserAccount
+ * class KuboPlugin\User\UserAccount
  *
  * UserAccount Visitor
  *

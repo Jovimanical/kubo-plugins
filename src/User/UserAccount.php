@@ -32,20 +32,19 @@ class UserAccount {
 	public function newAccount(array $data){
 		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"])){
 			$result = UserAccount\Account::newAccount($data["email"], $data["password"]);
-			if (!$result["lastInsertId"]){
+			if ($result["lastInsertId"]){
+				$accountId = $result["lastInsertId"];
+				$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
-				/**
-				* @todo throw a proper exception, an unexpected error occurred
-				*
-				*/
-				return false;
+				return true;
 			}
-
-			$accountId = $result["lastInsertId"];
-			$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
-
-			return true;
 		}
+
+		/**
+		* @todo throw a proper exception, an unexpected error occurred
+		*
+		*/
+		return false;
 	}
 
 	public function viewAccounts(){

@@ -27,7 +27,7 @@ class UserAccount {
      *
      * @param array $data
      *
-     * @return bool | Exception
+     * @return array
      */
 	public function newAccount(array $data){
 		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"])){
@@ -36,15 +36,13 @@ class UserAccount {
 				$accountId = $result["lastInsertId"];
 				$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
-				return true;
+				return ["status"=>true, "accountDetails"=>["id"=>$accountId, "email"=>$email]];
 			}
+
+			return ["status"=>false, "reason"=>"User account was not created"];
 		}
 
-		/**
-		* @todo throw a proper exception, an unexpected error occurred
-		*
-		*/
-		return false;
+		return ["status"=>false, "reason"=>"Invalid data provided"];
 	}
 
 	public function viewAccounts(){

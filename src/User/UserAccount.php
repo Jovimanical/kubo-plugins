@@ -24,32 +24,58 @@ class UserAccount {
 
 	/**
      * Creates new user account and sets user account type
-     * by registering new database entries
+     * by registering new database entries only if provided email does not
+     * exist in the database
      *
      * @param array $data
      *
      * @return array
      */
 	public function newAccount(array $data){
-		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"])){
-			$result = UserAccount\Account::newAccount($data["email"], $data["password"]);
-			if ($result["lastInsertId"]){
-				$accountId = $result["lastInsertId"];
-				$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
+		$return_result = []
+		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"]) && !is_null($data["password"])){
+			if (!UserAccount\Account::checkAccountExists($data["email"])){
+				$result = UserAccount\Account::newAccount($data["email"], $data["password"]);
+				if ($result["lastInsertId"]){
+					$accountId = $result["lastInsertId"];
+					$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
-				return ["status"=>true, "accountDetails"=>["id"=>$accountId, "email"=>$email]];
+					$return_result = ["status"=>true, "accountDetails"=>["id"=>$accountId, "email"=>$email]];
+				}
+
+				$return_result = ["status"=>false, "reason"=>"User account was not created"];	
 			}
-
-			return ["status"=>false, "reason"=>"User account was not created"];
+			else {
+				$return_result = ["status"=>false, "reason"=>"Account already exists"];	
+			}
 		}
 
-		return ["status"=>false, "reason"=>"Invalid data provided"];
+		$return_result = ["status"=>false, "reason"=>"Invalid data provided"];
+
+		return $return_result;
 	}
 
 	public function viewAccounts(){
 	}
 
+	/**
+     * Assigns an account type to a user account
+     *
+     * The relationship between users and account types is one to many.
+     *
+     * @param int $resourceId User Id
+     * @param array $data
+     *
+     * @return array
+     */
 	public function addUserAccountType(int $resourceId, array $data){
+		$addType = UserAccount\AccountType::addAccountType((int)$resourceId, (int)$data["accountType"]);
+
+		if ($addType["lastInsertId"]){
+			return ["status"=>true];
+		}
+
+		return ["status"=>false, "reason"=>"A database write error occurred"];
 	}
 
 	public function viewUserAccountTypes(int $resourceId){

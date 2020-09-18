@@ -51,4 +51,18 @@ class Account {
 
 	public static function viewAccounts(){
 	}
+
+	/**
+     * Check if an email has already been registered
+     *
+     * @param string $email
+     *
+     * @return bool
+     */
+	public static function checkAccountExists(string $email){
+		$query = "SELECT UserId FROM Users.Account WHERE UserEmail = '$email'";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result;
+	}
 }

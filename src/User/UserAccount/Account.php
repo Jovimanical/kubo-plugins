@@ -1,4 +1,4 @@
-<?php declare (strict_types=1)
+<?php declare (strict_types=1);
 /**
  * Controller Class.
  *
@@ -9,6 +9,7 @@
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  *
  */
+
 namespace KuboPlugin\User\UserAccount;
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;

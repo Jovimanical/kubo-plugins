@@ -9,6 +9,7 @@
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  *
  */
+
 namespace KuboPlugin\User;
 
 /**

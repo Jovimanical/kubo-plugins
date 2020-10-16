@@ -32,7 +32,7 @@ class UserAccount {
      * @return array
      */
 	public function newAccount(array $data){
-		$return_result = []
+		$return_result = [];
 		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"]) && !is_null($data["password"])){
 			if (!UserAccount\Account::checkAccountExists($data["email"])){
 				$result = UserAccount\Account::newAccount($data["email"], $data["password"]);

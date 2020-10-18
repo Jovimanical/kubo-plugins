@@ -77,6 +77,7 @@ class UserAccount {
 	}
 
 	public function viewUserAccountTypes(int $resourceId){
+		return UserAccount\AccountType::viewAccountTypes($resourceId);	
 	}
 
 	public function addAccountType(int $resourceId, array $data){
@@ -95,7 +96,12 @@ class UserAccount {
 		return ["status"=>false, "reason"=>"A database write error occurred"];
 	}
 
+	public function viewTeamMembers(int $resourceId){
+		return UserAccount\LinkedAccount::viewLinkedUsers($resourceId);	
+	}
+
 	public function viewLinkedAccounts(int $resourceId){
+		return UserAccount\LinkedAccount::viewLinkedAccounts($resourceId);	
 	}
 
 	public function removeLinkedAccount(int $resourceId, array $data){

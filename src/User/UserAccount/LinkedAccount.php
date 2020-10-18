@@ -16,4 +16,32 @@ class LinkedAccount {
 
 		return $result;
 	}
+
+	/**
+     * Retrieve all users linked to an account
+     *
+     * @param int $accountId
+     *
+     * @return array
+     */
+	public static function viewLinkedUsers(int $accountId){
+		$query = "SELECT a.LinkedAccountId, a.UserId, b.UserEmail, b.DateCreated FROM Users.LinkedAccounts a INNER JOIN Users.Account b ON a.UserId = b.UserId WHERE a.LinkedAccount = $accountId";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result;
+	}
+
+	/**
+     * Retrieve all accounts linked to a user
+     *
+     * @param int $userId
+     *
+     * @return array
+     */
+	public static function viewLinkedAccounts(int $userId){
+		$query = "SELECT a.LinkedAccountId, a.LinkedAccount, b.UserEmail AS LinkedAccountEmail, b.DateCreated FROM Users.LinkedAccounts a INNER JOIN Users.Account b ON a.LinkedAccount = b.UserId WHERE a.UserId = $userId";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result;
+	}
 }

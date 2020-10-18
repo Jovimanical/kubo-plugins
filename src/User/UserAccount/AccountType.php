@@ -42,4 +42,18 @@ class AccountType {
 
 		return $result;
 	}
+
+	/**
+     * Retrieve all user account types
+     *
+     * @param int $userId
+     *
+     * @return array
+     */
+	public static function viewAccountTypes(int $userId){
+		$query = "SELECT a.*, b.TypeName, b.TypeDescription FROM Users.UserAccountType a INNER JOIN Users.AccountTypes b ON a.AccountType = b.TypeId WHERE a.UserId = $userId";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result;
+	}
 }

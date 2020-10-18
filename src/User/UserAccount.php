@@ -88,6 +88,13 @@ class UserAccount {
 	}
 
 	public function addLinkedAccount(int $resourceId, array $data){
+		$addLink = UserAccount\LinkedAccount::addLinkToAccount((int)$resourceId, (int)$data["accountId"]);
+
+		if ($addLink["lastInsertId"]){
+			return ["status"=>true];
+		}
+
+		return ["status"=>false, "reason"=>"A database write error occurred"];
 	}
 
 	public function viewLinkedAccounts(int $resourceId){

@@ -9,7 +9,7 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 class LinkedAccount {
 
 	public static function addLinkToAccount(int $userId, int $accountId){
-		$result = DBQueryFactory::insert("Users.LinkedAccount", [
+		$result = DBQueryFactory::insert("Users.LinkedAccounts", [
 			"UserId"=>$userId,
 			"LinkedAccount"=>$accountId
 		]);

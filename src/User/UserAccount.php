@@ -32,25 +32,23 @@ class UserAccount {
      * @return array
      */
 	public function newAccount(array $data){
-		$return_result = [];
+		$return_result = ["status"=>false, "reason"=>"Invalid data provided"];
+
 		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"]) && !is_null($data["password"])){
+			$return_result = ["status"=>false, "reason"=>"Account already exists"];
+
 			if (!UserAccount\Account::checkAccountExists($data["email"])){
+				$return_result = ["status"=>false, "reason"=>"User account was not created"];
+				
 				$result = UserAccount\Account::newAccount($data["email"], $data["password"]);
 				if ($result["lastInsertId"]){
 					$accountId = $result["lastInsertId"];
 					$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
 					$return_result = ["status"=>true, "accountDetails"=>["id"=>$accountId, "email"=>$email]];
-				}
-
-				$return_result = ["status"=>false, "reason"=>"User account was not created"];	
-			}
-			else {
-				$return_result = ["status"=>false, "reason"=>"Account already exists"];	
+				}	
 			}
 		}
-
-		$return_result = ["status"=>false, "reason"=>"Invalid data provided"];
 
 		return $return_result;
 	}
@@ -89,7 +87,7 @@ class UserAccount {
 
 	public function addLinkedAccount(int $resourceId, array $data){
 		$addLink = UserAccount\LinkedAccount::addLinkToAccount((int)$resourceId, (int)$data["accountId"]);
-
+		
 		if ($addLink["lastInsertId"]){
 			return ["status"=>true];
 		}

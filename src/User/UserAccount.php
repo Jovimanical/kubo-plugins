@@ -37,7 +37,7 @@ class UserAccount {
 		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"]) && !is_null($data["password"])){
 			$return_result = ["status"=>false, "reason"=>"Account already exists"];
 
-			if (!UserAccount\Account::checkAccountExists($data["email"])){
+			if (!UserAccount\Account::checkAccountExistsByEmail($data["email"])){
 				$return_result = ["status"=>false, "reason"=>"User account was not created"];
 				
 				$result = UserAccount\Account::newAccount($data["email"], $data["password"]);
@@ -87,13 +87,20 @@ class UserAccount {
 	}
 
 	public function addLinkedAccount(int $resourceId, array $data){
-		$addLink = UserAccount\LinkedAccount::addLinkToAccount((int)$resourceId, (int)$data["accountId"]);
-		
-		if ($addLink["lastInsertId"]){
-			return ["status"=>true];
-		}
+		$accountExists = UserAccount\Account::checkAccountExistsById((int)$data["accountId"]);
+		$result = ["status"=>false, "reason"=>"Invalid user account link requested"];
 
-		return ["status"=>false, "reason"=>"A database write error occurred"];
+		if ($accountExists && $resourceId !== (int)$data["accountId"]){
+			$result = ["status"=>false, "reason"=>"Unable to link specified user accounts"];
+			$addLink = UserAccount\LinkedAccount::addLinkToAccount($resourceId, (int)$data["accountId"]);
+			
+			if ($addLink["lastInsertId"]){
+				$result = ["status"=>true];
+			}	
+		}
+		
+
+		return $result;
 	}
 
 	public function viewTeamMembers(int $resourceId){

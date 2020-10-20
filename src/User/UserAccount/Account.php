@@ -59,10 +59,17 @@ class Account {
      *
      * @return bool
      */
-	public static function checkAccountExists(string $email){
+	public static function checkAccountExistsByEmail(string $email){
 		$query = "SELECT UserId FROM Users.Account WHERE UserEmail = '$email'";
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-		return $result;
+		return count($result) == 1;
+	}
+
+	public static function checkAccountExistsById(int $accountId){
+		$query = "SELECT UserId FROM Users.Account WHERE UserId = $accountId";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return count($result) == 1;
 	}
 }

@@ -99,7 +99,6 @@ class UserAccount {
 			}	
 		}
 		
-
 		return $result;
 	}
 

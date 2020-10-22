@@ -72,4 +72,11 @@ class Account {
 
 		return count($result) == 1;
 	}
+
+	public static function getUserId(string $email){
+		$query = "SELECT UserId FROM Users.Account WHERE UserEmail = '$email';";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result[0]["UserId"] ?? -1;
+	}
 }

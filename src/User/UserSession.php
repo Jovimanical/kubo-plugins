@@ -59,4 +59,8 @@ class UserSession {
 
     	return $result;
     }
+
+    public static function isTokenValid(int $userId, array $data){
+    	return UserSession\Session::isTokenValid($userId, $data);
+    }
 }

@@ -38,8 +38,9 @@ class Session
 		return $result;
 	}
 
-	public static function retrieveDecodedSession(int $userId, int $sessionId){
-		$query = "SELECT Session FROM Users.UserSession WHERE UserId=$userId AND SessionId=$sessionId;";
+	public static function retrieveDecodedSession(int $userId, int $sessionId, bool $onlyActiveSession=false){
+		$query = "SELECT Session FROM Users.UserSession WHERE UserId=$userId AND SessionId=$sessionId";
+		$query = $onlyActiveSession ? $query." AND Status=1;" : $query;
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
 		$session = isset($result[0]) ? unserialize(base64_decode($result[0]["Session"])) : [];
@@ -74,18 +75,34 @@ class Session
 	public static function activate(int $resourceId, int $sessionId){
 		$query = "UPDATE Users.UserSession SET Status=1, LastModified=CURRENT_TIMESTAMP WHERE UserId=$resourceId AND SessionId=$sessionId;";
 
-		return DBConnectionFactory::getConnection()->exec($query);
+		return ["status"=>DBConnectionFactory::getConnection()->exec($query)];
 	}
 
 	public static function deactivate(int $resourceId, int $sessionId){
 		$query = "UPDATE Users.UserSession SET Status=0, LastModified=CURRENT_TIMESTAMP WHERE UserId=$resourceId AND SessionId=$sessionId;";
 
-		return DBConnectionFactory::getConnection()->exec($query);
+		return ["status"=>DBConnectionFactory::getConnection()->exec($query)];
 	}	
 
 	public static function deactivateAll(int $resourceId){
 		$query = "UPDATE Users.UserSession SET Status=0, LastModified=CURRENT_TIMESTAMP WHERE UserId=$resourceId;";
 
-		return DBConnectionFactory::getConnection()->exec($query);
+		return ["status"=>DBConnectionFactory::getConnection()->exec($query)];
 	}
+
+    public static function isTokenValid(int $userId, array $data)
+    {
+    	$isValid = ["status"=>false];
+
+        $sessionId = (int) $data["sessionId"];
+        $token = $data["token"];
+
+        $session = self::retrieveDecodedSession($userId, $sessionId, true);
+
+        if (isset($session["token"])){
+        	$isValid["status"] = $session["token"] == $token;
+        }
+
+        return $isValid;
+    }
 }

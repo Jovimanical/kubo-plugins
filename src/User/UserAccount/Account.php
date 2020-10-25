@@ -79,4 +79,17 @@ class Account {
 
 		return $result[0]["UserId"] ?? -1;
 	}
+
+	public static function updateKycGroup(int $userId){
+		$currGroup = UserKyc::determineKycGroup($userId)["GroupId"];
+
+		$result = -1;
+
+		if ($currGroup != 0){
+			$query = "UPDATE Users.Account SET KycGroupId = $currGroup, LastModified = CURRENT_TIMESTAMP WHERE UserId = $userId";
+			$result = DBConnectionFactory::getConnection()->exec($query);
+		}
+
+		return ["status"=>$result];
+	}
 }

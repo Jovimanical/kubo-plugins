@@ -45,7 +45,7 @@ class UserAccount {
 					$accountId = $result["lastInsertId"];
 					$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
-					$return_result = ["status"=>true, "accountDetails"=>["id"=>$accountId, "email"=>$email]];
+					$return_result = ["status"=>true, "accountDetails"=>["id"=>$accountId]];
 				}	
 			}
 		}
@@ -112,4 +112,29 @@ class UserAccount {
 
 	public function removeLinkedAccount(int $resourceId, array $data){
 	}
+
+	public function resetKycGroup(int $resourceId){
+		return UserAccount\Account::updateKycGroup($resourceId);
+	}
+
+	public function addKyc(int $resourceId, array $data){
+		return UserAccount\UserKyc::addKycStatus($resourceId, $data);
+	}
+
+	public function viewKycStatus(int $resourceId, array $data = []){
+		if (empty($data)){
+			$result = UserAccount\UserKyc::viewStatus($resourceId);
+		}
+		else {
+			$result = UserAccount\UserKyc::viewStatus($resourceId, $data);	
+		}
+
+		return $result;
+	}
+
+	public function updateKycStatus(int $resourceId, array $data){
+		return UserAccount\UserKyc::updateKycStatus($resourceId, $data);
+	}
+
+
 }

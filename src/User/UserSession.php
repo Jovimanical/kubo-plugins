@@ -32,6 +32,7 @@ class UserSession {
         $username = $data["username"];
         $password = $data["password"];
         $sessionInfo = $data["sessionInfo"] ?? [];
+        $accountType = $data["accountType"] ?? 0;
 
         if (UserSession\Login::isLoginDataValid($username, $password))
         {
@@ -45,6 +46,8 @@ class UserSession {
             ];
 
             $result = UserSession\Session::save((int)$id, $sessionData);
+
+            UserSession\Session::activate((int)$id, ["sessionId"=>$result["lastInsertId"], "accountType"=>$accountType]);
 
             return ["status"=>true, "userId"=>$id, "sessionId"=>$result["lastInsertId"], "sessionData"=>$sessionData];
         }
@@ -60,7 +63,7 @@ class UserSession {
     	return $result;
     }
 
-    public static function isTokenValid(int $userId, array $data){
+    private static function isTokenValid(int $userId, array $data){
     	return UserSession\Session::isTokenValid($userId, $data);
     }
 }

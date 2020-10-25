@@ -67,32 +67,4 @@ class Login
 
         return count($sessions) >= 1;
     }
-
-    protected static function isUserPermitted($userToken, $resource, $permission)
-    {
-        $session = \EmmetBlue\Plugins\User\Session::load();
-
-        if(isset($session[$userToken]))
-        {
-            $uuid = $session[$userToken]["uuid"];
-            $userLevel = \EmmetBlue\Plugins\User\Account::getStaffRoleAndDepartment($uuid);
-            $role = $userLevel["RoleName"];
-            $departmemnt = $userLevel["DepartmentName"];
-
-            $role = str_replace(" ", "", strtolower($role));
-            $departmemnt = str_replace(" ", "", strtolower($departmemnt));
-
-            $userLevel = $departmemnt."_".$role;
-
-            $data = [
-                "roleName"=>$userLevel,
-                "permissionName"=>$permission,
-                "resourceName"=>$resource
-            ];
-
-            return \EmmetBlue\Plugins\Permission\ManagePermissions::viewPermission($data);
-        }
-
-        return false;
-    }
 }

@@ -135,6 +135,4 @@ class UserAccount {
 	public function updateKycStatus(int $resourceId, array $data){
 		return UserAccount\UserKyc::updateKycStatus($resourceId, $data);
 	}
-
-
 }

@@ -24,6 +24,7 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  * @since v0.0.1 22/10/2020 19:35
  */
+
 class Session
 {
 	public static function load(int $userId, int $sessionId)

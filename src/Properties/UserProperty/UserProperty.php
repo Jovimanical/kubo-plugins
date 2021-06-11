@@ -79,6 +79,19 @@ class UserProperty {
         return $result;
     }
 
+    public static function viewProperty(int $propertyId){
+        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $result = $result[0] ?? [];
+        if (count($result) > 0){
+            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
+            $result["Metadata"] = self::viewPropertyMetadata((int)$result["PropertyId"]);
+        }
+
+        return $result;
+    }
+
     public static function viewPropertyMetadata(int $propertyId){
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

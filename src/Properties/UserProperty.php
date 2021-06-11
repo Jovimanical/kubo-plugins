@@ -28,4 +28,8 @@ class UserProperty {
     public function viewProperties(int $userId){
         return UserProperty\UserProperty::viewProperties($userId);
     }
+
+    public function viewProperty(int $propertyId){
+        return UserProperty\UserProperty::viewProperty($propertyId);
+    }
 }

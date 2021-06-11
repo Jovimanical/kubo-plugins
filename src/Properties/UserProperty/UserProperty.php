@@ -12,6 +12,10 @@
 
 namespace KuboPlugin\Properties\UserProperty;
 
+use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
+use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
+use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
+
 /**
  * class KuboPlugin\Properties\UserProperty
  *
@@ -58,12 +62,32 @@ class UserProperty {
 
         $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ". implode(",", $values);
 
-        $result = DBConnectionFactory::getConnection()->query($query);
+        $result = DBConnectionFactory::getConnection()->exec($query);
         
         return $result;
 	}
 
     public static function viewProperties(int $userId){
-        return UserProperty\UserProperty::getObject($objectId);
+        $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($result as $key=>$property){
+            $result[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$property["LinkedEntity"]]);
+            $result[$key]["Metadata"] = self::viewPropertyMetadata((int)$property["PropertyId"]);
+        }
+
+        return $result;
+    }
+
+    public static function viewPropertyMetadata(int $propertyId){
+        $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $metadata = [];
+        foreach ($result as $key=>$value){
+            $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+        }
+
+        return $metadata;
     }
 }

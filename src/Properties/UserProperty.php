@@ -26,6 +26,6 @@ class UserProperty {
 	}
 
     public function viewProperties(int $userId){
-        return UserProperty\UserProperty::getObject($objectId);
+        return UserProperty\UserProperty::viewProperties($userId);
     }
 }

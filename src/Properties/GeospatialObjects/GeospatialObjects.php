@@ -29,6 +29,10 @@ class GeospatialObjects {
 		return serialize($object);
 	}
 
+    private static function unserializeObject($str){
+        return html_entity_decode(unserialize($str));
+    }
+
 	public static function newObject(array $data){
 		$user = $data["user"];
 		$object = $data["object"];
@@ -41,4 +45,18 @@ class GeospatialObjects {
 
 		return $result;
 	}
+
+    public static function getObject(int $objectId){
+        $query = "SELECT * FROM Properties.GeospatialObject WHERE ObjectId = $objectId";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $result = $result[0] ?? [];
+
+        if (isset($result["GeospatialObject"])){
+            $result["GeospatialObject"] = self::unserializeObject($result["GeospatialObject"]);
+        }
+
+        return $result;
+    }
 }

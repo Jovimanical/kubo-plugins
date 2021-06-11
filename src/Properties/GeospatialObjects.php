@@ -24,4 +24,8 @@ class GeospatialObjects {
 	public function newObject(array $data){
 		return GeospatialObjects\GeospatialObjects::newObject($data);
 	}
+
+    public function getObject(int $objectId){
+        return GeospatialObjects\GeospatialObjects::getObject($objectId);
+    }
 }

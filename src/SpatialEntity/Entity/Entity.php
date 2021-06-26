@@ -30,10 +30,16 @@ class Entity {
     }
 
     private static function unserializeObject($str){
-        return html_entity_decode(unserialize($str));
+        $data = html_entity_decode(unserialize($str));
+        $reps = ["\n"=>"",'\\'=>"", "&#39;"=>"\""];
+        foreach($reps as $dirt=>$val){
+            $data = str_replace($dirt, $val, $data);
+        }
+
+        return $data;
     }
 
-	public static function newEntity(array $data){
+    public static function newEntity(array $data){
         $name = $data["entityName"];
         $type = $data["entityType"];
         $parentId = $data["entityParentId"] ?? null;
@@ -80,11 +86,13 @@ class Entity {
         $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        $children = [];
         foreach($result as $key=>$entity){
-            $result[$key]["EntityGeometry"] = self::unserializeObject($entity["EntityGeometry"]);
+            $entity["EntityGeometry"] = self::unserializeObject($entity["EntityGeometry"]);
+            $children[$entity["EntityId"]] = $entity;
         }
 
-        return $result;
+        return $children;
     }
 
     public static function viewEntityTypes(){

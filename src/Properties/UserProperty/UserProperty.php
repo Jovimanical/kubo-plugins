@@ -25,7 +25,7 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  * @since v0.0.1 11/06/2021 13:50
  */
 class UserProperty {
-	public static function newProperty(array $data){
+    public static function newProperty(array $data){
         $user = $data["user"];
         $metadata = $data["property_metadata"] ?? [];
         $title =  $data["property_title"];
@@ -65,7 +65,7 @@ class UserProperty {
         $result = DBConnectionFactory::getConnection()->exec($query);
         
         return $result;
-	}
+    }
 
     public static function viewProperties(int $userId){
         $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL";
@@ -92,6 +92,26 @@ class UserProperty {
         return $result;
     }
 
+    public static function viewPropertyChildren(int $propertyId){
+        $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
+        $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (isset($results[0])){
+            $propertyId = $results[0]["EntityParent"];
+        }
+        
+        $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId"=>$propertyId]);
+
+        $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId);
+
+        foreach ($results as $key=>$result){
+            $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
+            $results[$key]["Metadata"] = $childrenMetadata[$result["PropertyId"]] ?? [];
+        }
+
+        return $results;
+    }
+
     public static function viewPropertyMetadata(int $propertyId){
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -99,6 +119,27 @@ class UserProperty {
         $metadata = [];
         foreach ($result as $key=>$value){
             $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+        }
+
+        return $metadata;
+    }
+
+    public static function viewPropertyChildrenMetadata(int $parentId){
+        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+                    INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
+                    INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
+                    WHERE c.EntityParent = $parentId";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $metadata = [];
+
+        foreach ($result as $key=>$value){
+            if (!isset($metadata[$value["PropertyId"]])){
+                $metadata[$value["PropertyId"]] = [];
+            }
+
+            $metadata[$value["PropertyId"]][$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
         }
 
         return $metadata;

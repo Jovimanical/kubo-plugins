@@ -21,25 +21,25 @@ namespace KuboPlugin\SpatialEntity;
  * @since v0.0.1 11/06/2021 09:11
  */
 class Entity {
-	public function newEntity(array $data){
+	public static function newEntity(array $data){
         $return_result = Entity\Entity::newEntity($data);
 
         return $return_result;
     }
     
-    public function viewEntitiesByType(array $data){
+    public static function viewEntitiesByType(array $data){
         return Entity\Entity::viewEntitiesByType($data);
     }
     
-    public function viewEntityChildren(array $data){
+    public static function viewEntityChildren(array $data){
         return Entity\Entity::viewEntityChildren($data);
     }
     
-    public function viewEntityTypes(){
+    public static function viewEntityTypes(){
         return Entity\Entity::viewEntityTypes();
     }
     
-    public function viewEntity(array $data){
+    public static function viewEntity(array $data){
         return Entity\Entity::viewEntity($data);
     }
 }

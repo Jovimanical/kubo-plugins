@@ -10,22 +10,22 @@
  *
  */
 
-namespace KuboPlugin\Properties;
+namespace KuboPlugin\SpatialEntity;
 
 /**
- * class KuboPlugin\Properties\GeospatialObjects
+ * class KuboPlugin\SpatialEntity\Entity
  *
- * GeospatialObjects Visitor
+ * Entity Visitor
  *
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  * @since v0.0.1 11/06/2021 09:11
  */
-class GeospatialObjects {
+class Entity {
 	public function newObject(array $data){
-		return GeospatialObjects\GeospatialObjects::newObject($data);
+		return Entity\Entity::newObject($data);
 	}
 
     public function getObject(int $objectId){
-        return GeospatialObjects\GeospatialObjects::getObject($objectId);
+        return Entity\Entity::getObject($objectId);
     }
 }

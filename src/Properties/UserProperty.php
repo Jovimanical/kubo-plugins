@@ -21,31 +21,31 @@ namespace KuboPlugin\Properties;
  * @since v0.0.1 11/06/2021 13:48
  */
 class UserProperty {
-	public function newProperty(array $data){
+	public static function newProperty(array $data){
 		return UserProperty\UserProperty::newProperty($data);
 	}
 
-    public function viewProperties(int $userId){
+    public static function viewProperties(int $userId){
         return UserProperty\UserProperty::viewProperties($userId);
     }
 
-    public function viewProperty(int $propertyId){
+    public static function viewProperty(int $propertyId){
         return UserProperty\UserProperty::viewProperty($propertyId);
     }
 
-    public function viewPropertyByName(array $data){
+    public static function viewPropertyByName(array $data){
         return UserProperty\UserProperty::viewPropertyByName($data);
     }
 
-    public function viewPropertyChildren(int $propertyId){
+    public static function viewPropertyChildren(int $propertyId){
         return UserProperty\UserProperty::viewPropertyChildren($propertyId);
     }
 
-    public function viewPropertyMetadata(int $propertyId){
+    public static function viewPropertyMetadata(int $propertyId){
         return UserProperty\UserProperty::viewPropertyMetadata($propertyId);
     }
 
-    public function editPropertyMetadata(int $propertyId, array $data = []){
+    public static function editPropertyMetadata(int $propertyId, array $data = []){
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
 }

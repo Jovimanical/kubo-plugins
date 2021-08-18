@@ -33,6 +33,10 @@ class UserProperty {
         return UserProperty\UserProperty::viewProperty($propertyId);
     }
 
+    public function viewPropertyByName(array $data){
+        return UserProperty\UserProperty::viewPropertyByName($data);
+    }
+
     public function viewPropertyChildren(int $propertyId){
         return UserProperty\UserProperty::viewPropertyChildren($propertyId);
     }

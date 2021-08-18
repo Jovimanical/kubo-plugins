@@ -92,6 +92,20 @@ class UserProperty {
         return $result;
     }
 
+    public static function viewPropertyByName(array $data){
+        $name = $data["name"] ?? 0;
+        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $result = $result[0] ?? [];
+        if (count($result) > 0){
+            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
+            $result["Metadata"] = self::viewPropertyMetadata((int)$result["PropertyId"]);
+        }
+
+        return $result;
+    }
+
     public static function viewPropertyChildren(int $propertyId){
         $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

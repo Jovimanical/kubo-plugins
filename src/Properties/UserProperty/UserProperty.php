@@ -130,9 +130,20 @@ class UserProperty {
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
+                                WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
+                                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyId=$propertyId))";
+        $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
         $metadata = [];
         foreach ($result as $key=>$value){
             $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+        }
+
+        foreach ($propertyParentResult as $key => $value){
+            if (!isset($metadata[$value["FieldName"]])){
+                $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+            }
         }
 
         return $metadata;

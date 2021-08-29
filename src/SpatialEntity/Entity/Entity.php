@@ -95,6 +95,14 @@ class Entity {
         return $children;
     }
 
+    public static function viewEntityParent(array $data){
+        $entity = $data["entityId"];
+        $query = "SELECT EntityParent FROM [SpatialEntities].[Entities] WHERE EntityId = $entity";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
     public static function viewEntityTypes(){
         $query = "SELECT * FROM [SpatialEntities].[EntityTypes];";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

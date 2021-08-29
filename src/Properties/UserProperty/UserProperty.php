@@ -162,6 +162,10 @@ class UserProperty {
     public static function editPropertyMetadata(int $propertyId, array $metadata = []){
         $queries = [];
         foreach($metadata as $key=>$value){
+            if (is_array($value)){
+                $value = json_encode($value);
+            }
+            
             $queries[] = "BEGIN TRANSACTION;".
                         "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
                         "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".

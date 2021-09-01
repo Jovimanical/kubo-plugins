@@ -157,9 +157,7 @@ class UserProperty {
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
-                                WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
-                                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyId=$parentId))";
+        $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $parentId";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];

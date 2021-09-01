@@ -120,7 +120,7 @@ class UserProperty {
 
         foreach ($results as $key=>$result){
             $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
-            $results[$key]["Metadata"] = $childrenMetadata[$result["PropertyId"]] ?? [];
+            $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
         }
 
         return $results;

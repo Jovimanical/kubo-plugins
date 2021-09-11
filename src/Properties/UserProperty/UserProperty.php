@@ -71,8 +71,13 @@ class UserProperty {
         $user = $data["user"];
         $metadata = $data["property_metadata"] ?? [];
         $title =  $data["property_title"];
-        $entityId = $data["entity_id"];
+        $propertyId = $data["property_id"];
         $floorLevel = $data["floor_level"];
+
+        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $entityId = $result[0]["LinkedEntity"] ?? 0;
 
         $inputData = [
             "UserId"=>$user,

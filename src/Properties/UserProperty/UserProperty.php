@@ -88,17 +88,33 @@ class UserProperty {
 
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
 
-        $propertyId = $result["lastInsertId"];
+        $propId = $result["lastInsertId"];
 
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            $values[]  .= "($propertyId, '$key', '$value')";
+            $values[]  .= "($propId, '$key', '$value')";
         }
 
         $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ". implode(",", $values);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
+
+        $propertyChildren = self::viewPropertyChildren($propertyId, ["floorLevel"=>$floorLevel - 1]);
+        
+        foreach($propertyChildren as $property){
+            $title =  $property["PropertyTitle"]." - Floor".$floorLevel;
+            $entityId = $property["LinkedEntity"];
+
+            $inputData = [
+                "UserId"=>$user,
+                "LinkedEntity"=>$entityId,
+                "PropertyFloor"=>$floorLevel,
+                "PropertyTitle"=>QB::wrapString($title, "'")
+            ];
+
+            DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+        }
         
         return $result;
     }
@@ -144,12 +160,14 @@ class UserProperty {
 
     public static function viewPropertyChildren(int $propertyId, array $floorData = []){
         $floorLevel = 0;
-        
+
+        $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
+
         if (isset($floorData["floorLevel"])){
             $floorLevel = $floorData["floorLevel"];
+            $query .= " AND a.PropertyFloor = $floorLevel";
         }
 
-        $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId) AND a.PropertyFloor = $floorLevel";
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         if (isset($results[0])){

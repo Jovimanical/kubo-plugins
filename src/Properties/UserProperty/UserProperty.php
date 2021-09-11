@@ -142,7 +142,12 @@ class UserProperty {
         return $result;
     }
 
-    public static function viewPropertyChildren(int $propertyId, int $floorLevel = 0){
+    public static function viewPropertyChildren(int $propertyId, array $floorData = []){
+        $floorLevel = 0;
+        if (isset($floorData["floorLevel"])){
+            $floorLevel = $floorData["floorLevel"];
+        }
+        
         $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId AND a.PropertyFloor = $floorLevel)";
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 

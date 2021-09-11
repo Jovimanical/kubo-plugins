@@ -176,12 +176,12 @@ class UserProperty {
         
         $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId"=>$propertyId]);
 
-        // $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId);
+        $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId, (int)$floorLevel);
 
-        // foreach ($results as $key=>$result){
-        //     $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
-        //     $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
-        // }
+        foreach ($results as $key=>$result){
+            $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
+            $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
+        }
 
         return $results;
     }
@@ -209,18 +209,18 @@ class UserProperty {
         return $metadata;
     }
 
-    public static function viewPropertyChildrenMetadata(int $parentId){
+    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-                    WHERE c.EntityParent = $parentId";
+                    WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel";
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-                    WHERE b.LinkedEntity = $parentId";
+                    WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];

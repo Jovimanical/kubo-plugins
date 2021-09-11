@@ -21,9 +21,13 @@ namespace KuboPlugin\Properties;
  * @since v0.0.1 11/06/2021 13:48
  */
 class UserProperty {
-	public static function newProperty(array $data){
-		return UserProperty\UserProperty::newProperty($data);
-	}
+    public static function newProperty(array $data){
+        return UserProperty\UserProperty::newProperty($data);
+    }
+
+    public static function newPropertyOnEntity(array $data){
+        return UserProperty\UserProperty::newPropertyOnEntity($data);
+    }
 
     public static function viewProperties(int $userId){
         return UserProperty\UserProperty::viewProperties($userId);

@@ -67,6 +67,37 @@ class UserProperty {
         return $result;
     }
 
+    public static function newPropertyOnEntity(array $data){
+        $user = $data["user"];
+        $metadata = $data["property_metadata"] ?? [];
+        $title =  $data["property_title"];
+        $entityId = $data["entity_id"];
+        $floorLevel = $data["floor_level"];
+
+        $inputData = [
+            "UserId"=>$user,
+            "LinkedEntity"=>$entityId,
+            "PropertyFloor"=>$floorLevel,
+            "PropertyTitle"=>QB::wrapString($title, "'")
+        ];
+
+        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+
+        $propertyId = $result["lastInsertId"];
+
+        //STEP 3: Index Metadata
+        $values = [];
+        foreach ($metadata as $key => $value) {
+            $values[]  .= "($propertyId, '$key', '$value')";
+        }
+
+        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ". implode(",", $values);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+        
+        return $result;
+    }
+
     public static function viewProperties(int $userId){
         $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

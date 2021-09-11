@@ -100,7 +100,7 @@ class UserProperty {
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        $propertyChildren = self::viewPropertyChildren($propertyId, ["floorLevel"=>$floorLevel - 1]);
+        $propertyChildren = self::viewPropertyChildren((int)$propertyId, ["floorLevel"=>(int)$floorLevel - 1]);
         
         foreach($propertyChildren as $property){
             $title =  $property["PropertyTitle"]." - Floor".$floorLevel;
@@ -115,7 +115,7 @@ class UserProperty {
 
             DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
         }
-        
+
         return $result;
     }
 

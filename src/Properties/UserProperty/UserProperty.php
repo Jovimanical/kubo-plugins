@@ -144,8 +144,7 @@ class UserProperty {
 
     public static function viewPropertyChildren(int $propertyId, array $floorData = []){
         $floorLevel = 0;
-        print_r($floorData);
-        die();
+        
         if (isset($floorData["floorLevel"])){
             $floorLevel = $floorData["floorLevel"];
         }

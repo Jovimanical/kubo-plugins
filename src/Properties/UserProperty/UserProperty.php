@@ -176,12 +176,12 @@ class UserProperty {
         
         $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId"=>$propertyId]);
 
-        $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId);
+        // $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId);
 
-        foreach ($results as $key=>$result){
-            $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
-            $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
-        }
+        // foreach ($results as $key=>$result){
+        //     $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
+        //     $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
+        // }
 
         return $results;
     }

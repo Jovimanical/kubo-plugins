@@ -41,8 +41,8 @@ class UserProperty {
         return UserProperty\UserProperty::viewPropertyByName($data);
     }
 
-    public static function viewPropertyChildren(int $propertyId){
-        return UserProperty\UserProperty::viewPropertyChildren($propertyId);
+    public static function viewPropertyChildren(int $propertyId, int $floorLevel = 0){
+        return UserProperty\UserProperty::viewPropertyChildren($propertyId, $floorLevel);
     }
 
     public static function viewPropertyMetadata(int $propertyId){

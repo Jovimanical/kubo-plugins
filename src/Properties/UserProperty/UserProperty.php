@@ -180,19 +180,19 @@ class UserProperty {
 
         foreach ($results as $key=>$result){
             $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
-            $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
+            $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
 
         return $results;
     }
 
-    public static function viewPropertyMetadata(int $propertyId){
+    public static function viewPropertyMetadata(int $propertyId, int $floorLevel=0){
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
-                                WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
-                                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyId=$propertyId))";
+                                WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
+                                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyFloor = $floorLevel AND  PropertyId=$propertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];

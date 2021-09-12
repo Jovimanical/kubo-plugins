@@ -31,7 +31,7 @@ class UserAccount {
      *
      * @return array
      */
-	public function newAccount(array $data){
+	public static function newAccount(array $data){
 		$return_result = ["status"=>false, "reason"=>"Invalid data provided"];
 
 		if (isset($data["email"]) && isset($data["password"]) && isset($data["accountType"]) && !is_null($data["password"])){
@@ -53,7 +53,7 @@ class UserAccount {
 		return $return_result;
 	}
 
-	public function viewAccounts(){
+	public static function viewAccounts(){
 	}
 
 	/**
@@ -66,7 +66,7 @@ class UserAccount {
      *
      * @return array
      */
-	public function addUserAccountType(int $resourceId, array $data){
+	public static function addUserAccountType(int $resourceId, array $data){
 		$addType = UserAccount\AccountType::addAccountType((int)$resourceId, (int)$data["accountType"]);
 
 		if ($addType["lastInsertId"]){
@@ -76,17 +76,17 @@ class UserAccount {
 		return ["status"=>false, "reason"=>"A database write error occurred"];
 	}
 
-	public function viewUserAccountTypes(int $resourceId){
+	public static function viewUserAccountTypes(int $resourceId){
 		return UserAccount\AccountType::viewAccountTypes($resourceId);	
 	}
 
-	public function addAccountType(int $resourceId, array $data){
+	public static function addAccountType(int $resourceId, array $data){
 	}
 
-	public function removeAccountType(int $resourceId, array $data){
+	public static function removeAccountType(int $resourceId, array $data){
 	}
 
-	public function addLinkedAccount(int $resourceId, array $data){
+	public static function addLinkedAccount(int $resourceId, array $data){
 		$accountExists = UserAccount\Account::checkAccountExistsById((int)$data["accountId"]);
 		$result = ["status"=>false, "reason"=>"Invalid user account link requested"];
 
@@ -102,26 +102,26 @@ class UserAccount {
 		return $result;
 	}
 
-	public function viewTeamMembers(int $resourceId){
+	public static function viewTeamMembers(int $resourceId){
 		return UserAccount\LinkedAccount::viewLinkedUsers($resourceId);	
 	}
 
-	public function viewLinkedAccounts(int $resourceId){
+	public static function viewLinkedAccounts(int $resourceId){
 		return UserAccount\LinkedAccount::viewLinkedAccounts($resourceId);	
 	}
 
-	public function removeLinkedAccount(int $resourceId, array $data){
+	public static function removeLinkedAccount(int $resourceId, array $data){
 	}
 
-	public function resetKycGroup(int $resourceId){
+	public static function resetKycGroup(int $resourceId){
 		return UserAccount\Account::updateKycGroup($resourceId);
 	}
 
-	public function addKyc(int $resourceId, array $data){
+	public static function addKyc(int $resourceId, array $data){
 		return UserAccount\UserKyc::addKycStatus($resourceId, $data);
 	}
 
-	public function viewKycStatus(int $resourceId, array $data = []){
+	public static function viewKycStatus(int $resourceId, array $data = []){
 		if (empty($data)){
 			$result = UserAccount\UserKyc::viewStatus($resourceId);
 		}
@@ -132,7 +132,7 @@ class UserAccount {
 		return $result;
 	}
 
-	public function updateKycStatus(int $resourceId, array $data){
+	public static function updateKycStatus(int $resourceId, array $data){
 		return UserAccount\UserKyc::updateKycStatus($resourceId, $data);
 	}
 }

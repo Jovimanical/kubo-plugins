@@ -103,7 +103,7 @@ class UserProperty {
         $propertyChildren = self::viewPropertyChildren((int)$propertyId, ["floorLevel"=>(int)$floorLevel - 1]);
         
         foreach($propertyChildren as $property){
-            $title =  $property["PropertyTitle"]." - Floor".$floorLevel;
+            $title =  $property["PropertyTitle"]." - F".$floorLevel;
             $entityId = $property["LinkedEntity"];
 
             $inputData = [

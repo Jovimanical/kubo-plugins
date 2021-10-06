@@ -65,7 +65,7 @@ class Enquiry {
 
         $result = $result[0] ?? [];
         if (count($result) > 0){
-            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]) ?? "";
+            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
             $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
         }
 

@@ -64,8 +64,8 @@ class Entity {
 
         if (!$result['lastInsertId']){
             //throw an exception, insert was unsuccessful
-        }   
-        
+        }
+
         return $result;
     }
 

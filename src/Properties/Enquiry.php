@@ -22,10 +22,10 @@ namespace KuboPlugin\Properties;
  */
 class Enquiry {
 	public static function newEnquiry(array $data){
-		return UserProperty\Enquiry::newEnquiry($data);
+		return UserEnquiry\Enquiry::newEnquiry($data);
 	}
 
     public static function viewEnquiries(int $userId){
-        return UserProperty\Enquiry::viewEnquiries($userId);
+        return UserEnquiry\Enquiry::viewEnquiries($userId);
     }
 }

@@ -26,6 +26,6 @@ class Enquiry {
 	}
 
     public static function viewEnquiries(int $userId){
-        return UserEnquiry\Enquiry::viewEnquiries($userId);
+        return UserEnquiry\Enquiry::viewEnquiry($userId);
     }
 }

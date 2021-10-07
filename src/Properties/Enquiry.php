@@ -25,7 +25,7 @@ class Enquiry {
 		return UserEnquiry\Enquiry::newEnquiry($data);
 	}
 
-    public static function viewEnquiries(int $userId){
-        return UserEnquiry\Enquiry::viewEnquiry($userId);
+    public static function viewEnquiries(int $userId,array $data){
+        return UserEnquiry\Enquiry::viewEnquiry($userId,$data);
     }
 }

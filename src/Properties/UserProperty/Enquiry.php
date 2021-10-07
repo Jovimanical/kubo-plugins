@@ -59,14 +59,20 @@ class Enquiry {
         return $result;
     }
 
-    public static function viewEnquiry(int $EnquiryId){
-        $query = "SELECT * FROM Properties.Enquiries WHERE EnquiryId = $EnquiryId";
+    public static function viewEnquiry(int $EnquiryId,array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+        $query = "SELECT * FROM Properties.Enquiries WHERE EnquiryId = $EnquiryId  ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 5 ROWS ONLY";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $result = $result[0] ?? [];
         if (count($result) > 0){
-            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
-            $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["Property"]]);  // $result["LinkedEntity"]
+          //  $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
         }
 
         return $result;

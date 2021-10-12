@@ -67,7 +67,7 @@ class Enquiry {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 5 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $query = "SELECT * FROM Properties.Enquiries ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 100 ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];

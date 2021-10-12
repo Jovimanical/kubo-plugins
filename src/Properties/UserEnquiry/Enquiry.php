@@ -73,7 +73,7 @@ class Enquiry {
         $resultArr = [];
         foreach($result as $resultum){
             $resultMsg = $resultum['MessageJson'];
-            $resultum['MessageJsonX'] = html_entity_decode(unserialize($resultMsg));
+            $resultum['MessageJsonX'] = html_entity_decode(unserialize(unserialize($resultMsg)));
             array_push($resultArr,$resultum);
             
         }

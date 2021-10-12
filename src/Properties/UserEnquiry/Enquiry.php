@@ -70,15 +70,24 @@ class Enquiry {
         $query = "SELECT * FROM Properties.Enquiries ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 5 ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        $resultArr = "";
+        foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+            $resultum['MessageJsonX'] = unserialize($resultMsg);
+            array_push($resultArr,$resultum);
+            
+        }
+        
+
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
         //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
-        $result['MessageJson'] = unserialize($result['MessageJson']);
+        
 
-        return $result;
+        return $resultArr;
     }
 
     public static function viewEnquiryByName(array $data){

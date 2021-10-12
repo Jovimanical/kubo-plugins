@@ -76,7 +76,7 @@ class Enquiry {
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
-        $result['messageJson'] = unserialize($result['messageJson']);
+        $result['MessageJson'] = unserialize($result['MessageJson']);
 
         return $result;
     }

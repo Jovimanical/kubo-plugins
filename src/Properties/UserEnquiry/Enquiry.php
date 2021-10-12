@@ -70,7 +70,7 @@ class Enquiry {
         $query = "SELECT * FROM Properties.Enquiries ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 5 ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $resultArr = "";
+        $resultArr = [];
         foreach($result as $resultum){
             $resultMsg = $resultum['MessageJson'];
             $resultum['MessageJsonX'] = unserialize($resultMsg);

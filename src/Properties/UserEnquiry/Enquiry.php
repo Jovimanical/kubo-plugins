@@ -31,6 +31,8 @@ class Enquiry {
         $name =  $data["name"];
         $email = $data["email"] ?? null;
         $phone = $data["phone"] ?? null;
+        $email = $data["budget"] ?? null;
+        $phone = $data["msg"] ?? null;
 
         $messageJson = serialize($messagePayload);
 
@@ -62,22 +64,160 @@ class Enquiry {
     public static function viewEnquiry(int $EnquiryId,array $data){
         $fetch = "FIRST";
         $offset = 0;
+
         if($data['offset'] != 0){
             $fetch = "NEXT";
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 100 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
         foreach($result as $resultum){
             $resultMsg = $resultum['MessageJson'];
-            $resultum['MessageJsonX'] = htmlspecialchars_decode(unserialize($resultMsg));
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
+            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
             array_push($resultArr,$resultum);
-            
+
         }
+
+
+       // $result = $result[0] ?? [];
+       // if (count($result) > 0){
+        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       // }
+
+
+        return $resultArr;
+    }
+
+    public static function viewEnquiryBySeven(int $EnquiryId,array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId) AND WHERE DateCreated  >= date('Y-m-d H:i:s') AND DateCreated  <  date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d H:i:s'))) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $resultArr = [];
+        foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
+            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            array_push($resultArr,$resultum);
+
+        }
+
+
+       // $result = $result[0] ?? [];
+       // if (count($result) > 0){
+        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       // }
+
         
+
+        return $resultArr;
+    }
+
+    public static function viewEnquiryByThirty(int $EnquiryId,array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId) AND WHERE DateCreated  >= date('Y-m-d H:i:s') AND DateCreated  <  date('Y-m-d H:i:s', strtotime('-30 days', strtotime(date('Y-m-d H:i:s'))) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $resultArr = [];
+        foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
+            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            array_push($resultArr,$resultum);
+
+        }
+
+
+       // $result = $result[0] ?? [];
+       // if (count($result) > 0){
+        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       // }
+
+        
+
+        return $resultArr;
+    }
+
+
+    public static function viewEnquiryByNinety(int $EnquiryId,array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId) AND WHERE DateCreated  >= date('Y-m-d H:i:s') AND DateCreated  <  date('Y-m-d H:i:s', strtotime('-90 days', strtotime(date('Y-m-d H:i:s'))) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $resultArr = [];
+        foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
+            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            array_push($resultArr,$resultum);
+
+        }
+
+
+       // $result = $result[0] ?? [];
+       // if (count($result) > 0){
+        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       // }
+
+        
+
+        return $resultArr;
+    }
+
+
+
+    public static function searchEnquiry(int $EnquiryId,array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        $searchTerm = $data['searchTerm'];
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId) AND WHERE id LIKE '%$searchTerm%' AND DateCreated LIKE '%$searchTerm%' AND 'Name' LIKE '%$searchTerm%' AND EmailAddress LIKE '%$searchTerm%' AND PhoneNumber LIKE '%$searchTerm%' AND MessageJson LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $resultArr = [];
+        foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
+            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            array_push($resultArr,$resultum);
+
+        }
+
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){

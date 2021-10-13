@@ -78,7 +78,7 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
@@ -110,7 +110,7 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
@@ -143,7 +143,7 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
@@ -177,7 +177,7 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
@@ -213,7 +213,7 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            $result["PropertyData"] = self::viewProperties((int)$result["EnquiryId"]);
+            $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }

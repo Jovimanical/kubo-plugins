@@ -10,7 +10,7 @@
  *
  */
 
-namespace KuboPlugin\Properties\UserProperty;
+namespace KuboPlugin\Properties\UserEnquiry;
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;

@@ -77,8 +77,8 @@ class Enquiry {
         foreach($result as $resultum){
             $resultMsg = $resultum['MessageJson'];
 
-            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }

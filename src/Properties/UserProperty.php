@@ -52,4 +52,26 @@ class UserProperty {
     public static function editPropertyMetadata(int $propertyId, array $data = []){
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
+
+    public static function addNewProperty(array $data){
+        $UserId = $data["UserId"];
+        $PropertyTitle = $data["PropertyTitle"] ?? [];
+        $LinkedEntity =  $data["LinkedEntity"];
+        $DateCreated = $data["DateCreated"] ?? null;
+        $PropertyId = $data["PropertyId"] ?? null;
+        $PropertyFloor = $data["PropertyFloor"];
+
+        //STEP 2: Index User Property
+        $inputData = [
+            "UserId"=>$user,
+            "LinkedEntity"=>$entityId,
+            "PropertyTitle"=>$title,
+            "DateCreated"=>$DateCreated,
+            "PropertyId"=>$property,
+            "PropertyFloor"=>$PropertyFloor
+        ];
+        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+        
+        return $result;
+    }
 }

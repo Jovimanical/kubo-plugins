@@ -280,7 +280,6 @@ class UserProperty {
             "UserId"=>$UserId,
             "PropertyTitle"=>$PropertyTitle,
             "LinkedEntity"=>$LinkedEntity,
-            "DateCreated"=>$DateCreated,
             "PropertyFloor"=>$PropertyFloor
         ];
 
@@ -303,7 +302,6 @@ class UserProperty {
             "UserId"=>$user,
             "LinkedEntity"=>$entityId,
             "PropertyTitle"=>$title,
-            "DateCreated"=>$DateCreated,
             "PropertyId"=>$property,
             "PropertyFloor"=>$PropertyFloor
         ];

@@ -265,4 +265,60 @@ class UserProperty {
 
         return $result;
     }
+
+    public static function newPropertyX(array $data){
+        $UserId = $data["UserId"];
+        $PropertyTitle = $data["PropertyTitle"] ?? [];
+        $LinkedEntity =  $data["LinkedEntity"];
+        $DateCreated = $data["DateCreated"] ?? null;
+        $PropertyId = $data["PropertyId"] ?? null;
+        $PropertyFloor = $data["PropertyFloor"];
+
+        //STEP 2: Index User Property
+        $inputData = [
+            "UserId"=>$user,
+            "LinkedEntity"=>$entityId,
+            "PropertyTitle"=>$title,
+            "DateCreated"=>$DateCreated,
+            "PropertyId"=>$property,
+            "PropertyFloor"=>$PropertyFloor
+        ];
+        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+        
+        return $result;
+    }
+
+    public static function newPropertyY(array $data){
+        $UserId = $data["UserId"];
+        $PropertyTitle = $data["PropertyTitle"] ?? [];
+        $LinkedEntity =  $data["LinkedEntity"];
+        $DateCreated = $data["DateCreated"] ?? null;
+        $PropertyId = $data["PropertyId"] ?? null;
+        $PropertyFloor = $data["PropertyFloor"];
+
+        //STEP 2: Index User Property
+        $inputData = [
+            "UserId"=>$user,
+            "LinkedEntity"=>$entityId,
+            "PropertyTitle"=>$title,
+            "DateCreated"=>$DateCreated,
+            "PropertyId"=>$property,
+            "PropertyFloor"=>$PropertyFloor
+        ];
+        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+
+        $propertyId = $result["lastInsertId"];
+
+        //STEP 3: Index Metadata
+        $values = [];
+        foreach ($metadata as $key => $value) {
+            $values[]  .= "($propertyId, '$key', '$value')";
+        }
+
+        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ". implode(",", $values);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+        
+        return $result;
+    }
 }

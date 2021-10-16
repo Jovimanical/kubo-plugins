@@ -266,7 +266,7 @@ class UserProperty {
         return $result;
     }
 
-    public static function newPropertyX(array $data){
+    public static function addNewProperty(array $data){
         $UserId = $data["UserId"];
         $PropertyTitle = $data["PropertyTitle"] ?? [];
         $LinkedEntity =  $data["LinkedEntity"];

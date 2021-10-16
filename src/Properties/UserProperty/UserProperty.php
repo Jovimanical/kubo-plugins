@@ -276,13 +276,15 @@ class UserProperty {
 
         //STEP 2: Index User Property
         $inputData = [
-            "UserId"=>$user,
-            "LinkedEntity"=>$entityId,
-            "PropertyTitle"=>$title,
+            "PropertyId"=>$PropertyId,
+            "UserId"=>$UserId,
+            "PropertyTitle"=>$PropertyTitle,
+            "LinkedEntity"=>$LinkedEntity,
             "DateCreated"=>$DateCreated,
-            "PropertyId"=>$property,
             "PropertyFloor"=>$PropertyFloor
         ];
+
+        
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
         
         return $result;

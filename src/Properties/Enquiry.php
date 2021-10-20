@@ -28,4 +28,20 @@ class Enquiry {
     public static function viewEnquiries(int $userId,array $data){
         return UserEnquiry\Enquiry::viewEnquiry($userId,$data);
     }
+
+    public static function viewEnquiryBySeven(int $userId,array $data){
+        return UserEnquiry\Enquiry::viewEnquiryBySeven($userId,$data);
+    }
+
+    public static function viewEnquiryByThirty(int $userId,array $data){
+        return UserEnquiry\Enquiry::viewEnquiryByThirty($userId,$data);
+    }
+
+    public static function viewEnquiryByNinety(int $userId,array $data){
+        return UserEnquiry\Enquiry::viewEnquiryByNinety($userId,$data);
+    }
+
+    public static function searchEnquiry(int $userId,array $data){
+        return UserEnquiry\Enquiry::searchEnquiry($userId,$data);
+    }
 }

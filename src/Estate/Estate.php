@@ -13,7 +13,7 @@
 namespace KuboPlugin\Estate;
 
 /**
- * class KuboPlugin\Mortgages
+ * class KuboPlugin\Estate
  *
  * Estate
  *
@@ -22,20 +22,20 @@ namespace KuboPlugin\Estate;
  */
 class Estate {
 	public static function updateEstateUser(array $data){
-		return Estates\Estate::updateEstateUser($data);
+		return Estate\Estate::updateEstateUser($data);
 	}
 
     public static function viewEstateUser(int $userId,array $data){
-        return Estates\Estate::viewEstateUser($userId,$data);
+        return Estate\Estate::viewEstateUser($userId,$data);
     }
 
 
     public static function uploadEstateUserAvatar(int $userId,array $data){
-        return Estates\Estate::uploadEstateUserAvatar($userId,$data);
+        return Estate\Estate::uploadEstateUserAvatar($userId,$data);
     }
 
     public static function sendSupport(int $userId,array $data){
-        return Estates\Estate::sendSupport($userId,$data);
+        return Estate\Estate::sendSupport($userId,$data);
     }
 
 }

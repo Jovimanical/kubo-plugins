@@ -1,6 +1,6 @@
 <?php declare (strict_types=1);
 /**
- * Mortgages Class.
+ * UserMortgage Class.
  *
  * This file is part of Project Kubo, please read the documentation
  * available in the root level of this project
@@ -10,10 +10,10 @@
  *
  */
 
-namespace KuboPlugin\Estates;
+namespace KuboPlugin\Estate;
 
 /**
- * class KuboPlugin\Estates
+ * class KuboPlugin\Estate
  *
  * Mortgages Visitor
  *

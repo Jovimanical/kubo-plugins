@@ -10,7 +10,7 @@
  *
  */
 
-namespace KuboPlugin\Estates\UserMortgage;
+namespace KuboPlugin\Estate\UserMortgage;
 
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
@@ -19,7 +19,7 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 
 
 /**
- * class KuboPlugin\Estates\UserMortgage
+ * class KuboPlugin\Estate\UserMortgage
  *
  * Mortgages Visitor
  *

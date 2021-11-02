@@ -151,4 +151,17 @@ class Estate {
         return mail($receiver, $subject, $msg, $headers);
     }
 
+    public static function sendMail(array $data){
+
+        $mail = new Mailer($data['sender'],$data['recipients'],$data['message']);
+        
+        if($mail->send()){
+
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }

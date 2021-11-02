@@ -102,7 +102,10 @@ class Enquiry {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= date('Y-m-d H:i:s') AND DateCreated  <  date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d H:i:s'))) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
+        $fromDate = date('Y-m-d H:i:s');
+        $toDate = date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d H:i:s'))));
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -135,7 +138,11 @@ class Enquiry {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= date('Y-m-d H:i:s') AND DateCreated  <  date('Y-m-d H:i:s', strtotime('-30 days', strtotime(date('Y-m-d H:i:s'))) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  
+        $fromDate = date('Y-m-d H:i:s');
+        $toDate = date('Y-m-d H:i:s', strtotime('-30 days', strtotime(date('Y-m-d H:i:s'))));
+
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  <  $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -168,6 +175,10 @@ class Enquiry {
             $fetch = "NEXT";
             $offset = $data['offset'];
         }
+
+        $fromDate = date('Y-m-d H:i:s');
+        $toDate = date('Y-m-d H:i:s', strtotime('-90 days', strtotime(date('Y-m-d H:i:s'))));
+
 
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= date('Y-m-d H:i:s') AND DateCreated  <  date('Y-m-d H:i:s', strtotime('-90 days', strtotime(date('Y-m-d H:i:s'))) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

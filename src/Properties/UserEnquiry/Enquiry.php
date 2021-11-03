@@ -103,7 +103,8 @@ class Enquiry {
         }
 
         $fromDate = date('Y-m-d H:i:s');
-        $toDate = date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d H:i:s'))));
+       // $toDate = date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d H:i:s'))));
+        $toDate = date('Y-m-d H:i:s');
 
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -125,7 +126,7 @@ class Enquiry {
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
-        
+
 
         return $resultArr;
     }

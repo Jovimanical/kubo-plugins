@@ -92,7 +92,7 @@ class Entity {
             $children[$entity["EntityId"]] = $entity;
         }
 
-        var_dump("second break  ".$results);
+        var_dump("second break ".$results);
 
         return $children;
     }

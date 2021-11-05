@@ -173,15 +173,21 @@ class UserProperty {
         if (isset($results[0])){
             $propertyId = $results[0]["EntityParent"];
         }
-        
+
+        var_dump("first break  ".$results);
+
         $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId"=>$propertyId]);
+
+        var_dump("third break  ".$results);
 
         $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId, (int)$floorLevel);
 
+        var_dump("fourth break  ".$results);
         foreach ($results as $key=>$result){
             $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
             $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
+        var_dump("five break  ".$results);
 
         return $results;
     }
@@ -195,16 +201,20 @@ class UserProperty {
                                 SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyFloor = $floorLevel AND  PropertyId=$propertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
+        var_dump("first meta break  ".$result);
         $metadata = [];
         foreach ($result as $key=>$value){
             $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
         }
+        var_dump("second meta break  ".$metadata);
 
         foreach ($propertyParentResult as $key => $value){
             if (!isset($metadata[$value["FieldName"]])){
                 $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
             }
         }
+
+        var_dump("third meta break  ".$metadata);
 
         return $metadata;
     }
@@ -217,12 +227,15 @@ class UserProperty {
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        var_dump("first meta x break  ".$result);
+
         $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
                     WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
+        var_dump("second meta x break  ".$propertyParentResult);
         $metadata = [];
 
         foreach ($result as $key=>$value){
@@ -239,6 +252,7 @@ class UserProperty {
                 }
             }
         }
+        var_dump("third meta x break  ".$metadata);
 
 
         return $metadata;

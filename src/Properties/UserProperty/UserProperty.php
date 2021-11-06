@@ -101,7 +101,7 @@ class UserProperty {
         $result = DBConnectionFactory::getConnection()->exec($query);
 
         $propertyChildren = self::viewPropertyChildren((int)$propertyId, ["floorLevel"=>(int)$floorLevel - 1]);
-        
+
         foreach($propertyChildren as $property){
             $title =  $property["PropertyTitle"]." - F".$floorLevel;
             $entityId = $property["LinkedEntity"];

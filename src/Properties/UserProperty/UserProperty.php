@@ -244,7 +244,7 @@ class UserProperty {
         return $metadata;
     }
 
-    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0, int $offset = 0, int $numSet = 35){
+    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0, int $offset = 0, int $numset = 35){
         $fetch = "FIRST";
         $offset = 0;
         $numSet = $numset;
@@ -252,7 +252,7 @@ class UserProperty {
             $fetch = "NEXT";
             $offset = $offset;
         }
-        
+
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId

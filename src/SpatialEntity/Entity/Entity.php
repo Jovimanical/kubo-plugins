@@ -82,6 +82,29 @@ class Entity {
     }
 
     public static function viewEntityChildren(array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        $numSet = $data['numset'] ?? 35;
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+        $entity = $data["entityId"];
+        $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $children = [];
+        foreach($result as $key=>$entity){
+            $entity["EntityGeometry"] = self::unserializeObject($entity["EntityGeometry"]);
+            $children[$entity["EntityId"]] = $entity;
+        }
+
+
+        return $children;
+    }
+
+    /*
+    public static function viewEntityChildren(array $data){
         $entity = $data["entityId"];
         $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -95,6 +118,7 @@ class Entity {
 
         return $children;
     }
+    */
 
     public static function viewEntityParent(array $data){
         $entity = $data["entityId"];

@@ -161,6 +161,39 @@ class UserProperty {
     public static function viewPropertyChildren(int $propertyId, array $floorData = []){
         $floorLevel = 0;
 
+        $offset = $floorData['offset'];
+        $numSet = $floorData['numset'];
+
+        $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
+
+        if (isset($floorData["floorLevel"])){
+            $floorLevel = $floorData["floorLevel"];
+            $query .= " AND a.PropertyFloor = $floorLevel";
+        }
+
+        $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (isset($results[0])){
+            $propertyId = $results[0]["EntityParent"];
+        }
+
+        $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId"=>$propertyId,"offset"=>$offset,"numset"=>$numSet]);
+
+
+        $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId, (int)$floorLevel, (int)$offset, (int)$numSet);
+
+        foreach ($results as $key=>$result){
+            $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
+            $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
+        }
+
+        return $results;
+    }
+
+    /*
+      public static function viewPropertyChildren(int $propertyId, array $floorData = []){
+        $floorLevel = 0;
+
         $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
 
         if (isset($floorData["floorLevel"])){
@@ -185,7 +218,8 @@ class UserProperty {
         }
 
         return $results;
-    }
+      }
+    */
 
     public static function viewPropertyMetadata(int $propertyId, int $floorLevel=0){
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
@@ -210,7 +244,48 @@ class UserProperty {
         return $metadata;
     }
 
-    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
+    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0, int $offset = 0, int $numSet = 35){
+        $fetch = "FIRST";
+        $offset = 0;
+        $numSet = $data['numset'];
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+                    INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
+                    INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
+                    WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+                    INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
+                    INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
+                    WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
+        $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
+        $metadata = [];
+
+        foreach ($result as $key=>$value){
+            if (!isset($metadata[$value["PropertyId"]])){
+                $propertyId = $value["PropertyId"];
+                $metadata[$value["PropertyId"]] = [];
+            }
+
+            $metadata[$value["PropertyId"]][$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+
+            foreach ($propertyParentResult as $key => $value){
+                if (!isset($metadata[$propertyId][$value["FieldName"]])){
+                    $metadata[$propertyId][$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+                }
+            }
+        }
+
+        return $metadata;
+    }
+
+    /*
+      public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
@@ -242,7 +317,7 @@ class UserProperty {
 
         return $metadata;
     }
-
+    */
     public static function editPropertyMetadata(int $propertyId, array $metadata = []){
         $queries = [];
         foreach($metadata as $key=>$value){

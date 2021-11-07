@@ -255,14 +255,14 @@ class UserProperty {
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-                    WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
+                    WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel ORDER BY c.EntityId OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-                    WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
+                    WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel ORDER BY c.EntityId OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $metadata = [];
 

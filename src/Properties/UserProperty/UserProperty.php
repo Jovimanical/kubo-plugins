@@ -252,6 +252,7 @@ class UserProperty {
             $fetch = "NEXT";
             $offset = $offset;
         }
+        
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId

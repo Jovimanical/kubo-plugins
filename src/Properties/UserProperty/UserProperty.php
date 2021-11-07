@@ -247,10 +247,10 @@ class UserProperty {
     public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0, int $offset = 0, int $numSet = 35){
         $fetch = "FIRST";
         $offset = 0;
-        $numSet = $data['numset'];
-        if($data['offset'] != 0){
+        $numSet = $numset;
+        if($offset != 0){
             $fetch = "NEXT";
-            $offset = $data['offset'];
+            $offset = $offset;
         }
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId

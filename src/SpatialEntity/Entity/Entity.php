@@ -90,7 +90,7 @@ class Entity {
             $offset = $data['offset'];
         }
         $entity = $data["entityId"];
-        $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
+        $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity ORDER BY EntityId OFFSET $offset ROWS FETCH $fetch $numSet ROWS ONLY";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $children = [];

@@ -105,7 +105,9 @@ class Enquiry {
         $fromDate = date('Y-m-d H:i:s');
         $toDate = date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d H:i:s'))));
         
-
+        var_dump($fromDate);
+        var_dump($toDate);
+        die();
 
         $query = "SELECT * FROM Properties.Enquiries WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

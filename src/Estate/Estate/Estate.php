@@ -166,33 +166,33 @@ class Estate {
 
 
     public static function getDashBoardTotal(int $userId){
-        $result = [];
+        $resultArr = [];
 
-        $query = "SELECT EntityType FROM Properties.Entity WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 1";
+        $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 1";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $estateCount =  count($result);
-        $result['estate'] = $estateCount;
+        $resultArr['estate'] = $estateCount;
 
-        $query1 = "SELECT EntityType FROM Properties.Entity WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 3";
-        $result1 = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $query1 = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 3";
+        $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propCount =  count($result1);
-        $result['property'] = $propCount;
+        $resultArr['property'] = $propCount;
 
         $query2 = "SELECT property_id FROM Estate.Mortgages  WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
-        $result2 = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $result2 = DBConnectionFactory::getConnection()->query($query2)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $mortCount =  count($result1);
-        $result['mortgages'] = $mortCount;
+        $mortCount =  count($result2);
+        $resultArr['mortgages'] = $mortCount;
 
         $query3 = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
-        $result3 = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $result3 = DBConnectionFactory::getConnection()->query($query3)->fetchAll(\PDO::FETCH_ASSOC);
 
         $reserveCount =  count($result3);
-        $result['reservations'] = $reserveCount;
+        $resultArr['reservations'] = $reserveCount;
 
-        return $result;
+        return $resultArr;
 
     }
 

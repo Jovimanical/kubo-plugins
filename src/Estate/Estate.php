@@ -38,4 +38,8 @@ class Estate {
         return Estate\Estate::sendSupport($userId,$data);
     }
 
+    public static function getDashBoardTotal(int $userId,array $data){
+        return Estate\Estate::getDashBoardTotal($userId,$data);
+    }
+
 }

@@ -183,7 +183,7 @@ class Estate {
         $query2 = "SELECT property_id FROM Estate.Mortgages  WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
         $result2 = DBConnectionFactory::getConnection()->query($query2)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $mortCount =  count($result1);
+        $mortCount =  count($result2);
         $resultArr['mortgages'] = $mortCount;
 
         $query3 = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";

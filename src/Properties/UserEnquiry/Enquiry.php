@@ -217,7 +217,7 @@ class Enquiry {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND EnquiryId LIKE '%$searchTerm%' AND DateCreated LIKE '%$searchTerm%' AND 'Name' LIKE '%$searchTerm%' AND EmailAddress LIKE '%$searchTerm%' AND PhoneNumber LIKE '%$searchTerm%' AND MessageJson LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND EnquiryId LIKE '%$searchTerm%' OR DateCreated LIKE '%$searchTerm%' OR 'Name' LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' OR MessageJson LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];

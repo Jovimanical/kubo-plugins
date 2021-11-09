@@ -168,13 +168,13 @@ class Estate {
     public static function getDashBoardTotal(int $userId){
         $result = [];
 
-        $query = "SELECT EntityType FROM Properties.Entity WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 1";
+        $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 1";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $estateCount =  count($result);
         $result['estate'] = $estateCount;
 
-        $query1 = "SELECT EntityType FROM Properties.Entity WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 3";
+        $query1 = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 3";
         $result1 = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propCount =  count($result1);

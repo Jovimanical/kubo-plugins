@@ -109,7 +109,7 @@ class UserMortgage {
         $toDate = date('Y-m-d', strtotime('-30 days', strtotime(date('Y-m-d'))));
 
 
-        $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
+        $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND date_started  >= $fromDate AND date_started  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;
@@ -130,7 +130,7 @@ class UserMortgage {
 
 
 
-       $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
+       $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND date_started  >= $fromDate AND date_started  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
        return $result;
@@ -146,7 +146,7 @@ class UserMortgage {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND WHERE id LIKE '%$searchTerm%' AND property_name LIKE '%$searchTerm%' AND mortgagee_name LIKE '%$searchTerm%' AND mortgage_bank LIKE '%$searchTerm%' AND monthly_payment LIKE '%$searchTerm%' AND down_payment LIKE '%$searchTerm%' ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
+        $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND id LIKE '%$searchTerm%' OR property_name LIKE '%$searchTerm%' OR mortgagee_name LIKE '%$searchTerm%' OR mortgage_bank LIKE '%$searchTerm%' OR monthly_payment LIKE '%$searchTerm%' OR down_payment LIKE '%$searchTerm%' ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;

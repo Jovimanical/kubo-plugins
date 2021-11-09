@@ -10,7 +10,7 @@
  *
  */
 
-namespace KuboPlugin\Estates\Estate;
+namespace KuboPlugin\Estate\Estate;
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
@@ -20,7 +20,7 @@ use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 
 
 /**
- * class KuboPlugin\Estates\Estate
+ * class KuboPlugin\Estate\Estate
  *
  * Estate
  *

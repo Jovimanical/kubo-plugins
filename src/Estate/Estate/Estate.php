@@ -196,4 +196,20 @@ class Estate {
 
     }
 
+    public static function searchEstateUser(int $userId,array $data){
+        $fetch = "FIRST";
+        $offset = 0;
+        $searchTerm = $data['searchTerm'];
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $query = "SELECT * FROM Properties.UserProperty WHERE UserId = $userId AND LinkedEntity IN (SELECT EntityType FROM SpatialEntities.Entities WHERE EntityType = 1) AND PropertyId LIKE '%$searchTerm%' OR PropertyTitle LIKE '%$searchTerm%' ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result;
+
+    }
+
 }

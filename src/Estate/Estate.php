@@ -42,4 +42,8 @@ class Estate {
         return Estate\Estate::getDashBoardTotal($userId);
     }
 
+    public static function searchEstateUser(int $userId,array $data){
+        return Estate\Estate::searchEstateUser($userId,$data);
+    }
+
 }

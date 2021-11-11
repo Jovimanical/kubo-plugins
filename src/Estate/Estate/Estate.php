@@ -245,4 +245,27 @@ class Estate {
         return $metadata;
     }   
 
+    public static function editEstateData(int $propertyId, array $metadata = []){
+        $queries = [];
+        foreach($metadata as $key=>$value){
+            if (is_array($value)){
+                $value = json_encode($value);
+            }
+            
+            $queries[] = "BEGIN TRANSACTION;".
+                        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
+                        "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".
+                        "COMMIT TRANSACTI
+                        ON;";
+
+
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
+
 }

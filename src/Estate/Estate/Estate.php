@@ -231,6 +231,18 @@ class Estate {
 
     }
 
-   
+    public static function viewEstateData(int $propertyId, int $floorLevel=0){
+        // Getting Estate Data
+        $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $metadata = [];
+        foreach ($result as $key=>$value){
+            $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"]];
+        }
+
+
+        return $metadata;
+    }   
 
 }

@@ -231,6 +231,41 @@ class Estate {
 
     }
 
-   
+    public static function viewEstateData(int $propertyId, int $floorLevel=0){
+        // Getting Estate Data
+        $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $metadata = [];
+        foreach ($result as $key=>$value){
+            $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"]];
+        }
+
+
+        return $metadata;
+    }   
+
+    public static function editEstateData(int $propertyId, array $metadata = []){
+        $queries = [];
+        foreach($metadata as $key=>$value){
+            if (is_array($value)){
+                $value = json_encode($value);
+            }
+            
+            $queries[] = "BEGIN TRANSACTION;".
+                        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
+                        "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".
+                        "COMMIT TRANSACTI
+                        ON;";
+
+
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
 
 }

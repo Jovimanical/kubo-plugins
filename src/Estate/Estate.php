@@ -39,7 +39,7 @@ class Estate {
     }
 
     public static function sendMail(array $data){
-        return Estate\Estate::sendMail($userId,$data);
+        return Estate\Estate::sendMail($data);
     }
 
     public static function getDashBoardTotal(int $userId){

@@ -40,7 +40,7 @@ class Estate
         $first_name = "";
         $last_name = "";
         if (isset($fullname)) {
-            $name = explode(trim(" ", $fullname));
+            $name = explode(" ", trim($fullname));
             $first_name = $name[0];
             $last_name = $name[1];
         }

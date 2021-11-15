@@ -38,12 +38,36 @@ class Estate {
         return Estate\Estate::sendSupport($userId,$data);
     }
 
+    public static function sendMail(array $data){
+        return Estate\Estate::sendMail($userId,$data);
+    }
+
     public static function getDashBoardTotal(int $userId){
         return Estate\Estate::getDashBoardTotal($userId);
     }
 
-    public static function searchEstateUser(int $userId,array $data){
-        return Estate\Estate::searchEstateUser($userId,$data);
+    public static function searchEstateClient(int $userId,array $data){
+        return Estate\Estate::searchEstateClient($userId,$data);
+    }
+
+    public static function viewEstateData(int $propertyId, int $floorLevel = 0){
+        return Estate\Estate::viewEstateData($propertyId,$floorLevel);
+    }
+
+    public static function editEstateData(int $propertyId, array $metadata = []){
+        return Estate\Estate::editEstateData($propertyId,$metadata);
+    }
+
+    public static function allocateProperty(int $userId, array $data){
+        return Estate\Estate::allocateProperty($userId,$data);
+    }
+
+    public static function viewBlockAllocationsData(int $propertyId, array $data){
+        return Estate\Estate::viewBlockAllocationsData($propertyId, $data);
+    }
+
+    public static function viewUnitAllocationsData(int $propertyId, array $data){
+        return Estate\Estate::viewUnitAllocationsData($propertyId, $data);
     }
 
 }

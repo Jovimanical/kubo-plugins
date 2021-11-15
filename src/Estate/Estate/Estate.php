@@ -54,7 +54,7 @@ class Estate
             "about" => QB::wrapString($about, "'"),
             "address" => QB::wrapString($address, "'"),
             "tel" => QB::wrapString($tel, "'"),
-            "user_id" => QB::wrapString($userId, "'"),
+            "user_id" => $userId,
         ];
 
         $result = [];

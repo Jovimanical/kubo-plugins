@@ -27,7 +27,7 @@ use EmmetBlue\Core\Factory\MailerFactory as Mailer;
  */
 class Estate
 {
-    public static function updateEstateUser(array $data)
+    public static function updateEstateUser(int $userId, array $data)
     {
         $company_name = $data["company_name"] ?? null;
         $fullname = $data["fullname"] ?? null;
@@ -36,7 +36,7 @@ class Estate
         $phone = $data["phone"] ?? null;
         $address = $data["address"] ?? null;
         $tel = $data["tel"] ?? null;
-
+        
         $first_name = "";
         $last_name = "";
         if (isset($fullname)) {
@@ -54,6 +54,7 @@ class Estate
             "about" => QB::wrapString($about, "'"),
             "address" => QB::wrapString($address, "'"),
             "tel" => QB::wrapString($tel, "'"),
+            "user_id" => QB::wrapString($userId, "'"),
         ];
 
         $result = [];
@@ -390,7 +391,6 @@ class Estate
                     $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
                 }
 
-                
             }
 
         }

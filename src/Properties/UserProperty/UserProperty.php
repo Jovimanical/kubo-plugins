@@ -259,8 +259,7 @@ class UserProperty {
             $queries[] = "BEGIN TRANSACTION;".
                         "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
                         "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".
-                        "COMMIT TRANSACTI
-                        ON;";
+                        "COMMIT TRANSACTION;";
 
 
         }

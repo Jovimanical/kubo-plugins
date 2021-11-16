@@ -30,7 +30,7 @@ use Psr\Http\Message\ResponseInterface;
  * @author Sixtus Onumajuru <jigga.e10@gmail.com>
  * @since v0.0.1 18/10/2021 06:20
  */
-class Estate
+class Estate implements ServerRequestInterface
 {
     public static function updateEstateUser(int $userId, array $data)
     {
@@ -111,7 +111,6 @@ class Estate
 
         $companyName = $inputData['company_name'];
 
-        $request = new ServerRequestInterface();
 
         $uploadedFiles = $request->getUploadedFiles();
 
@@ -257,7 +256,6 @@ class Estate
     {
         $queries = [];
 
-        $request = new ServerRequestInterface();
 
         $uploadedFiles = $request->getUploadedFiles();
 

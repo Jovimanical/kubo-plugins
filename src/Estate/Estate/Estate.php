@@ -17,6 +17,11 @@ use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
 use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+
+
 /**
  * class KuboPlugin\Estate\Estate
  *
@@ -105,6 +110,8 @@ class Estate
         ];
 
         $companyName = $inputData['company_name'];
+
+        $request = new ServerRequestInterface();
 
         $uploadedFiles = $request->getUploadedFiles();
 
@@ -249,6 +256,8 @@ class Estate
     public static function editEstateData(int $propertyId, array $metadata = [])
     {
         $queries = [];
+
+        $request = new ServerRequestInterface();
 
         $uploadedFiles = $request->getUploadedFiles();
 

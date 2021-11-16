@@ -10,7 +10,7 @@
  *
  */
 
-namespace KuboPlugin\Notifications\SendMail;
+namespace KuboPlugin\Notifications;
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
@@ -20,7 +20,7 @@ use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 
 
 /**
- * class KuboPlugin\Notifications\SendMail
+ * class KuboPlugin\Notifications
  *
  * SendMail
  *

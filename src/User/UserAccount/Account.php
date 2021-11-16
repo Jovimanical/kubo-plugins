@@ -34,7 +34,7 @@ class Account {
      *
      * @return array
      */
-	public static function newAccount(string $email, string $password){
+	public static function newAccount(string $email, string $password, string $names){
 		$passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 		$result = DBQueryFactory::insert("Users.Account", [

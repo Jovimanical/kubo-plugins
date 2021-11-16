@@ -30,7 +30,7 @@ use Psr\Http\Message\ResponseInterface;
  * @author Sixtus Onumajuru <jigga.e10@gmail.com>
  * @since v0.0.1 18/10/2021 06:20
  */
-class Estate implements ServerRequestInterface
+class Estate
 {
     public static function updateEstateUser(int $userId, array $data)
     {

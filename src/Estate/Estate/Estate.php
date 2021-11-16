@@ -466,7 +466,7 @@ class Estate
 
         ];
 
-        $query = "SELECT * FROM Estate.users WHERE email = $email";
+        $query = "SELECT * FROM Estate.users WHERE email = '$email'";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;

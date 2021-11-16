@@ -457,4 +457,19 @@ class Estate
 
     }
 
+    public static function viewEstateName(int $userId, array $data)
+    {
+        $email = $data["email"] ?? null;
+
+        $inputData = [
+            "email" => QB::wrapString($email, "'"),
+
+        ];
+
+        $query = "SELECT * FROM Estate.users WHERE email = $email";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
 }

@@ -70,4 +70,9 @@ class Estate {
         return Estate\Estate::viewUnitAllocationsData($propertyId, $data);
     }
 
+    public static function viewEstateName(int $userId, array $data) {
+        return Estate\Estate::viewEstateName($userId, $data);
+    }
+
+
 }

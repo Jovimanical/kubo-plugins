@@ -54,16 +54,8 @@ class Account {
         $address = '';
         $tel = '';
         
-        $first_name = "";
-        $last_name = "";
-        if (isset($fullname)) {
-            $name = explode(" ", trim($fullname));
-            $first_name = $name[0];
-            $last_name = $name[1];
-        } else {
-			$first_name = '';
-            $last_name = '';
-		}
+        $first_name = '';
+        $last_name = '';
 
         $inputData = [
             "company_name" => QB::wrapString($company_name, "'"),

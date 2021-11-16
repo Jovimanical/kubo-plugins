@@ -76,7 +76,12 @@ class Estate
             $result = DBQueryFactory::insert("[Estate].[users]", $inputData, false);
         }
 
-        return $result;
+        if($result){
+            return true;
+        } else {
+            return false;
+        }
+        
     }
 
     public static function viewEstateUser(int $userId, array $data)
@@ -291,7 +296,11 @@ class Estate
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        return $result;
+        if($result){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static function allocateProperty(int $userId, array $data)

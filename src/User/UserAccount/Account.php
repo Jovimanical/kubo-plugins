@@ -48,7 +48,7 @@ class Account {
 
 		$company_name = $names ?? '';
         $fullname =  '';
-        $email = '';
+        $email = QB::wrapString($email, "'");
         $about = '';
         $phone = '';
         $address = '';

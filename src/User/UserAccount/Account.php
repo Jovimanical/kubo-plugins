@@ -131,12 +131,12 @@ class Account {
 
     public static function changePassword(int $resourceId, array $data){
         $passwordHash = password_hash($data['current_password'], PASSWORD_DEFAULT);
-        $query = "SELECT * FROM Users.Account WHERE UserId = '$resourceId'";
+        $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = '$resourceId'";
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $data_new_password = $data['new_password'];
 
-        return $result[0];
+        return $result[0]['PasswordHash'];
 
         if($passwordHash == $result[0]['PasswordHash']){
             $query1 = "UPDATE Users.Account SET PasswordHash = '$data_new_password' WHERE UserId = '$resourceId'";
@@ -147,12 +147,12 @@ class Account {
             } else {
                 return false;
             }
-            
+
         } else {
 
             return false;
         }
 
-		
+
 	}
 }

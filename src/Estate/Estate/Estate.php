@@ -66,7 +66,7 @@ class Estate
 
         $companyName = $inputData['company_name'];
 
-        $query = "SELECT * FROM Estate.users WHERE company_name = $companyName";
+        $query = "SELECT * FROM Estate.users WHERE company_name = '$companyName'";
         $resultOne = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         $counter = count($resultOne);
         if (isset($counter) and $counter > 0) {

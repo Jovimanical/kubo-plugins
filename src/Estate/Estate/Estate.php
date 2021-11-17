@@ -81,7 +81,7 @@ class Estate
         } else {
             return false;
         }
-        
+
     }
 
     public static function viewEstateUser(int $userId, array $data)

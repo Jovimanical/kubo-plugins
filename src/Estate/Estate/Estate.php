@@ -17,6 +17,11 @@ use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
 use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+
+
 /**
  * class KuboPlugin\Estate\Estate
  *
@@ -27,7 +32,7 @@ use EmmetBlue\Core\Factory\MailerFactory as Mailer;
  */
 class Estate
 {
-    public static function updateEstateUser(array $data)
+    public static function updateEstateUser(int $userId, array $data)
     {
         $company_name = $data["company_name"] ?? null;
         $fullname = $data["fullname"] ?? null;
@@ -36,7 +41,7 @@ class Estate
         $phone = $data["phone"] ?? null;
         $address = $data["address"] ?? null;
         $tel = $data["tel"] ?? null;
-
+        
         $first_name = "";
         $last_name = "";
         if (isset($fullname)) {
@@ -54,6 +59,7 @@ class Estate
             "about" => QB::wrapString($about, "'"),
             "address" => QB::wrapString($address, "'"),
             "tel" => QB::wrapString($tel, "'"),
+            "user_id" => $userId,
         ];
 
         $result = [];
@@ -70,7 +76,12 @@ class Estate
             $result = DBQueryFactory::insert("[Estate].[users]", $inputData, false);
         }
 
-        return $result;
+        if($result){
+            return true;
+        } else {
+            return false;
+        }
+        
     }
 
     public static function viewEstateUser(int $userId, array $data)
@@ -104,6 +115,7 @@ class Estate
         ];
 
         $companyName = $inputData['company_name'];
+
 
         $uploadedFiles = $request->getUploadedFiles();
 
@@ -249,6 +261,7 @@ class Estate
     {
         $queries = [];
 
+
         $uploadedFiles = $request->getUploadedFiles();
 
         // handle file upload
@@ -283,7 +296,11 @@ class Estate
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        return $result;
+        if($result){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static function allocateProperty(int $userId, array $data)
@@ -390,7 +407,6 @@ class Estate
                     $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
                 }
 
-                
             }
 
         }
@@ -448,6 +464,21 @@ class Estate
             return false;
         }
 
+    }
+
+    public static function viewEstateName(int $userId, array $data)
+    {
+        $email = $data["email"] ?? null;
+
+        $inputData = [
+            "email" => QB::wrapString($email, "'"),
+
+        ];
+
+        $query = "SELECT * FROM Estate.users WHERE email = '$email'";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result;
     }
 
 }

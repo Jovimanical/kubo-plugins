@@ -40,7 +40,7 @@ class UserAccount {
 			if (!UserAccount\Account::checkAccountExistsByEmail($data["email"])){
 				$return_result = ["status"=>false, "reason"=>"User account was not created"];
 				
-				$result = UserAccount\Account::newAccount($data["email"], $data["password"]);
+				$result = UserAccount\Account::newAccount($data["email"], $data["password"], $data["names"]);
 				if ($result["lastInsertId"]){
 					$accountId = $result["lastInsertId"];
 					$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
@@ -134,5 +134,9 @@ class UserAccount {
 
 	public static function updateKycStatus(int $resourceId, array $data){
 		return UserAccount\UserKyc::updateKycStatus($resourceId, $data);
+	}
+
+	public static function changePassword(int $resourceId, array $data){
+		return UserAccount\Account::changePassword($resourceId, $data);
 	}
 }

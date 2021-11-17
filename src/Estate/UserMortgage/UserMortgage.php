@@ -28,23 +28,23 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  */
 class UserMortgage {
 	public static function newMortgage(array $data){
-        $propertyId = $data["property_id"] ?? null;
-        $property_name =  $data["property_name"] ?? null;
-        $property_address =  $data["property_address"] ?? null;
+        $propertyId = $data["property_id"] ?? '';
+        $property_name =  $data["property_name"] ?? '';
+        $property_address =  $data["property_address"] ?? '';
         $property_params = $data["property_params"] ?? [];
-        $mortgage_id =  $data["mortgage_id"] ?? null;
-        $mortgagee_name =  $data["mortgagee_name"] ?? null;
+        $mortgage_id =  $data["mortgage_id"] ?? '';
+        $mortgagee_name =  $data["mortgagee_name"] ?? '';
         $user_params = $data["user_params"] ?? [];
-        $mortgage_bank = $data["mortgage_bank"] ?? null;
+        $mortgage_bank = $data["mortgage_bank"] ?? '';
         $employment_params = $data["employment_params"] ?? [];
-        $state = $data["state"] ?? null;
-        $taxId = $data["tax_id"] ?? null;
+        $state = $data["state"] ?? '';
+        $txn_id = $data["txn_id"] ?? '';
 
         $inputData = [
             "mortgage_id"=>$mortgage_id,
-            "employment_params"=>QB::wrapString($employment_params, "'"),
-            "property_params"=>QB::wrapString($property_params, "'"),
-            "user_params"=>QB::wrapString($user_params, "'"),
+            "employment_params"=>$employment_params,
+            "property_params"=>$property_params,
+            "user_params"=>$user_params,
             "mortgagee_name"=>QB::wrapString($mortgagee_name, "'"),
             "property_id"=>$propertyId,
             "property_name"=>QB::wrapString($property_name, "'"),

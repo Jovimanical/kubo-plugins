@@ -71,7 +71,7 @@ class Estate
         $counter = count($resultOne);
         if (isset($counter) and $counter > 0) {
             $updateQuery = "UPDATE Estate.users SET email = " . $inputData['email'] . ",company_name = " . $inputData['company_name'] . ",first_name = " . $inputData['first_name'] . ",last_name = " . $inputData['last_name'] . " WHERE company_name = $companyName";
-            $result = DBConnectionFactory::getConnection()->query($query);
+            $result = DBConnectionFactory::getConnection()->query($updateQuery);
         } else {
             $result = DBQueryFactory::insert("[Estate].[users]", $inputData, false);
         }

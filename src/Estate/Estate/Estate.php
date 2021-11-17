@@ -40,7 +40,7 @@ class Estate
         $about = $data["about"] ?? null;
         $phone = $data["phone"] ?? null;
         $address = $data["address"] ?? null;
-        $tel = $data["tel"] ?? null;
+        $tel = $data["tel"] ?? '';
         
         $first_name = "";
         $last_name = "";

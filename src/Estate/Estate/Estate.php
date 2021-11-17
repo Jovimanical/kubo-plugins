@@ -66,11 +66,11 @@ class Estate
 
         $companyName = $inputData['company_name'];
 
-        $query = "SELECT * FROM Estate.users WHERE company_name = '$companyName'";
+        $query = "SELECT * FROM Estate.users WHERE company_name = $companyName";
         $resultOne = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         $counter = count($resultOne);
         if (isset($counter) and $counter > 0) {
-            $updateQuery = "UPDATE Estate.users SET company_name = " . $inputData['company_name'] . ",first_name = " . $inputData['first_name'] . ",last_name = " . $inputData['last_name'] . " WHERE company_name = $companyName";
+            $updateQuery = "UPDATE Estate.users SET email = " . $inputData['email'] . ",company_name = " . $inputData['company_name'] . ",first_name = " . $inputData['first_name'] . ",last_name = " . $inputData['last_name'] . " WHERE company_name = $companyName";
             $result = DBConnectionFactory::getConnection()->query($query);
         } else {
             $result = DBQueryFactory::insert("[Estate].[users]", $inputData, false);

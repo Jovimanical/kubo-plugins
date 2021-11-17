@@ -77,7 +77,9 @@ class Estate
         }
 
         if($result){
-            return true;
+            $query1 = "SELECT * FROM Estate.users WHERE company_name = $companyName";
+            $resultTwo = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
+            return $resultTwo;
         } else {
             return false;
         }

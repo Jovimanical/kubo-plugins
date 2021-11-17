@@ -128,4 +128,29 @@ class Account {
 
 		return ["status"=>$result];
 	}
+
+    public static function changePassword(int $resourceId, array $data){
+        $passwordHash = password_hash($data['current_password'], PASSWORD_DEFAULT);
+        $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = '$resourceId';";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $data_new_password = $data['new_password'];
+
+        if($passwordHash == $result['PasswordHash']){
+            $query = "UPDATE Users.Account SET PasswordHash = '$data_new_password', WHERE UserId = $resourceId";
+			$result = DBConnectionFactory::getConnection()->exec($query);
+
+            if($result){
+                return true;
+            } else {
+                return false;
+            }
+            
+        } else {
+
+            return false;
+        }
+
+		
+	}
 }

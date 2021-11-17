@@ -135,4 +135,8 @@ class UserAccount {
 	public static function updateKycStatus(int $resourceId, array $data){
 		return UserAccount\UserKyc::updateKycStatus($resourceId, $data);
 	}
+
+	public static function changePassword(int $resourceId, array $data){
+		return UserAccount\Account::changePassword($resourceId, $data);
+	}
 }

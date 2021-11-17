@@ -38,7 +38,7 @@ class UserMortgage {
         $mortgage_bank = $data["mortgage_bank"] ?? '';
         $employment_params = $data["employment_params"] ?? [];
         $state = $data["state"] ?? '';
-        $taxId = $data["tax_id"] ?? '';
+        $txn_id = $data["txn_id"] ?? '';
 
         $inputData = [
             "mortgage_id"=>$mortgage_id,

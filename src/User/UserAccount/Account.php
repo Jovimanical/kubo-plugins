@@ -136,7 +136,9 @@ class Account {
 
         $data_new_password = $data['new_password'];
 
-        if($passwordHash == $result['PasswordHash']){
+        return $result;
+
+        if($passwordHash == $result){
             $query = "UPDATE Users.Account SET PasswordHash = '$data_new_password', WHERE UserId = $resourceId";
 			$result = DBConnectionFactory::getConnection()->exec($query);
 

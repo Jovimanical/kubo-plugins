@@ -42,9 +42,9 @@ class UserMortgage {
 
         $inputData = [
             "mortgage_id"=>$mortgage_id,
-            "employment_params"=>QB::wrapString($employment_params, "'"),
-            "property_params"=>QB::wrapString($property_params, "'"),
-            "user_params"=>QB::wrapString($user_params, "'"),
+            "employment_params"=>$employment_params,
+            "property_params"=>$property_params,
+            "user_params"=>$user_params,
             "mortgagee_name"=>QB::wrapString($mortgagee_name, "'"),
             "property_id"=>$propertyId,
             "property_name"=>QB::wrapString($property_name, "'"),

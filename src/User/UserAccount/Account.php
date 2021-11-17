@@ -136,10 +136,10 @@ class Account {
 
         $data_new_password = $data['new_password'];
 
-        //return $result;
+        return $result[0];
 
         if($passwordHash == $result[0]['PasswordHash']){
-            $query1 = "UPDATE Users.Account SET PasswordHash = '$data_new_password', WHERE UserId = '$resourceId'";
+            $query1 = "UPDATE Users.Account SET PasswordHash = '$data_new_password' WHERE UserId = '$resourceId'";
 			$result1 = DBConnectionFactory::getConnection()->exec($query1);
 
             if($result1){

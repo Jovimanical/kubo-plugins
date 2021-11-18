@@ -137,10 +137,13 @@ class Account {
         $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = $resourceId";
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $query = "UPDATE Users.Account SET PasswordHash = '$passwordHash' WHERE UserId = $resourceId";
-        $result = DBConnectionFactory::getConnection()->exec($query);
+        if(!is_null($newPassword) && password_verify($oldPassword,$result[0]['PasswordHash'])){
+            $query = "UPDATE Users.Account SET PasswordHash = '$passwordHash' WHERE UserId = $resourceId";
+			$result = DBConnectionFactory::getConnection()->exec($query);
 
-        return $result;
+            return $result;
+
+        }
 
         return ["errorStatus" => true, "errorMessage" => "Invalid password supplied"]; //@todo: throw an exception here
 	}

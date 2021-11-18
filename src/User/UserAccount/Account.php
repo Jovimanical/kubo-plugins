@@ -145,7 +145,7 @@ class Account {
 
         }
 
-        return ["errorStatus" => true, "errorMessage" => "Invalid password supplied"]; //@todo: throw an exception here
+        return ["errorStatus" => true, "errorMessage" => "Invalid password supplied", "meta"=>[$oldPassword, $result]]; //@todo: throw an exception here
 	}
 }
 

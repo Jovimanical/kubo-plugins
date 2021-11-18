@@ -145,7 +145,7 @@ class Account {
 
         }
 
-        return ["errorStatus" => true, "errorMessage" => "Invalid password supplied", "meta"=>[$oldPassword, $result, "ophash"=>password_hash($oldPassword, PASSWORD_DEFAULT)]]; //@todo: throw an exception here
+        return ["errorStatus" => true, "errorMessage" => "Invalid password supplied"]; //@todo: throw an exception here
 	}
 }
 

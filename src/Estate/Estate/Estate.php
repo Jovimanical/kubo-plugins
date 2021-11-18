@@ -99,9 +99,9 @@ class Estate
         ];
 
         $companyName = $inputData['company_name'];
-        // $email = $inputData['email'];
+        $email = $inputData['email'];
 
-        $query = "SELECT * FROM Estate.users WHERE company_name = $companyName";
+        $query = "SELECT * FROM Estate.users WHERE email = $email";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;

@@ -41,7 +41,7 @@ class Estate
         $phone = $data["phone"] ?? null;
         $address = $data["address"] ?? null;
         $tel = $data["tel"] ?? '';
-        
+
         $first_name = "";
         $last_name = "";
         if (isset($fullname)) {
@@ -107,27 +107,30 @@ class Estate
 
     public static function uploadEstateUserAvatar(int $userId, array $data)
     {
-        $company_name = $data["company_name"] ?? null;
-        $email = $data["email"] ?? null;
+        $company_name = $data["company_name"] ?? '';
+        $email = $data["email"] ?? '';
+        $avatar = $data["avatar"] ?? '';
 
         $inputData = [
             "company_name" => QB::wrapString($company_name, "'"),
             "email" => QB::wrapString($email, "'"),
+            "profile_photo" => QB::wrapString($avatar, "'")
 
         ];
 
         $companyName = $inputData['company_name'];
+        $avatar_img = $inputData['profile_photo'];
 
 
-        $uploadedFiles = $request->getUploadedFiles();
+        // $uploadedFiles = $request->getUploadedFiles();
 
         // handle file upload
-        $uploadedFile = $uploadedFiles['avatar'];
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $avatar = base64_encode(file_get_contents($uploadedFile)); // convert to base64
+        // $uploadedFile = $uploadedFiles['avatar'];
+        if ($avatar_img != "") {
+           // $avatar = base64_encode(file_get_contents($uploadedFile)); // convert to base64
 
-            $updateQuery = "UPDATE Estate.users SET profile_photo = $avatar WHERE company_name = $companyName";
-            $resultImg = DBConnectionFactory::getConnection()->query($query);
+            $updateQuery = "UPDATE Estate.users SET profile_photo = $avatar_img WHERE company_name = $companyName";
+            $resultImg = DBConnectionFactory::getConnection()->query($updateQuery);
 
             $resultArr = [];
 
@@ -263,7 +266,7 @@ class Estate
     {
         $queries = [];
 
-
+        
         $uploadedFiles = $request->getUploadedFiles();
 
         // handle file upload
@@ -281,6 +284,7 @@ class Estate
             $metadata["title_img"] = $title_img;
 
         }
+        
 
         foreach ($metadata as $key => $value) {
             if (is_array($value)) {

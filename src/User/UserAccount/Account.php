@@ -130,14 +130,14 @@ class Account {
 	}
 
     public static function changePassword(int $resourceId, array $data){
-        $newPassword = $data["newPassword"] ?? 0;
+        $newPassword = $data["newPassword"] ?? null;
         $oldPassword = $data["currentPassword"] ?? '';
 
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
         $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = $resourceId";
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        if($newPassword != 0 && password_verify($oldPassword,$result[0]['PasswordHash'])){
+        if(!is_null($newPassword) && password_verify($oldPassword,$result[0]['PasswordHash'])){
             $query = "UPDATE Users.Account SET PasswordHash = '$passwordHash' WHERE UserId = $resourceId";
 			$result = DBConnectionFactory::getConnection()->exec($query);
 

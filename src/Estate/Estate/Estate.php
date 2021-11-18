@@ -120,6 +120,7 @@ class Estate
 
         $companyName = $inputData['company_name'];
         $avatar_img = $inputData['profile_photo'];
+        $emailx = $inputData['email'];
 
 
         // $uploadedFiles = $request->getUploadedFiles();
@@ -129,13 +130,13 @@ class Estate
         if ($avatar_img != "") {
            // $avatar = base64_encode(file_get_contents($uploadedFile)); // convert to base64
 
-            $updateQuery = "UPDATE Estate.users SET profile_photo = $avatar_img WHERE company_name = $companyName";
+            $updateQuery = "UPDATE Estate.users SET profile_photo = $avatar_img WHERE email = $emailx";
             $resultImg = DBConnectionFactory::getConnection()->query($updateQuery);
 
             $resultArr = [];
 
             if (isset($resultImg)) {
-                $query = "SELECT * FROM Estate.users WHERE company_name = $companyName";
+                $query = "SELECT * FROM Estate.users WHERE email = $emailx";
                 $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
                 $resultArr[] = $result;
             } else {
@@ -266,7 +267,7 @@ class Estate
     {
         $queries = [];
 
-        
+        /*
         $uploadedFiles = $request->getUploadedFiles();
 
         // handle file upload
@@ -284,7 +285,7 @@ class Estate
             $metadata["title_img"] = $title_img;
 
         }
-        
+        */
 
         foreach ($metadata as $key => $value) {
             if (is_array($value)) {
@@ -302,8 +303,14 @@ class Estate
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
+        $resultArr = [];
         if($result){
-            return true;
+            $queryx = "SELECT * FROM Properties.UserPropertyMetadata WHERE PropertyId = '$propertyId'";
+            $resultx = DBConnectionFactory::getConnection()->query($queryx)->fetchAll(\PDO::FETCH_ASSOC);
+            $resultArr[] = $resultx;
+
+            return $resultArr;
+
         } else {
             return false;
         }

@@ -71,7 +71,7 @@ class Estate
         $resultOne = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         $counter = count($resultOne);
         if (isset($counter) and $counter > 0) {
-            $updateQuery = "UPDATE Estate.users SET company_name = " . $inputData['company_name'] . ",first_name = " . $inputData['first_name'] . ",last_name = " . $inputData['last_name'] . " WHERE email = $email";
+            $updateQuery = "UPDATE Estate.users SET company_name = " . $inputData['company_name'] . ",first_name = " . $inputData['first_name'] . ",last_name = " . $inputData['last_name'] . ",phone = " . $inputData['phone'] . ",address = " . $inputData['address'] . ",about = " . $inputData['about'] . " WHERE email = $email";
             $result = DBConnectionFactory::getConnection()->query($updateQuery);
         } else {
             $result = DBQueryFactory::insert("[Estate].[users]", $inputData, false);

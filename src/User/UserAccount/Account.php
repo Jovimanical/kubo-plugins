@@ -46,43 +46,23 @@ class Account {
 			//throw an exception, insert was unsuccessful
 		}	
 
-		$company_name = $names ?? '';
-        $about = '';
-        $phone = '';
-        $address = '';
-        $tel = '';
-        
-        $first_name = '';
-        $last_name = '';
+		$companyName = $names ?? '';
 
         $inputData = [
-            "company_name" => QB::wrapString($company_name, "'"),
-            "first_name" => QB::wrapString($first_name, "'"),
-            "last_name" => QB::wrapString($last_name, "'"),
-            "email" => QB::wrapString($email, "'"),
-            "phone" => QB::wrapString($phone, "'"),
-            "about" => QB::wrapString($about, "'"),
-            "address" => QB::wrapString($address, "'"),
-            "tel" => QB::wrapString($tel, "'"),
-            "user_id" => $result['lastInsertId'],
+            "company_name" => QB::wrapString($companyName, "'"),
         ];
 
-        $result = [];
+        $queries[] = "INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId'].", 1, ".$inputData['company_name'].")";
 
-        $companyName = $inputData['company_name'];
+        $query = implode(";", $queries);
 
-        $query = "SELECT * FROM Estate.users WHERE company_name = $companyName";
-        $resultOne = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        $counter = count($resultOne);
-        if (isset($counter) and $counter > 0) {
-            $updateQuery = "UPDATE Estate.users SET company_name = " . $inputData['company_name'] . ",first_name = " . $inputData['first_name'] . ",last_name = " . $inputData['last_name'] . " WHERE company_name = $companyName";
-            $result = DBConnectionFactory::getConnection()->query($query);
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        if ($result) {
+            return "New Account Successful!";
         } else {
-            $result = DBQueryFactory::insert("[Estate].[users]", $inputData, false);
+            return "New Account Unsuccessful, please retry!";
         }
-
-
-		return $result;
 	}
 
 	public static function viewAccounts(){

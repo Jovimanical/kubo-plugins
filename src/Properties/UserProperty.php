@@ -69,9 +69,6 @@ class UserProperty {
         return UserProperty\UserProperty::searchEstateClient($userId,$data);
     }
 
-    public static function editEstateData(int $propertyId, array $metadata = []){
-        return Estate\Estate::editEstateData($propertyId,$metadata);
-    }
 
     public static function addAllocation(int $userId, array $data){
         return UserProperty\UserProperty::addAllocation($userId,$data);

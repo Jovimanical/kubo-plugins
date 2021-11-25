@@ -28,17 +28,17 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  */
 class UserMortgage {
 	public static function newMortgage(array $data){
-        $propertyId = $data["property_id"] ?? '';
+        $propertyId = $data["property_id"] ?? 0;
         $property_name =  $data["property_name"] ?? '';
         $property_address =  $data["property_address"] ?? '';
         $property_params = $data["property_params"] ?? '';
-        $mortgage_id =  $data["mortgage_id"] ?? '';
+        $mortgage_id =  $data["mortgage_id"] ?? 0;
         $mortgagee_name =  $data["mortgagee_name"] ?? '';
         $user_params = $data["user_params"] ?? '';
         $mortgage_bank = $data["mortgage_bank"] ?? '';
         $employment_params = $data["employment_params"] ?? '';
         $state = $data["state"] ?? '';
-        $txn_id = $data["txn_id"] ?? '';
+        $txn_id = $data["txn_id"] ?? 0;
 
         $inputData = [
             "MortgageId"=>$mortgage_id,

@@ -44,7 +44,7 @@ class Account {
 
 		if (!$result['lastInsertId']){
 			//throw an exception, insert was unsuccessful
-		}	
+		}
 
 		$companyName = $names ?? '';
 
@@ -52,16 +52,14 @@ class Account {
             "company_name" => QB::wrapString($companyName, "'"),
         ];
 
-        $query = "INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId'].", 2, ".$inputData['company_name'].")";
+        $query = "INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId']." , 2, ".$inputData['company_name'].")";
 
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        if ($result) {
-            return "New Account Successful!";
-        } else {
-            return "New Account Unsuccessful, please retry!";
-        }
+
+        return $result;
+
 	}
 
 	public static function viewAccounts(){

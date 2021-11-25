@@ -32,13 +32,14 @@ class UserMortgage {
         $property_name =  $data["property_name"] ?? '';
         $property_address =  $data["property_address"] ?? '';
         $property_params = $data["property_params"] ?? '';
-        $mortgage_id =  $data["mortgage_id"] ?? 0;
+        $mortgage_id =  $data["mortgage_id"] ?? time().rand(100,900);
         $mortgagee_name =  $data["mortgagee_name"] ?? '';
         $user_params = $data["user_params"] ?? '';
         $mortgage_bank = $data["mortgage_bank"] ?? '';
         $employment_params = $data["employment_params"] ?? '';
         $state = $data["state"] ?? '';
-        $txn_id = $data["txn_id"] ?? 0;
+        $txn_id = $data["txn_id"] ?? time().rand(1000,9000);
+        $deal_id = time().rand(100000,900000);
 
         $inputData = [
             "MortgageId"=>$mortgage_id,
@@ -51,7 +52,8 @@ class UserMortgage {
             "PropertyAddress"=>QB::wrapString($property_address, "'"),
             "MortgageBank"=>QB::wrapString($mortgage_bank, "'"),
             "State"=>QB::wrapString($state, "'"),
-            "TxnId"=>$txn_id
+            "TxnId"=>$txn_id,
+            "DealId"=>$deal_id
         ];
 
         $result = DBQueryFactory::insert("[Properties].[Mortgages]", $inputData, false);

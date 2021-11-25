@@ -55,10 +55,15 @@ class Account {
         $query = "INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId']." , 2, ".$inputData['company_name'].")";
 
 
-        $result = DBConnectionFactory::getConnection()->exec($query);
+        $resultData = DBConnectionFactory::getConnection()->exec($query);
 
+		if($resultData){
+			return $result;
+		} else {
+			$result['error']  = "Company name add failed!";
+			return $result;
+		}
 
-        return $result;
 
 	}
 

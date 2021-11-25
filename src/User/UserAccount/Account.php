@@ -52,9 +52,8 @@ class Account {
             "company_name" => QB::wrapString($companyName, "'"),
         ];
 
-        $queries[] = "INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId'].", 1, ".$inputData['company_name'].")";
+        $query = "INSERT INTO Users.UserInfoFieldMetaValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId'].", 1, ".$inputData['company_name'].")";
 
-        $query = implode(";", $queries);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 

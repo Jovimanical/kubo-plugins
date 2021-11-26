@@ -74,5 +74,4 @@ class Estate {
         return Estate\Estate::viewEstateName($userId, $data);
     }
 
-
 }

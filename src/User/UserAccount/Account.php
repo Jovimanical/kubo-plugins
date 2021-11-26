@@ -112,27 +112,24 @@ class Account {
 	}
 
     public static function changePassword(int $resourceId, array $data){
-        $passwordHash = password_hash($data['new_password'], PASSWORD_DEFAULT);
-        $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = '$resourceId'";
+        $newPassword = $data["newPassword"] ?? null;
+        $oldPassword = $data["currentPassword"] ?? '';
+
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = $resourceId";
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $data_new_password = $data['current_password'];
+        if(!is_null($newPassword) && password_verify($oldPassword,$result[0]['PasswordHash'])){
+            $query = "UPDATE Users.Account SET PasswordHash = '$passwordHash' WHERE UserId = $resourceId";
+			$result = DBConnectionFactory::getConnection()->exec($query);
 
-        if(password_verify($data_new_password,$result[0]['PasswordHash'])){
-            $query1 = "UPDATE Users.Account SET PasswordHash = '$passwordHash' WHERE UserId = '$resourceId'";
-			$result1 = DBConnectionFactory::getConnection()->exec($query1);
+            return $result;
 
-            if(isset($result1)){
-                return true;
-            } else {
-                return false;
-            }
-
-        } else {
-
-            return false;
         }
 
-
+        return ["errorStatus" => true, "errorMessage" => "Invalid password supplied"]; //@todo: throw an exception here
 	}
 }
+
+
+

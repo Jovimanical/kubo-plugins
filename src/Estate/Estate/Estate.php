@@ -109,49 +109,17 @@ class Estate
 
     public static function uploadEstateUserAvatar(int $userId, array $data)
     {
-        $company_name = $data["company_name"] ?? '';
-        $email = $data["email"] ?? '';
-        $avatar = $data["avatar"] ?? '';
+        $email = $data["email"] ?? null;
+        $avatar = $data["avatar"] ?? null;
 
-        $inputData = [
-            "company_name" => QB::wrapString($company_name, "'"),
-            "email" => QB::wrapString($email, "'"),
-            "profile_photo" => QB::wrapString($avatar, "'")
-
-        ];
-
-        $companyName = $inputData['company_name'];
-        $avatar_img = $inputData['profile_photo'];
-        $emailx = $inputData['email'];
-
-
-        // $uploadedFiles = $request->getUploadedFiles();
-
-        // handle file upload
-        // $uploadedFile = $uploadedFiles['avatar'];
-        if ($avatar_img != "") {
-           // $avatar = base64_encode(file_get_contents($uploadedFile)); // convert to base64
-
-            $updateQuery = "UPDATE Estate.users SET profile_photo = $avatar_img WHERE email = $emailx";
-            $resultImg = DBConnectionFactory::getConnection()->query($updateQuery);
-
-            $resultArr = [];
-
-            if (isset($resultImg)) {
-                $query = "SELECT * FROM Estate.users WHERE email = $emailx";
-                $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-                $resultArr[] = $result;
-            } else {
-                $resultArr[] = "No Data";
-            }
-
-            return $resultArr;
-        } else {
-            $result = 'Upload Failed';
-
-            return $result;
+        if (is_null($avatar) || is_null($email)){
+            throw new \Exception("Invalid data supplied");
         }
 
+        $updateQuery = "UPDATE Estate.users SET profile_photo = '$avatar' WHERE email = '$email'";
+        $result = DBConnectionFactory::getConnection()->exec($updateQuery);
+
+        return $result;
     }
 
     public static function sendSupport(int $userId, array $data)

@@ -53,7 +53,41 @@ class UserProperty {
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
 
-    public static function addNewProperty(array $data){
-        return UserProperty\UserProperty::addNewProperty($data);
+    public static function editPropertyData(int $propertyId,array $metadata){
+		return UserProperty\UserProperty::editPropertyData($propertyId,$metadata);
+	}
+
+    public static function viewPropertyData(int $propertyId,array $metadata){
+        return UserProperty\UserProperty::viewPropertyData($propertyId,$metadata);
     }
+
+    public static function getDashBoardTotal(int $userId){
+        return UserProperty\UserProperty::getDashBoardTotal($userId);
+    }
+
+    public static function searchEstateClient(int $userId,array $data){
+        return UserProperty\UserProperty::searchEstateClient($userId,$data);
+    }
+
+
+    public static function addAllocation(int $userId, array $data){
+        return UserProperty\UserProperty::addAllocation($userId,$data);
+    }
+
+    public static function viewEstateAllocationsData(int $propertyId, array $data){
+        return UserProperty\UserProperty::viewEstateAllocationsData($propertyId, $data);
+    }
+
+    public static function viewBlockAllocationsData(int $propertyId, array $data){
+        return UserProperty\UserProperty::viewBlockAllocationsData($propertyId, $data);
+    }
+
+    public static function viewUnitAllocationsData(int $propertyId, array $data){
+        return UserProperty\UserProperty::viewUnitAllocationsData($propertyId, $data);
+    }
+
+    public static function viewCompanyName(int $userId) {
+        return UserProperty\UserProperty::viewCompanyName($userId);
+    }
+
 }

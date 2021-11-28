@@ -43,4 +43,20 @@ class sendMail {
 
     }
 
+    public static function sendSupport(int $userId, array $data)
+    {
+        $headers = "From: " . $data['email'] . "" . "\r\n" .
+            "Name:  " . $data['name'] . "";
+
+        $receiver = $data['receiver'];
+        $sender = $data['email'];
+
+        $subject = $data['subject'];
+
+        $msg = $data['message'];
+
+        return mail($receiver, $subject, $msg, $headers);
+    }
+
+
 }

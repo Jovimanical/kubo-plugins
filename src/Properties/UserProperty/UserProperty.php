@@ -269,7 +269,7 @@ class UserProperty {
                     // we have a base64. Call Storage abstraction.
                     $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$value]);
                     if ($dataRef["status"]){ // @todo: check properly to ensure 
-                        $value = $dataRef;
+                        $value = $dataRef["ref"];
                     }
                 }
             }       

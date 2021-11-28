@@ -264,7 +264,7 @@ class UserProperty {
                 $base64Components = explode(";base64,", $value);
                 if (
                     count($base64Components) == 2 && 
-                    (explode(":", $base64Components[0])[0] == "data")
+                    ((explode(":", $base64Components[0]))[0] == "data")
                 ) {
                     // we have a base64. Call Storage abstraction.
                     $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$value]);

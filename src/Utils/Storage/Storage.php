@@ -28,6 +28,6 @@ class Storage {
     public static function storeBase64(array $data){
         //Save a base64 string in solution storage bucket and return an array [status: true, ref: unique_ref] to the saved object.
 
-        return ["status"=>true, "ref":uniqid()];
+        return ["status"=>true, "ref"=>uniqid()];
     }
 }

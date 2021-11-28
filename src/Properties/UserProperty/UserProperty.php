@@ -216,7 +216,7 @@ class UserProperty {
    
 
     
-      public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
+    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
                     INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId

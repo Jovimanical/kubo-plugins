@@ -286,7 +286,7 @@ class UserProperty {
 
         $result = DBConnectionFactory::getConnection()->exec($query);        
 
-        return $query;
+        return $result;
     }
 
 

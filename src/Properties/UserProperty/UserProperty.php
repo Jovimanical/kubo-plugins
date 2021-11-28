@@ -159,7 +159,7 @@ class UserProperty {
     }
 
 
-      public static function viewPropertyChildren(int $propertyId, array $floorData = []){
+    public static function viewPropertyChildren(int $propertyId, array $floorData = []){
         $floorLevel = 0;
 
         $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
@@ -186,15 +186,15 @@ class UserProperty {
         }
 
         return $results;
-      }
+    }
 
     public static function viewPropertyMetadata(int $propertyId, int $floorLevel=0){
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
-                                WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
-                                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyFloor = $floorLevel AND  PropertyId=$propertyId))";
+        WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
+            SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyFloor = $floorLevel AND  PropertyId=$propertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];
@@ -214,16 +214,16 @@ class UserProperty {
     
     public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
-                    INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
-                    INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-                    WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel";
+        INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
+        INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
+        WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel";
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a 
-                    INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
-                    INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-                    WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel";
+        INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
+        INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
+        WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $metadata = [];
 
@@ -248,16 +248,36 @@ class UserProperty {
     public static function editPropertyMetadata(int $propertyId, array $metadata = []){
         $queries = [];
         foreach($metadata as $key=>$value){
+            /**@algo: Storing images and other base64 objects in the DB is inefficient.
+             *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+             * 
+             * Base64 String Format: <data_type>;base64,<md or a SHA component>
+             * Split string using ;base64, and expect two components in an array to conclude
+             * that we have a base64
+             * **/
+
             if (is_array($value)){
+                // @todo check that array does not contain a base64 encoded string.
                 $value = json_encode($value);
             }
+            else {
+                $base64Components = explode(";base64,", $value);
+                if (
+                    count($base64Components) == 2 && 
+                    (explode(":", $base64Components[0])[0] == "data")
+                ) {
+                    // we have a base64. Call Storage abstraction.
+                    $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$value]);
+                    if ($dataRef["status"]){ // @todo: check properly to ensure 
+                        $value = $dataRef;
+                    }
+                }
+            }       
 
             $queries[] = "BEGIN TRANSACTION;".
-                        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
-                        "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".
-                        "COMMIT TRANSACTION;";
-
-
+            "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
+            "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".
+            "COMMIT TRANSACTION;";
         }
 
         $query = implode(";", $queries);
@@ -365,9 +385,9 @@ class UserProperty {
             $keyId = camelToSnakeCase($key);
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
-                "COMMIT TRANSACTION;";
+            "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
+            "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+            "COMMIT TRANSACTION;";
 
         }
 
@@ -409,33 +429,33 @@ class UserProperty {
 
 
          // Inserting Allocations Data
-         $queries[] = "BEGIN TRANSACTION;" .
-         "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, ".$inputData['Recipient'].", ".$inputData['Phone'].", ".$inputData['Email'].")" .
-         "COMMIT TRANSACTION;";
+        $queries[] = "BEGIN TRANSACTION;" .
+        "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, ".$inputData['Recipient'].", ".$inputData['Phone'].", ".$inputData['Email'].")" .
+           "COMMIT TRANSACTION;";
 
-            foreach ($metadata as $key => $value) {
+           foreach ($metadata as $key => $value) {
                 // Inserting Allocations MetaData
-                $keyId = camelToSnakeCase($key);
-                $queries[] = "BEGIN TRANSACTION;" .
-                    "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$property_id; " .
-                    "IF @@ROWCOUNT = 0
-                              BEGIN INSERT INTO Properties.AllocationsMetadata (PropertyId, FieldName, FieldValue) VALUES ($property_id, '$keyId', '$value')
-                              END;" .
-                    "COMMIT TRANSACTION;";
+            $keyId = camelToSnakeCase($key);
+            $queries[] = "BEGIN TRANSACTION;" .
+            "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$property_id; " .
+            "IF @@ROWCOUNT = 0
+            BEGIN INSERT INTO Properties.AllocationsMetadata (PropertyId, FieldName, FieldValue) VALUES ($property_id, '$keyId', '$value')
+            END;" .
+            "COMMIT TRANSACTION;";
 
-            }
+        }
 
-            $query = implode(";", $queries);
+        $query = implode(";", $queries);
 
-            $resultData = DBConnectionFactory::getConnection()->exec($query);
+        $resultData = DBConnectionFactory::getConnection()->exec($query);
 
-            if($resultData){
+        if($resultData){
 
-                return "Allocation Successful!";
+            return "Allocation Successful!";
 
-            } else {
-                return "Allocation Not Successful!";
-            }
+        } else {
+            return "Allocation Not Successful!";
+        }
 
     }
 

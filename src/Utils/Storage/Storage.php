@@ -36,7 +36,7 @@ class Storage
                 ];
             }
 
-            $fileName = time() . "_" . uniqid() . ".png";
+            $fileName = "file".time() . "_" . uniqid() . ".png";
             $filePath = "/var/www/html/kubo-core/";
 
             $ref = self::base64ToImg($object, $filePath, $fileName);

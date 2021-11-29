@@ -48,12 +48,24 @@ class Storage {
             ];
         }
 
+       // var_dump($ref);
+
         return ["status"=>true, "ref"=>$ref];
     }
 
     public static function base64ToImg($base64String, $filePath, $outputFile) {
+        // check for dir
+        $filer = $filePath."uploads/".$outputFile;
+
+        $dirname = dirname($filer);
+        if (!is_dir($dirname))
+        {
+            mkdir($dirname, 0755, true);
+        }
         // open file for writing
-        $imgStringFile = fopen( $filePath.$outputFile, 'w' );
+        $imgStringFile = fopen( $filePath."uploads/".$outputFile, 'w' );
+
+        
 
         // split the string on commas
         $dataImg = explode( ',', $base64String );

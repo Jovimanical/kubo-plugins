@@ -26,6 +26,9 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  */
 class Storage {
     public static function storeBase64(array $data){
+        try {
+
+        
         //Save a base64 string in solution storage bucket and return an array [status: true, ref: unique_ref] to the saved object.
         $object = $data["object"] ?? "";
 
@@ -48,9 +51,16 @@ class Storage {
             ];
         }
 
-       // var_dump($ref);
+        var_dump($ref);
 
         return ["status"=>true, "ref"=>$ref];
+
+        } catch(\Exception $e){
+          return ["status"=>false, "message"=>$e->getMessage()];
+        }
+
+    }
+    
     }
 
     public static function base64ToImg($base64String, $filePath, $outputFile) {

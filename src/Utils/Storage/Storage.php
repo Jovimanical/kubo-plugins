@@ -39,7 +39,7 @@ class Storage {
         $fileName = time()."_".uniqid().".png";
         $filePath = "/var/www/html/kubo-core/";
 
-        $ref = self::base64ToImg($object,"$fileName");
+        $ref = self::base64ToImg($object,$filePath,$fileName);
 
         if(!$ref){
             return [

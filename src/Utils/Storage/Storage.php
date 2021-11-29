@@ -48,6 +48,8 @@ class Storage {
             ];
         }
 
+        var_dump($ref);
+
         return ["status"=>true, "ref"=>$ref];
     }
 

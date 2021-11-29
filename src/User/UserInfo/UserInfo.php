@@ -117,7 +117,7 @@ class UserInfo
             "profilePhoto" => QB::wrapString($avatar, "'"),
         ];
 
-       // $image = base64ToImg( $avatar, 'profilePhoto'.$userId.'.jpg' );
+       // @todo convert to image from base64 => $image = base64ToImg( $avatar, 'profilePhoto'.$userId.'.jpg' );
 
         $avatar = $inputData['profilePhoto'];
 
@@ -135,19 +135,6 @@ class UserInfo
 
     }
 
-    function base64ToImg($base64String, $outputFile) {
-        // open file for writing
-        $imgStringFile = fopen( $outputFile, 'wb' );
-
-        // split the string on commas
-        $dataImg = explode( ',', $base64String );
-
-        fwrite( $imgStringFile, base64_decode( $dataImg[1] ) );
-
-        // clean up the file resource
-        fclose($imgStringFile);
-
-        return $outputFile;
-    }
+    
 
 }

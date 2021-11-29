@@ -27,7 +27,47 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 class Storage {
     public static function storeBase64(array $data){
         //Save a base64 string in solution storage bucket and return an array [status: true, ref: unique_ref] to the saved object.
+        $object = $data["object"] ?? "";
 
-        return ["status"=>true, "ref"=>uniqid()];
+        if(empty($object)){
+            return [
+                "status" => false,
+                "message" => "Object is required"
+            ];
+        }
+
+        $fileName = time()."_".uniqid().".png";
+        $filePath = "/var/www/html/kubo-core/";
+
+        $ref = base64ToImg($object,"$fileName");
+
+        if(!$ref){
+            return [
+                "status" => false,
+                "message" => "Failed to save image"
+            ];
+        }
+
+        return ["status"=>true, "ref"=>$ref];
+    }
+
+    function base64ToImg($base64String, $filePath, $outputFile) {
+        // open file for writing
+        $imgStringFile = fopen( $filePath.$outputFile, 'w' );
+
+        // split the string on commas
+        $dataImg = explode( ',', $base64String );
+
+        $writer = fwrite( $imgStringFile, base64_decode( $dataImg[1] ) );
+
+
+        // clean up the file resource
+        fclose($imgStringFile);
+
+        if(!$writer){
+            return false;
+        }
+
+        return "uploads/".$outputFile;
     }
 }

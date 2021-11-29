@@ -250,7 +250,7 @@ class UserProperty {
         foreach($metadata as $key=>$value){
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
-             * 
+             *
              * Base64 String Format: <data_type>;base64,<md or a SHA component>
              * Split string using ;base64, and expect two components in an array to conclude
              * that we have a base64
@@ -258,7 +258,27 @@ class UserProperty {
 
             if (is_array($value)){
                 // @todo check that array does not contain a base64 encoded string.
-                $value = json_encode($value);
+                foreach ($value as $keyItem=>$valueItem){
+                    $resultItems = [];
+                    $base64Components = explode(";base64,", $valueItem);
+                    if (
+                        count($base64Components) == 2 && 
+                        ((explode(":", $base64Components[0]))[0] == "data")
+                    ) {
+                        // we have a base64. Call Storage abstraction.
+                        $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$value]);
+                        if ($dataRef["status"]){ // @todo: check properly to ensure 
+                            $valueItem = $dataRef["ref"];
+                        }
+                        $resultItems[] = $valueItem;
+                    } else {
+                        $resultItems[] = $valueItem;
+                    }
+
+                    $value = json_encode($resultItems);
+
+                }
+
             }
             else {
                 $base64Components = explode(";base64,", $value);
@@ -272,7 +292,7 @@ class UserProperty {
                         $value = $dataRef["ref"];
                     }
                 }
-            }       
+            }
 
             $queries[] = "BEGIN TRANSACTION;".
             "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".

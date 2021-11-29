@@ -211,7 +211,7 @@ class UserProperty {
         return $metadata;
     }
 
-    
+
     public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
@@ -304,7 +304,7 @@ class UserProperty {
 
         $query = implode(";", $queries);
 
-        $result = DBConnectionFactory::getConnection()->exec($query);        
+        $result = DBConnectionFactory::getConnection()->exec($query);
 
         return $result;
     }

@@ -39,7 +39,7 @@ class Storage {
         $fileName = time()."_".uniqid().".png";
         $filePath = "/var/www/html/kubo-core/";
 
-        $ref = base64ToImg($object,"$fileName");
+        $ref = self::base64ToImg($object,"$fileName");
 
         if(!$ref){
             return [
@@ -51,7 +51,7 @@ class Storage {
         return ["status"=>true, "ref"=>$ref];
     }
 
-    function base64ToImg($base64String, $filePath, $outputFile) {
+    public static function base64ToImg($base64String, $filePath, $outputFile) {
         // open file for writing
         $imgStringFile = fopen( $filePath.$outputFile, 'w' );
 

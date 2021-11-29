@@ -259,18 +259,15 @@ class UserProperty {
             if (is_array($value)){
                 // @todo check that array does not contain a base64 encoded string.
                 $resultItems = [];
-                foreach ($value as $keyItem=>$valueItem){
+                foreach ($value as $valueItem){
 
-                    var_dump($valueItem);
-                    die();
-                    
                     $base64Components = explode(";base64,", $valueItem);
                     if (
                         count($base64Components) == 2 && 
                         ((explode(":", $base64Components[0]))[0] == "data")
                     ) {
                         // we have a base64. Call Storage abstraction.
-                        $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$value]);
+                        $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$valueItem]);
                         if ($dataRef["status"]){ // @todo: check properly to ensure 
                             $valueItem = $dataRef["ref"];
                         }

@@ -258,8 +258,9 @@ class UserProperty {
 
             if (is_array($value)){
                 // @todo check that array does not contain a base64 encoded string.
+                $resultItems = [];
                 foreach ($value as $keyItem=>$valueItem){
-                    $resultItems = [];
+                    
                     $base64Components = explode(";base64,", $valueItem);
                     if (
                         count($base64Components) == 2 && 
@@ -275,9 +276,11 @@ class UserProperty {
                         $resultItems[] = $valueItem;
                     }
 
-                    $value = json_encode($resultItems);
+                    
 
                 }
+
+                $value = json_encode($resultItems);
 
             }
             else {

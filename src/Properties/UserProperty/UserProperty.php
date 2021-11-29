@@ -260,6 +260,9 @@ class UserProperty {
                 // @todo check that array does not contain a base64 encoded string.
                 $resultItems = [];
                 foreach ($value as $keyItem=>$valueItem){
+
+                    var_dump($valueItem);
+                    die();
                     
                     $base64Components = explode(";base64,", $valueItem);
                     if (

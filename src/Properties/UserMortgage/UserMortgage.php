@@ -10,7 +10,7 @@
  *
  */
 
-namespace KuboPlugin\Estate\UserMortgage;
+namespace KuboPlugin\Properties\UserMortgage;
 
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
@@ -19,7 +19,7 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 
 
 /**
- * class KuboPlugin\Estate\UserMortgage
+ * class KuboPlugin\Properties\UserMortgage
  *
  * Mortgages Visitor
  *
@@ -28,33 +28,35 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  */
 class UserMortgage {
 	public static function newMortgage(array $data){
-        $propertyId = $data["property_id"] ?? '';
+        $propertyId = $data["property_id"] ?? 0;
         $property_name =  $data["property_name"] ?? '';
         $property_address =  $data["property_address"] ?? '';
-        $property_params = $data["property_params"] ?? [];
-        $mortgage_id =  $data["mortgage_id"] ?? '';
+        $property_params = $data["property_params"] ?? '';
+        $mortgage_id =  $data["mortgage_id"] ?? time().rand(100,900);
         $mortgagee_name =  $data["mortgagee_name"] ?? '';
-        $user_params = $data["user_params"] ?? [];
+        $user_params = $data["user_params"] ?? '';
         $mortgage_bank = $data["mortgage_bank"] ?? '';
-        $employment_params = $data["employment_params"] ?? [];
+        $employment_params = $data["employment_params"] ?? '';
         $state = $data["state"] ?? '';
-        $txn_id = $data["txn_id"] ?? '';
+        $txn_id = $data["txn_id"] ?? time().rand(1000,9000);
+        $deal_id = time().rand(100000,900000);
 
         $inputData = [
-            "mortgage_id"=>$mortgage_id,
-            "employment_params"=>$employment_params,
-            "property_params"=>$property_params,
-            "user_params"=>$user_params,
-            "mortgagee_name"=>QB::wrapString($mortgagee_name, "'"),
-            "property_id"=>$propertyId,
-            "property_name"=>QB::wrapString($property_name, "'"),
-            "property_address"=>QB::wrapString($property_address, "'"),
-            "mortgage_bank"=>QB::wrapString($mortgage_bank, "'"),
-            "state"=>QB::wrapString($state, "'"),
-            "txn_id"=>$txn_id
+            "MortgageId"=>$mortgage_id,
+            "EmploymentParams"=>QB::wrapString($employment_params, "'"),
+            "PropertyParams"=>QB::wrapString($property_params, "'"),
+            "UserParams"=>QB::wrapString($user_params, "'"),
+            "MortgageeName"=>QB::wrapString($mortgagee_name, "'"),
+            "PropertyId"=>$propertyId,
+            "PropertyName"=>QB::wrapString($property_name, "'"),
+            "PropertyAddress"=>QB::wrapString($property_address, "'"),
+            "MortgageBank"=>QB::wrapString($mortgage_bank, "'"),
+            "State"=>QB::wrapString($state, "'"),
+            "TxnId"=>$txn_id,
+            "DealId"=>$deal_id
         ];
 
-        $result = DBQueryFactory::insert("[Estate].[Mortgages]", $inputData, false);
+        $result = DBQueryFactory::insert("[Properties].[Mortgages]", $inputData, false);
 
         return $result;
 	}
@@ -68,7 +70,7 @@ class UserMortgage {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Estate.Mortgages  WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
+        $query = "SELECT * FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY Id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;
@@ -90,7 +92,7 @@ class UserMortgage {
 
 
 
-       $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND date_started  >= $fromDate AND date_started  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
+       $query = "SELECT * FROM Properties.Mortgages WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateStarted  >= $fromDate AND DateStarted  <  $toDate ORDER BY Id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
        return $result;
@@ -109,7 +111,7 @@ class UserMortgage {
         $toDate = date('Y-m-d', strtotime('-30 days', strtotime(date('Y-m-d'))));
 
 
-        $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND date_started  >= $fromDate AND date_started  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
+        $query = "SELECT * FROM Properties.Mortgages WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateStarted  >= $fromDate AND DateStarted  <  $toDate ORDER BY Id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;
@@ -130,7 +132,7 @@ class UserMortgage {
 
 
 
-       $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND date_started  >= $fromDate AND date_started  <  $toDate ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
+       $query = "SELECT * FROM Properties.Mortgages WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateStarted  >= $fromDate AND DateStarted  <  $toDate ORDER BY Id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $EnquiryId)
        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
        return $result;
@@ -146,7 +148,7 @@ class UserMortgage {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Estate.Mortgages WHERE property_id IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND id LIKE '%$searchTerm%' OR property_name LIKE '%$searchTerm%' OR mortgagee_name LIKE '%$searchTerm%' OR mortgage_bank LIKE '%$searchTerm%' OR monthly_payment LIKE '%$searchTerm%' OR down_payment LIKE '%$searchTerm%' ORDER BY id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
+        $query = "SELECT * FROM Properties.Mortgages WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND Id LIKE '%$searchTerm%' OR PropertyName LIKE '%$searchTerm%' OR MortgageeName LIKE '%$searchTerm%' OR MortgageBank LIKE '%$searchTerm%' OR MonthlyPayment LIKE '%$searchTerm%' OR DownPayment LIKE '%$searchTerm%' ORDER BY Id DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;

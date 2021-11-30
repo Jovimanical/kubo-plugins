@@ -10,7 +10,7 @@
  *
  */
 
-namespace KuboPlugin\Notifications\SendMail;
+namespace KuboPlugin\Notifications;
 
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
@@ -20,7 +20,7 @@ use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 
 
 /**
- * class KuboPlugin\Notifications\SendMail
+ * class KuboPlugin\Notifications
  *
  * SendMail
  *
@@ -42,5 +42,21 @@ class sendMail {
         }
 
     }
+
+    public static function sendSupport(int $userId, array $data)
+    {
+        $headers = "From: " . $data['email'] . "" . "\r\n" .
+            "Name:  " . $data['name'] . "";
+
+        $receiver = $data['receiver'];
+        $sender = $data['email'];
+
+        $subject = $data['subject'];
+
+        $msg = $data['message'];
+
+        return mail($receiver, $subject, $msg, $headers);
+    }
+
 
 }

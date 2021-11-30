@@ -34,7 +34,7 @@ class Account {
      *
      * @return array
      */
-	public static function newAccount(string $email, string $password){
+	public static function newAccount(string $email, string $password, string $names){
 		$passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 		$result = DBQueryFactory::insert("Users.Account", [
@@ -44,9 +44,27 @@ class Account {
 
 		if (!$result['lastInsertId']){
 			//throw an exception, insert was unsuccessful
-		}	
+		}
 
-		return $result;
+		$companyName = $names ?? '';
+
+        $inputData = [
+            "company_name" => QB::wrapString($companyName, "'"),
+        ];
+
+        $query = "INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (".$result['lastInsertId']." , 2, ".$inputData['company_name'].")";
+
+
+        $resultData = DBConnectionFactory::getConnection()->exec($query);
+
+		if($resultData){
+			return $result;
+		} else {
+			$result['error']  = "Company name add failed!";
+			return $result;
+		}
+
+
 	}
 
 	public static function viewAccounts(){
@@ -92,4 +110,26 @@ class Account {
 
 		return ["status"=>$result];
 	}
+
+    public static function changePassword(int $resourceId, array $data){
+        $newPassword = $data["newPassword"] ?? null;
+        $oldPassword = $data["currentPassword"] ?? '';
+
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $query = "SELECT PasswordHash FROM Users.Account WHERE UserId = $resourceId";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if(!is_null($newPassword) && password_verify($oldPassword,$result[0]['PasswordHash'])){
+            $query = "UPDATE Users.Account SET PasswordHash = '$passwordHash' WHERE UserId = $resourceId";
+			$result = DBConnectionFactory::getConnection()->exec($query);
+
+            return $result;
+
+        }
+
+        return ["errorStatus" => true, "errorMessage" => "Invalid password supplied"]; //@todo: throw an exception here
+	}
 }
+
+
+

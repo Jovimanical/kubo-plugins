@@ -75,6 +75,8 @@ class Storage
         // split the string on commas
         $dataImg = explode(',', $base64String);
 
+       
+
         // $writer = fwrite($imgStringFile, base64_decode($dataImg[1]));
         $writer = file_put_contents($filePath . "uploads/" . $outputFile,base64_decode($dataImg[1]));
 
@@ -87,4 +89,5 @@ class Storage
 
         return "uploads/" . $outputFile;
     }
+
 }

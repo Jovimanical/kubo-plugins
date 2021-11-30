@@ -246,6 +246,8 @@ class UserProperty {
     }
 
     public static function editPropertyMetadata(int $propertyId, array $metadata = []){
+
+        return exec('whoami');
         $queries = [];
         foreach($metadata as $key=>$value){
             /**@algo: Storing images and other base64 objects in the DB is inefficient.

@@ -62,18 +62,21 @@ class Storage
     {
         // check for dir
         $filer = $filePath . "uploads/" . $outputFile;
-
+        /*
         $dirname = dirname($filer);
         if (!is_dir($dirname)) {
             mkdir($dirname, 0755, true);
         }
+        */
+
         // open file for writing
-        $imgStringFile = fopen($filePath . "uploads/" . $outputFile, 'w');
+        //$imgStringFile = fopen($filePath . "uploads/" . $outputFile, 'w');
 
         // split the string on commas
         $dataImg = explode(',', $base64String);
 
-        $writer = fwrite($imgStringFile, base64_decode($dataImg[1]));
+        // $writer = fwrite($imgStringFile, base64_decode($dataImg[1]));
+        $writer = file_put_contents($filePath . "uploads/" . $outputFile,base64_decode($dataImg[1]));
 
         // clean up the file resource
         fclose($imgStringFile);

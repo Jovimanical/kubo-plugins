@@ -79,7 +79,7 @@ class Storage
         $writer = file_put_contents($filePath . "uploads/" . $outputFile,base64_decode($dataImg[1]));
 
         // clean up the file resource
-        fclose($imgStringFile);
+        // fclose($imgStringFile);
 
         if (!$writer) {
             return false;

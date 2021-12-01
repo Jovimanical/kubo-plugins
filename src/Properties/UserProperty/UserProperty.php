@@ -270,6 +270,8 @@ class UserProperty
                         $base64DataResult = self::checkForAndStoreBase64String($valueItem);
                         if ($base64DataResult["status"]) { // @todo: check properly to ensure
                             $value[$key] = $base64DataResult["ref"];
+                        } else {
+                            $value[$key] = $valueItem;
                         }
                     } else {
                         $value[$key] = json_encode($valueItem);
@@ -310,6 +312,11 @@ class UserProperty
         ) {
             // we have a base64. Call Storage abstraction.
             $result = \KuboPlugin\Utils\Storage::storeBase64(["object" => $string]);
+        } else {
+            $result = [
+                "status" => false,
+                "message" => "Not an image"
+            ];
         }
 
         return $result;

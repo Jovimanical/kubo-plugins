@@ -56,9 +56,10 @@ class Storage
     }
 
     public static function readBase64(array $data){
-        $fileName = $data["resource"] ?? "";
+        $fileName = $data["file"] ?? "";
         $contents = file_get_contents(Constant::getGlobals()["file-server-path"].DIRECTORY_SEPARATOR.$fileName);
 
         return ["contents"=>$contents];
     }
 }
+    

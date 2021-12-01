@@ -65,10 +65,22 @@ class UserInfo
             "address" => QB::wrapString($address, "'"),
         ];
 
+        $query = "SELECT * FROM Users.UserInfoFields";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+
         foreach ($inputDataCompany as $key => $value) {
+            $keyValue = "";
+            foreach($result as $value){
+                if($key == $value["FieldName"]){
+                    $keyValue = $value["FieldId"];
+
+                }
+            }
+
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId='$key' AND UserId=".$inputDataCompany['user_id'].";" .
+                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId='$keyValue' AND UserId=".$inputDataCompany['user_id'].";" .
                 "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (" . $inputDataCompany['user_id'] . ", '$key', '$value') END;" .
                 "COMMIT TRANSACTION;";
 

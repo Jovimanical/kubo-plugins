@@ -264,7 +264,7 @@ class UserProperty
              * **/
 
             if (is_array($value)) {
-                
+
                 foreach ($value as $key=>$valueItem) {
                     if (is_string($valueItem)){
                         $base64DataResult = self::checkForAndStoreBase64String($valueItem);

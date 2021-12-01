@@ -21,7 +21,10 @@ namespace KuboPlugin\Utils;
  * @since v0.0.1 28/11/2021 11:55
  */
 class Storage {
-	public static function storeBase64(array $data){
-		return Storage\Storage::storeBase64($data);
-	}
+    public static function storeBase64(array $data){
+        return Storage\Storage::storeBase64($data);
+    }
+    public static function readBase64(array $data){
+        return Storage\Storage::readBase64($data);
+    }
 }

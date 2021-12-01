@@ -266,43 +266,23 @@ class UserProperty
              * **/
 
             if (is_array($value)) {
-                // @todo check that array does not contain a base64 encoded string.
                 $resultItems = [];
-                foreach ($value as $valueItem) {
-                    if (is_array($valueItem)) {
-                        $resultItems[] = json_encode($valueItem);
-                    } else {
-                        $base64Components = explode(";base64,", $valueItem);
-                        if (
-                            count($base64Components) == 2 &&
-                            ((explode(":", $base64Components[0]))[0] == "data")
-                        ) {
-                            // we have a base64. Call Storage abstraction.
-                            $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object" => $valueItem]);
-                            if ($dataRef["status"]) { // @todo: check properly to ensure
-                                $valueItem = $dataRef["ref"];
-                            }
-                            $resultItems[] = $valueItem;
-                        } else {
-                            $resultItems[] = $valueItem;
+                foreach ($value as $key=>$valueItem) {
+                    if (is_string($valueItem)){
+                        $base64DataResult = self::checkForAndStoreBase64String($valueItem);
+                        if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                            $value[$key] = $base64DataResult["ref"];
                         }
                     }
 
                 }
 
-                $value = json_encode($resultItems);
+                $value = json_encode($value);
 
             } else {
-                $base64Components = explode(";base64,", $value);
-                if (
-                    count($base64Components) == 2 &&
-                    ((explode(":", $base64Components[0]))[0] == "data")
-                ) {
-                    // we have a base64. Call Storage abstraction.
-                    $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object" => $value]);
-                    if ($dataRef["status"]) { // @todo: check properly to ensure
-                        $value = $dataRef["ref"];
-                    }
+                $base64DataResult = self::checkForAndStoreBase64String($value);
+                if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                    $value = $base64DataResult["ref"];
                 }
             }
 
@@ -317,6 +297,20 @@ class UserProperty
         $query = implode(";", $queries);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
+
+    protected static function checkForAndStoreBase64String($string){
+        $base64Components = explode(";base64,", $string);
+        $result = [];
+        if (
+            count($base64Components) == 2 &&
+            ((explode(":", $base64Components[0]))[0] == "data")
+        ) {
+            // we have a base64. Call Storage abstraction.
+            $result = \KuboPlugin\Utils\Storage::storeBase64(["object" => $string]);
+        }
 
         return $result;
     }

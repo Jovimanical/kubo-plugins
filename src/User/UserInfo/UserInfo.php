@@ -71,9 +71,9 @@ class UserInfo
 
         foreach ($inputDataCompany as $key => $value) {
             $keyValue = 0;
-            foreach($result as $value){
-                if($key == $value["FieldName"]){
-                    $keyValue = $value["FieldId"];
+            foreach($result as $valueItem){
+                if($key == $valueItem["FieldName"]){
+                    $keyValue = $valueItem["FieldId"];
 
                 }
             }

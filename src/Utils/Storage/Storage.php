@@ -26,6 +26,10 @@ class Storage
 {
     protected static function saveToFileServerPath($fileName, $content){
         $fileServerPath = Constant::getGlobals()["file-server-path"];
+        if(!imagecreatefrompng($fileServerPath.DIRECTORY_SEPARATOR.$fileName)){
+            return false;
+        }
+
         return file_put_contents($fileServerPath.DIRECTORY_SEPARATOR.$fileName, $content);
     }
 
@@ -62,4 +66,3 @@ class Storage
         return ["contents"=>$contents];
     }
 }
-    

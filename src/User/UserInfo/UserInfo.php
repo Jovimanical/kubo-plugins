@@ -61,8 +61,8 @@ class UserInfo
 
         $inputDataCompany = [
             "company_name" => QB::wrapString($companyName, "'"),
-            "about" => QB::wrapString($about, "'"),
             "address" => QB::wrapString($address, "'"),
+            "about" => QB::wrapString($about, "'"),
         ];
 
         $query = "SELECT * FROM Users.UserInfoFields";
@@ -80,8 +80,8 @@ class UserInfo
 
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId=$keyValue AND UserId=$userId;" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES ($userId, $keyValue, '$value') END;" .
+                "UPDATE Users.UserInfoFieldValues SET FieldValue=$value WHERE FieldId=$keyValue AND UserId=$userId;" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES ($userId, $keyValue, $value) END;" .
                 "COMMIT TRANSACTION;";
 
         }

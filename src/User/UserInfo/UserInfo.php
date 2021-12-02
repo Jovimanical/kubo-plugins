@@ -70,7 +70,7 @@ class UserInfo
 
 
         foreach ($inputDataCompany as $key => $value) {
-            $keyValue = "";
+            $keyValue = 0;
             foreach($result as $value){
                 if($key == $value["FieldName"]){
                     $keyValue = $value["FieldId"];
@@ -80,8 +80,8 @@ class UserInfo
 
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId='$keyValue' AND UserId=".$inputDataCompany['user_id'].";" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (" . $inputDataCompany['user_id'] . ", '$key', '$value') END;" .
+                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId=$keyValue AND UserId=".$inputDataCompany['user_id'].";" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (" . $inputDataCompany['user_id'] . ", $keyValue, '$value') END;" .
                 "COMMIT TRANSACTION;";
 
         }
@@ -125,6 +125,15 @@ class UserInfo
     {
         $avatar = $data["avatar"] ?? '';
 
+        $base64DataResult = self::checkForAndStoreBase64String($value);
+        
+        if ($base64DataResult["status"]) { 
+            // @todo: check properly to ensure
+            $avatar = $base64DataResult["ref"];
+        } else {
+            return $base64DataResult["message"];
+        }
+
         $inputData = [
             "profilePhoto" => QB::wrapString($avatar, "'"),
         ];
@@ -132,6 +141,8 @@ class UserInfo
        // @todo convert to image from base64 => $image = base64ToImg( $avatar, 'profilePhoto'.$userId.'.jpg' );
 
         $avatar = $inputData['profilePhoto'];
+
+
 
         $updateQuery = "UPDATE Users.UserInfo SET profilePhotoUrl = $avatar WHERE UserId = '$userId'";
         $result = DBConnectionFactory::getConnection()->query($updateQuery);
@@ -145,6 +156,25 @@ class UserInfo
 
         return $result;
 
+    }
+
+    protected static function checkForAndStoreBase64String($string){
+        $base64Components = explode(";base64,", $string);
+        $result = [];
+        if (
+            count($base64Components) == 2 &&
+            ((explode(":", $base64Components[0]))[0] == "data")
+        ) {
+            // we have a base64. Call Storage abstraction.
+            $result = \KuboPlugin\Utils\Storage::storeBase64(["object" => $string]);
+        } else {
+            $result = [
+                "status" => false,
+                "message" => "Not an image"
+            ];
+        }
+
+        return $result;
     }
 
     

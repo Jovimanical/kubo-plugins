@@ -88,7 +88,7 @@ class UserInfo
 
         $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId=$userId" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ('$userId', " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ($userId, " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
                 "COMMIT TRANSACTION;";
 
         $query = implode(";", $queries);

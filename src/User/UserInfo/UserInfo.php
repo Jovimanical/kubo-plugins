@@ -125,7 +125,7 @@ class UserInfo
     {
         $avatar = $data["avatar"] ?? '';
 
-        $base64DataResult = self::checkForAndStoreBase64String($value);
+        $base64DataResult = self::checkForAndStoreBase64String($avatar);
         
         if ($base64DataResult["status"]) { 
             // @todo: check properly to ensure

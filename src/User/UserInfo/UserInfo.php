@@ -65,7 +65,7 @@ class UserInfo
             "address" => QB::wrapString($address, "'"),
         ];
 
-        $query = "SELECT FieldId FROM Users.UserInfoFields";
+        $query = "SELECT * FROM Users.UserInfoFields";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
 
@@ -80,15 +80,15 @@ class UserInfo
 
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId=$keyValue AND UserId=".$inputDataCompany['user_id'].";" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (" . $inputDataCompany['user_id'] . ", $keyValue, '$value') END;" .
+                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId=$keyValue AND UserId=$userId;" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES ($userId, $keyValue, '$value') END;" .
                 "COMMIT TRANSACTION;";
 
         }
 
         $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId='$user_id'" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ('$user_id', " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
+                "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId=$userId" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ('$userId', " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
                 "COMMIT TRANSACTION;";
 
         $query = implode(";", $queries);
@@ -144,7 +144,7 @@ class UserInfo
 
 
 
-        $updateQuery = "UPDATE Users.UserInfo SET profilePhotoUrl = $avatar WHERE UserId = '$userId'";
+        $updateQuery = "UPDATE Users.UserInfo SET profilePhotoUrl = $avatar WHERE UserId = $userId";
         $result = DBConnectionFactory::getConnection()->query($updateQuery);
 
 

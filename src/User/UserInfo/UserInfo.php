@@ -87,7 +87,7 @@ class UserInfo
         }
 
         $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId=$userId" .
+                "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId=$userId;" .
                 "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ($userId, " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
                 "COMMIT TRANSACTION;";
 
@@ -126,7 +126,7 @@ class UserInfo
         $avatar = $data["avatar"] ?? '';
 
         $base64DataResult = self::checkForAndStoreBase64String($avatar);
-        
+
         if ($base64DataResult["status"]) { 
             // @todo: check properly to ensure
             $avatar = $base64DataResult["ref"];
@@ -177,6 +177,6 @@ class UserInfo
         return $result;
     }
 
-    
+
 
 }

@@ -65,7 +65,7 @@ class UserInfo
             "address" => QB::wrapString($address, "'"),
         ];
 
-        $query = "SELECT * FROM Users.UserInfoFields";
+        $query = "SELECT FieldId FROM Users.UserInfoFields";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
 

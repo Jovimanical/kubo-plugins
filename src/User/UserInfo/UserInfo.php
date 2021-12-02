@@ -105,12 +105,12 @@ class UserInfo
 
     public static function viewUserInfo(int $userId)
     {
-
+        $result = [];
         $query = "SELECT * FROM Users.UserInfo WHERE UserId=$userId";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $result['data'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $query = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId=$userId";
-        $result['meta'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $queryMeta = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId=$userId";
+        $result['meta'] = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
 
         if ($result) {
             return $result;

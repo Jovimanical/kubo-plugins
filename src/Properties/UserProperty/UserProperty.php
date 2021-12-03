@@ -254,8 +254,7 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
-        var_dump($metadata);
-        die(var_dump($metadata));
+
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.

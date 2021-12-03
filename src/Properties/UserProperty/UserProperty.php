@@ -471,9 +471,9 @@ class UserProperty
             // Inserting Allocations MetaData
             $keyId = self::camelToSnakeCase($key);
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$property_id; " .
+                "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
                 "IF @@ROWCOUNT = 0
-            BEGIN INSERT INTO Properties.AllocationsMetadata (PropertyId, FieldName, FieldValue) VALUES ($property_id, '$keyId', '$value')
+            BEGIN INSERT INTO Properties.AllocationsMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value')
             END;" .
                 "COMMIT TRANSACTION;";
 

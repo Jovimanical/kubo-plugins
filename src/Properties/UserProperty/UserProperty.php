@@ -274,7 +274,7 @@ class UserProperty
                         if ($base64DataResult["status"]) { // @todo: check properly to ensure
                             $value[$key] = $base64DataResult["ref"];
                         } else {
-                            $value[$key] = json_encode($valueItem);
+                            $value[$key] = $valueItem;
                         }
                     } else {
                         $value[$key] = json_encode($valueItem);
@@ -288,6 +288,8 @@ class UserProperty
                 $base64DataResult = self::checkForAndStoreBase64String($value);
                 if ($base64DataResult["status"]) { // @todo: check properly to ensure
                     $value = $base64DataResult["ref"];
+                } else {
+                    $value = "jigga";
                 }
             }
 

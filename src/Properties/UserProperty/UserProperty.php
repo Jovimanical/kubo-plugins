@@ -510,8 +510,8 @@ class UserProperty
                 $query1 = "SELECT FieldName, FieldValue FROM Properties.AllocationsMetadata WHERE PropertyId = $propertyId";
                 $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
 
-                foreach ($result1 as $key => $value) {
-                    $result[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
+                foreach ($result1 as $keyItem => $valueItem) {
+                    $result[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"]];
                 }
 
             }

@@ -532,7 +532,7 @@ class UserProperty
         $resultLinkedEntity = $result0['LinkedEntity'];
 
         // Getting Allocations Data
-        $query = "SELECT * FROM Properties.Allocations WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityParent = $resultLinkedEntity))";
+        $query = "SELECT * FROM Properties.Allocations WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityParent = '$resultLinkedEntity'))";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         if ($result) {
@@ -541,10 +541,10 @@ class UserProperty
                 $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
 
                 foreach ($result1 as $key => $value) {
-                    $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
+                    $result[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
                 }
 
-                return $metadata;
+                return $result;
             }
         } else {
             return "No Data Available !";
@@ -553,7 +553,7 @@ class UserProperty
 
     public static function viewUnitAllocationsData(int $propertyId)
     {
-        $metadata = [];
+        // $metadata = [];
         // Getting Allocations Data
         $query = "SELECT * FROM Properties.Allocations WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -563,10 +563,10 @@ class UserProperty
             $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($result1 as $key => $value) {
-                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
+                $result[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
             }
 
-            return $metadata;
+            return $result;
         } else {
             return false;
         }

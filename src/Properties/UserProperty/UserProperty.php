@@ -254,6 +254,8 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
+        var_dump($metadata);
+        die(var_dump($metadata));
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
@@ -466,7 +468,7 @@ class UserProperty
 
         foreach ($metadata as $key => $value) {
             // Inserting Allocations MetaData
-            $keyId = camelToSnakeCase($key);
+            $keyId = self::camelToSnakeCase($key);
             $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$property_id; " .
                 "IF @@ROWCOUNT = 0
@@ -580,7 +582,7 @@ class UserProperty
         return $result;
     }
 
-    public function camelToSnakeCase($string, $sc = "_")
+    protected static function camelToSnakeCase($string, $sc = "_")
     {
         return strtolower(preg_replace(
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $sc, $string));

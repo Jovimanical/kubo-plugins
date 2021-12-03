@@ -274,10 +274,10 @@ class UserProperty
                         if ($base64DataResult["status"]) { // @todo: check properly to ensure
                             $value[$key] = $base64DataResult["ref"];
                         } else {
-                            $value[$key] = "Jiggabyter";
+                            $value[$key] = $valueItem;
                         }
                     } else {
-                        $value[$key] = "Jiggabyter";
+                        $value[$key] = json_encode($valueItem);
                     }
 
                 }

@@ -277,7 +277,7 @@ class UserProperty
                             $value[$key] = "Jiggabyter";
                         }
                     } else {
-                        $value[$key] = json_encode($valueItem);
+                        $value[$key] = "Jiggabyter";
                     }
 
                 }

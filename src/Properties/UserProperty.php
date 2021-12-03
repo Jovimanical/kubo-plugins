@@ -74,16 +74,16 @@ class UserProperty {
         return UserProperty\UserProperty::addAllocation($userId,$data);
     }
 
-    public static function viewEstateAllocationsData(int $propertyId, array $data){
-        return UserProperty\UserProperty::viewEstateAllocationsData($propertyId, $data);
+    public static function viewEstateAllocationsData(int $propertyId){
+        return UserProperty\UserProperty::viewEstateAllocationsData($propertyId);
     }
 
-    public static function viewBlockAllocationsData(int $propertyId, array $data){
-        return UserProperty\UserProperty::viewBlockAllocationsData($propertyId, $data);
+    public static function viewBlockAllocationsData(int $propertyId){
+        return UserProperty\UserProperty::viewBlockAllocationsData($propertyId);
     }
 
-    public static function viewUnitAllocationsData(int $propertyId, array $data){
-        return UserProperty\UserProperty::viewUnitAllocationsData($propertyId, $data);
+    public static function viewUnitAllocationsData(int $propertyId){
+        return UserProperty\UserProperty::viewUnitAllocationsData($propertyId);
     }
 
     public static function viewCompanyName(int $userId) {

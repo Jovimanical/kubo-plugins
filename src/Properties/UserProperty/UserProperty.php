@@ -254,6 +254,8 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
+        $test = print_r($metadata, true);
+        return $test;
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -462,7 +464,7 @@ class UserProperty
 
         // Inserting Allocations Data
         $queries[] = "BEGIN TRANSACTION;" .
-            "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, " . $inputData['Recipient'] . ", " . $inputData['Phone'] . ", " . $inputData['Email'] . ")" .
+            "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, " . $inputData['Recipient'] . ", " . $inputData['Phone'] . ", " . $inputData['Email'] . ");" .
             "COMMIT TRANSACTION;";
 
         foreach ($metadata as $key => $value) {

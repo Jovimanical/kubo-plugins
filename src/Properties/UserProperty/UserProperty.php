@@ -495,10 +495,10 @@ class UserProperty
 
     public static function viewEstateAllocationsData(int $propertyId)
     {
-        $metadata = [];
+        // $metadata = [];
 
         $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $result0 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
+        $result0 = DBConnectionFactory::getConnection()->query($query0)->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($result0 as $key => $value) {
 
@@ -511,20 +511,20 @@ class UserProperty
                 $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
 
                 foreach ($result1 as $key => $value) {
-                    $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
+                    $result[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
                 }
 
             }
 
         }
 
-        return $metadata;
+        return $result;
 
     }
 
     public static function viewBlockAllocationsData(int $propertyId)
     {
-        $metadata = [];
+        // $metadata = [];
 
         $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $result0 = DBConnectionFactory::getConnection()->query($query0)->fetchAll(\PDO::FETCH_ASSOC);

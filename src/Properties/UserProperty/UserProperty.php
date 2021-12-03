@@ -527,7 +527,7 @@ class UserProperty
         $metadata = [];
 
         $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $result0 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
+        $result0 = DBConnectionFactory::getConnection()->query($query0)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultLinkedEntity = $result0['LinkedEntity'];
 

@@ -12,6 +12,8 @@
 
 namespace KuboPlugin\Utils\Storage;
 
+use EmmetBlue\Core\Constant;
+
 /**
  * class KuboPlugin\Utils\Storage
  *
@@ -22,72 +24,45 @@ namespace KuboPlugin\Utils\Storage;
  */
 class Storage
 {
+    protected static function saveToFileServerPath($fileName, $content){
+        $fileServerPath = Constant::getGlobals()["file-server-path"];
+       // if(!imagecreatefrompng($fileServerPath.DIRECTORY_SEPARATOR.$fileName)){
+        //    return false;
+      //  }
+
+        return file_put_contents($fileServerPath.DIRECTORY_SEPARATOR.$fileName, $content);
+    }
+
     public static function storeBase64(array $data)
     {
-        try {
+        //Save a base64 string in solution storage bucket and return an array [status: true, ref: unique_ref] to the saved object.
+        $string = $data["object"] ?? "";
 
-            //Save a base64 string in solution storage bucket and return an array [status: true, ref: unique_ref] to the saved object.
-            $object = $data["object"] ?? "";
-
-            if (empty($object)) {
-                return [
-                    "status" => false,
-                    "message" => "Object is required",
-                ];
-            }
-
-            $fileName = "file".time() . "_" . uniqid() . ".png";
-            $filePath = "/var/www/html/kubo-core/";
-
-            $ref = self::base64ToImg($object, $filePath, $fileName);
-
-            if (!$ref) {
-                return [
-                    "status" => false,
-                    "message" => "Failed to save image",
-                ];
-            }
-
-            // var_dump($ref);
-
-            return ["status" => true, "ref" => $ref];
-
-        } catch (\Exception $e) {
-            return ["status" => false, "message" => $e->getMessage()];
+        if (empty($string)) {
+            return [
+                "status" => false,
+                "message" => "Object is required",
+            ];
         }
 
+        $ref = md5(uniqid());
+
+        $result = self::saveToFileServerPath($ref, $string);
+
+        if (!$result) {
+            return [
+                "status" => false,
+                "message" => "Failed to save image",
+            ];
+        }
+
+        return ["status" => true, "ref" => $ref];
     }
 
-    public static function base64ToImg($base64String, $filePath, $outputFile)
-    {
-        // check for dir
-        $filer = $filePath . "uploads/" . $outputFile;
-        /*
-        $dirname = dirname($filer);
-        if (!is_dir($dirname)) {
-            mkdir($dirname, 0755, true);
-        }
-        */
+    public static function readBase64(array $data){
+        $fileName = $data["file"] ?? "";
+        $contents = file_get_contents(Constant::getGlobals()["file-server-path"].DIRECTORY_SEPARATOR.$fileName);
 
-        // open file for writing
-        //$imgStringFile = fopen($filePath . "uploads/" . $outputFile, 'w');
-
-        // split the string on commas
-        $dataImg = explode(',', $base64String);
-
-       
-
-        // $writer = fwrite($imgStringFile, base64_decode($dataImg[1]));
-        $writer = file_put_contents($filePath . "uploads/" . $outputFile,base64_decode($dataImg[1]));
-
-        // clean up the file resource
-        // fclose($imgStringFile);
-
-        if (!$writer) {
-            return false;
-        }
-
-        return "uploads/" . $outputFile;
+        return ["contents"=>$contents];
     }
-
 }

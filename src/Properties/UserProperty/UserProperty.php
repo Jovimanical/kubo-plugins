@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare (strict_types = 1);
 /**
  * Controller Class.
  *
@@ -12,9 +12,9 @@
 
 namespace KuboPlugin\Properties\UserProperty;
 
+use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
-use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 
 /**
  * class KuboPlugin\Properties\UserProperty
@@ -24,21 +24,23 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  * @author Samuel Adeshina <samueladeshina73@gmail.com>
  * @since v0.0.1 11/06/2021 13:50
  */
-class UserProperty {
-    public static function newProperty(array $data){
+class UserProperty
+{
+    public static function newProperty(array $data)
+    {
         $user = $data["user"];
         $metadata = $data["property_metadata"] ?? [];
-        $title =  $data["property_title"];
+        $title = $data["property_title"];
         $geometry = $data["property_geometry"] ?? null;
         $parent = $data["property_parent"] ?? null;
         $type = $data["property_type"];
 
         //STEP 1: Index Spatial Entity
         $entity = [
-            "entityName"=>$title,
-            "entityType"=>$type,
-            "entityParentId"=>$parent,
-            "entityGeometry"=>$geometry
+            "entityName" => $title,
+            "entityType" => $type,
+            "entityParentId" => $parent,
+            "entityGeometry" => $geometry,
         ];
 
         $indexEntityResult = \KuboPlugin\SpatialEntity\Entity\Entity::newEntity($entity);
@@ -46,9 +48,9 @@ class UserProperty {
 
         //STEP 2: Index User Property
         $inputData = [
-            "UserId"=>$user,
-            "LinkedEntity"=>$entityId,
-            "PropertyTitle"=>QB::wrapString($title, "'")
+            "UserId" => $user,
+            "LinkedEntity" => $entityId,
+            "PropertyTitle" => QB::wrapString($title, "'"),
         ];
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
 
@@ -57,20 +59,21 @@ class UserProperty {
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            $values[]  .= "($propertyId, '$key', '$value')";
+            $values[] .= "($propertyId, '$key', '$value')";
         }
 
-        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ". implode(",", $values);
+        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
         return $result;
     }
 
-    public static function newPropertyOnEntity(array $data){
+    public static function newPropertyOnEntity(array $data)
+    {
         $user = $data["user"] ?? 0;
         $metadata = $data["property_metadata"] ?? [];
-        $title =  $data["property_title"];
+        $title = $data["property_title"];
         $propertyId = $data["property_id"];
         $floorLevel = $data["floor_level"];
 
@@ -80,10 +83,10 @@ class UserProperty {
         $entityId = $result[0]["LinkedEntity"] ?? 0;
 
         $inputData = [
-            "UserId"=>$user,
-            "LinkedEntity"=>$entityId,
-            "PropertyFloor"=>$floorLevel,
-            "PropertyTitle"=>QB::wrapString($title, "'")
+            "UserId" => $user,
+            "LinkedEntity" => $entityId,
+            "PropertyFloor" => $floorLevel,
+            "PropertyTitle" => QB::wrapString($title, "'"),
         ];
 
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
@@ -93,24 +96,24 @@ class UserProperty {
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            $values[]  .= "($propId, '$key', '$value')";
+            $values[] .= "($propId, '$key', '$value')";
         }
 
-        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ". implode(",", $values);
+        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        $propertyChildren = self::viewPropertyChildren((int)$propertyId, ["floorLevel"=>(int)$floorLevel - 1]);
+        $propertyChildren = self::viewPropertyChildren((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);
 
-        foreach($propertyChildren as $property){
-            $title =  $property["PropertyTitle"]." - F".$floorLevel;
+        foreach ($propertyChildren as $property) {
+            $title = $property["PropertyTitle"] . " - F" . $floorLevel;
             $entityId = $property["LinkedEntity"];
 
             $inputData = [
-                "UserId"=>$user,
-                "LinkedEntity"=>$entityId,
-                "PropertyFloor"=>$floorLevel,
-                "PropertyTitle"=>QB::wrapString($title, "'")
+                "UserId" => $user,
+                "LinkedEntity" => $entityId,
+                "PropertyFloor" => $floorLevel,
+                "PropertyTitle" => QB::wrapString($title, "'"),
             ];
 
             DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
@@ -119,68 +122,70 @@ class UserProperty {
         return $result;
     }
 
-    public static function viewProperties(int $userId){
+    public static function viewProperties(int $userId)
+    {
         $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        foreach ($result as $key=>$property){
-            $result[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$property["LinkedEntity"]]);
-            $result[$key]["Metadata"] = self::viewPropertyMetadata((int)$property["PropertyId"]);
+        foreach ($result as $key => $property) {
+            $result[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
+            $result[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
         }
 
         return $result;
     }
 
-    public static function viewProperty(int $propertyId){
+    public static function viewProperty(int $propertyId)
+    {
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $result = $result[0] ?? [];
-        if (count($result) > 0){
-            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
-            $result["Metadata"] = self::viewPropertyMetadata((int)$result["PropertyId"]);
+        if (count($result) > 0) {
+            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
+            $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
         }
 
         return $result;
     }
 
-    public static function viewPropertyByName(array $data){
+    public static function viewPropertyByName(array $data)
+    {
         $name = $data["name"] ?? 0;
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $result = $result[0] ?? [];
-        if (count($result) > 0){
-            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
-            $result["Metadata"] = self::viewPropertyMetadata((int)$result["PropertyId"]);
+        if (count($result) > 0) {
+            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
+            $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
         }
 
         return $result;
     }
 
-
-    public static function viewPropertyChildren(int $propertyId, array $floorData = []){
+    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
+    {
         $floorLevel = 0;
 
         $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
 
-        if (isset($floorData["floorLevel"])){
+        if (isset($floorData["floorLevel"])) {
             $floorLevel = $floorData["floorLevel"];
             $query .= " AND a.PropertyFloor = $floorLevel";
         }
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (isset($results[0])){
+        if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
         }
 
-        $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId"=>$propertyId]);
+        $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
+        $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, (int) $floorLevel);
 
-        $childrenMetadata = self::viewPropertyChildrenMetadata((int)$propertyId, (int)$floorLevel);
-
-        foreach ($results as $key=>$result){
+        foreach ($results as $key => $result) {
             $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
             $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
@@ -188,56 +193,57 @@ class UserProperty {
         return $results;
     }
 
-    public static function viewPropertyMetadata(int $propertyId, int $floorLevel=0){
+    public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)
+    {
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
-        WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN 
+        WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyFloor = $floorLevel AND  PropertyId=$propertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];
-        foreach ($result as $key=>$value){
-            $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+        foreach ($result as $key => $value) {
+            $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        foreach ($propertyParentResult as $key => $value){
-            if (!isset($metadata[$value["FieldName"]])){
-                $metadata[$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+        foreach ($propertyParentResult as $key => $value) {
+            if (!isset($metadata[$value["FieldName"]])) {
+                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
             }
         }
 
         return $metadata;
     }
 
-
-    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0){
-        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0)
+    {
+        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
         WHERE c.EntityParent = $parentId AND b.PropertyFloor = $floorLevel";
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+        $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
         WHERE b.LinkedEntity = $parentId AND b.PropertyFloor = $floorLevel";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $metadata = [];
 
-        foreach ($result as $key=>$value){
-            if (!isset($metadata[$value["PropertyId"]])){
+        foreach ($result as $key => $value) {
+            if (!isset($metadata[$value["PropertyId"]])) {
                 $propertyId = $value["PropertyId"];
                 $metadata[$value["PropertyId"]] = [];
             }
 
-            $metadata[$value["PropertyId"]][$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+            $metadata[$value["PropertyId"]][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
 
-            foreach ($propertyParentResult as $key => $value){
-                if (!isset($metadata[$propertyId][$value["FieldName"]])){
-                    $metadata[$propertyId][$value["FieldName"]] = ["FieldValue"=>$value["FieldValue"], "MetadataId"=>$value["MetadataId"]];
+            foreach ($propertyParentResult as $key => $value) {
+                if (!isset($metadata[$propertyId][$value["FieldName"]])) {
+                    $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                 }
             }
         }
@@ -245,11 +251,13 @@ class UserProperty {
         return $metadata;
     }
 
-    public static function editPropertyMetadata(int $propertyId, array $metadata = []){
-
-        return exec('whoami');
+    public static function editPropertyMetadata(int $propertyId, array $metadata = [])
+    {
         $queries = [];
-        foreach($metadata as $key=>$value){
+       // $test = print_r($metadata, true);
+       // return $test;
+
+        foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
              *
@@ -258,53 +266,39 @@ class UserProperty {
              * that we have a base64
              * **/
 
-            if (is_array($value)){
-                // @todo check that array does not contain a base64 encoded string.
-                $resultItems = [];
-                foreach ($value as $valueItem){
+            if (is_array($value)) {
 
-                    $base64Components = explode(";base64,", $valueItem);
-                    if (
-                        count($base64Components) == 2 && 
-                        ((explode(":", $base64Components[0]))[0] == "data")
-                    ) {
-                        // we have a base64. Call Storage abstraction.
-                        $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$valueItem]);
-                        if ($dataRef["status"]){ // @todo: check properly to ensure 
-                            $valueItem = $dataRef["ref"];
+                foreach ($value as $key=>$valueItem) {
+                    if (is_string($valueItem)){
+                        $base64DataResult = self::checkForAndStoreBase64String($valueItem);
+                        if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                            $value[$key] = $base64DataResult["ref"];
+                        } else {
+                            $value[$key] = $valueItem;
                         }
-                        $resultItems[] = $valueItem;
                     } else {
-                        $resultItems[] = $valueItem;
+                        $value[$key] = json_encode($valueItem);
                     }
-
-                    
 
                 }
 
-                $value = json_encode($resultItems);
+                $value = json_encode($value);
 
-            }
-            else {
-                $base64Components = explode(";base64,", $value);
-                if (
-                    count($base64Components) == 2 && 
-                    ((explode(":", $base64Components[0]))[0] == "data")
-                ) {
-                    // we have a base64. Call Storage abstraction.
-                    $dataRef = \KuboPlugin\Utils\Storage::storeBase64(["object"=>$value]);
-                    if ($dataRef["status"]){ // @todo: check properly to ensure 
-                        $value = $dataRef["ref"];
-                    }
+            } else {
+                $base64DataResult = self::checkForAndStoreBase64String($value);
+                if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                    $value = $base64DataResult["ref"];
+                } else {
+                    $value = json_encode($value);
                 }
             }
 
-            $queries[] = "BEGIN TRANSACTION;".
-            "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; ".
-            "BEGIN TRY ".
-            "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;".
-            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH ".
-            "COMMIT TRANSACTION;";
+            $queries[] = "BEGIN TRANSACTION;" .
+                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; " .
+                "BEGIN TRY " .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;" .
+                "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                "COMMIT TRANSACTION;";
         }
 
         $query = implode(";", $queries);
@@ -314,7 +308,24 @@ class UserProperty {
         return $result;
     }
 
+    protected static function checkForAndStoreBase64String($string){
+        $base64Components = explode(";base64,", $string);
+        $result = [];
+        if (
+            count($base64Components) == 2 &&
+            ((explode(":", $base64Components[0]))[0] == "data")
+        ) {
+            // we have a base64. Call Storage abstraction.
+            $result = \KuboPlugin\Utils\Storage::storeBase64(["object" => $string]);
+        } else {
+            $result = [
+                "status" => false,
+                "message" => "Not an image"
+            ];
+        }
 
+        return $result;
+    }
 
     // @todo refactor methods below
 
@@ -386,52 +397,6 @@ class UserProperty {
 
     }
 
-    public static function viewPropertyData(int $propertyId, int $floorLevel = 0)
-    {
-        // Getting Estate Data
-        $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = '$propertyId'";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $metadata = [];
-        foreach ($result as $key => $value) {
-            $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
-        }
-
-        return $metadata;
-    }
-
-    public static function editPropertyData(int $propertyId, array $metadata = [])
-    {
-        $queries = [];
-
-        foreach ($metadata as $key => $value) {
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-
-            $keyId = camelToSnakeCase($key);
-
-            $queries[] = "BEGIN TRANSACTION;" .
-            "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
-            "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
-            "COMMIT TRANSACTION;";
-
-        }
-
-        $query = implode(";", $queries);
-
-        $result = DBConnectionFactory::getConnection()->exec($query);
-
-        if($result){
-
-            return "Edit Successful!";
-
-        } else {
-            return "Edit Not Successful!";
-        }
-    }
-
-
     public static function addAllocation(int $userId, array $data)
     {
         $queries = [];
@@ -451,24 +416,23 @@ class UserProperty {
             "Recipient" => QB::wrapString($clientName, "'"),
             "Email" => QB::wrapString($email, "'"),
             "Phone" => QB::wrapString($phone, "'"),
-            "PropertyId" => $propertyId
+            "PropertyId" => $propertyId,
         ];
 
-
-         // Inserting Allocations Data
+        // Inserting Allocations Data
         $queries[] = "BEGIN TRANSACTION;" .
-        "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, ".$inputData['Recipient'].", ".$inputData['Phone'].", ".$inputData['Email'].")" .
-           "COMMIT TRANSACTION;";
-
-           foreach ($metadata as $key => $value) {
-                // Inserting Allocations MetaData
-            $keyId = camelToSnakeCase($key);
-            $queries[] = "BEGIN TRANSACTION;" .
-            "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$property_id; " .
-            "IF @@ROWCOUNT = 0
-            BEGIN INSERT INTO Properties.AllocationsMetadata (PropertyId, FieldName, FieldValue) VALUES ($property_id, '$keyId', '$value')
-            END;" .
+            "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, " . $inputData['Recipient'] . ", " . $inputData['Phone'] . ", " . $inputData['Email'] . ");" .
             "COMMIT TRANSACTION;";
+
+        foreach ($metadata as $key => $value) {
+            // Inserting Allocations MetaData
+            $keyId = self::camelToSnakeCase($key);
+            $queries[] = "BEGIN TRANSACTION;" .
+                "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
+                "IF @@ROWCOUNT = 0
+            BEGIN INSERT INTO Properties.AllocationsMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value')
+            END;" .
+                "COMMIT TRANSACTION;";
 
         }
 
@@ -476,7 +440,7 @@ class UserProperty {
 
         $resultData = DBConnectionFactory::getConnection()->exec($query);
 
-        if($resultData){
+        if ($resultData) {
 
             return "Allocation Successful!";
 
@@ -486,68 +450,11 @@ class UserProperty {
 
     }
 
-
-    public static function viewEstateAllocationsData(int $propertyId)
-    {
-        $metadata = [];
-
-        $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $result0 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($result0 as $key => $value) {
-
-            // Getting Allocations Data
-            $query = "SELECT * FROM Properties.Allocations WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityParent = $value))";
-            $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-            if ($result) {
-                $query1 = "SELECT FieldName, FieldValue FROM Properties.AllocationsMetadata WHERE PropertyId = $propertyId";
-                $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($result1 as $key => $value) {
-                    $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
-                }
-
-            }
-
-        }
-
-        return $metadata;
-
-    }
-
-    public static function viewBlockAllocationsData(int $propertyId)
-    {
-        $metadata = [];
-
-        $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $result0 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $resultLinkedEntity = $result0['LinkedEntity'];
-
-        // Getting Allocations Data
-        $query = "SELECT * FROM Properties.Allocations WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityParent = $resultLinkedEntity))";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($result) {
-            foreach ($result1 as $key => $value) {
-                $query1 = "SELECT FieldName, FieldValue FROM Properties.AllocationsMetadata WHERE PropertyId = $propertyId";
-                $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($result1 as $key => $value) {
-                    $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
-                }
-
-                return $metadata;
-            }
-        } else {
-            return "No Data Available !";
-        }
-    }
+   
 
     public static function viewUnitAllocationsData(int $propertyId)
     {
-        $metadata = [];
+        // $metadata = [];
         // Getting Allocations Data
         $query = "SELECT * FROM Properties.Allocations WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -557,10 +464,10 @@ class UserProperty {
             $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($result1 as $key => $value) {
-                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
+                $result[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
             }
 
-            return $metadata;
+            return $result;
         } else {
             return false;
         }
@@ -571,14 +478,14 @@ class UserProperty {
     {
         $userId = $userId ?? null;
 
-
         $query = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId = $userId AND FieldId = 2";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $result;
     }
 
-    public function camelToSnakeCase($string, $sc = "_") {
+    protected static function camelToSnakeCase($string, $sc = "_")
+    {
         return strtolower(preg_replace(
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $sc, $string));
     }

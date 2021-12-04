@@ -61,22 +61,34 @@ class UserInfo
 
         $inputDataCompany = [
             "company_name" => QB::wrapString($companyName, "'"),
-            "about" => QB::wrapString($about, "'"),
             "address" => QB::wrapString($address, "'"),
+            "about" => QB::wrapString($about, "'"),
         ];
 
+        $query = "SELECT * FROM Users.UserInfoFields";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+
         foreach ($inputDataCompany as $key => $value) {
+            $keyValue = 0;
+            foreach($result as $valueItem){
+                if($key == $valueItem["FieldName"]){
+                    $keyValue = $valueItem["FieldId"];
+
+                }
+            }
+
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfoFieldValues SET FieldValue='$value' WHERE FieldId='$key' AND UserId=".$inputDataCompany['user_id'].";" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES (" . $inputDataCompany['user_id'] . ", '$key', '$value') END;" .
+                "UPDATE Users.UserInfoFieldValues SET FieldValue=$value WHERE FieldId=$keyValue AND UserId=$userId;" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES ($userId, $keyValue, $value) END;" .
                 "COMMIT TRANSACTION;";
 
         }
 
         $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId='$user_id'" .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ('$user_id', " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
+                "UPDATE Users.UserInfo SET FirstName=".$inputDataUser['first_name'].", LastName=".$inputDataUser['last_name'].", PhoneNumber=".$inputDataUser['phone']." WHERE UserId=$userId;" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfo (UserId, FirstName, LastName, PhoneNumber) VALUES ($userId, " . $inputDataUser['first_name'] . ", " . $inputDataUser['last_name'] . ", " . $inputDataUser['phone'] . ") END;" .
                 "COMMIT TRANSACTION;";
 
         $query = implode(";", $queries);
@@ -93,12 +105,12 @@ class UserInfo
 
     public static function viewUserInfo(int $userId)
     {
-
+        $result = [];
         $query = "SELECT * FROM Users.UserInfo WHERE UserId=$userId";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $result['data'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $query = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId=$userId";
-        $result['meta'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $queryMeta = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId=$userId";
+        $result['meta'] = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
 
         if ($result) {
             return $result;
@@ -113,6 +125,15 @@ class UserInfo
     {
         $avatar = $data["avatar"] ?? '';
 
+        $base64DataResult = self::checkForAndStoreBase64String($avatar);
+
+        if ($base64DataResult["status"]) { 
+            // @todo: check properly to ensure
+            $avatar = $base64DataResult["ref"];
+        } else {
+            return $base64DataResult["message"];
+        }
+
         $inputData = [
             "profilePhoto" => QB::wrapString($avatar, "'"),
         ];
@@ -121,7 +142,9 @@ class UserInfo
 
         $avatar = $inputData['profilePhoto'];
 
-        $updateQuery = "UPDATE Users.UserInfo SET profilePhotoUrl = $avatar WHERE UserId = '$userId'";
+
+
+        $updateQuery = "UPDATE Users.UserInfo SET profilePhotoUrl = $avatar WHERE UserId = $userId";
         $result = DBConnectionFactory::getConnection()->query($updateQuery);
 
 
@@ -135,6 +158,25 @@ class UserInfo
 
     }
 
-    
+    protected static function checkForAndStoreBase64String($string){
+        $base64Components = explode(";base64,", $string);
+        $result = [];
+        if (
+            count($base64Components) == 2 &&
+            ((explode(":", $base64Components[0]))[0] == "data")
+        ) {
+            // we have a base64. Call Storage abstraction.
+            $result = \KuboPlugin\Utils\Storage::storeBase64(["object" => $string]);
+        } else {
+            $result = [
+                "status" => false,
+                "message" => "Not an image"
+            ];
+        }
+
+        return $result;
+    }
+
+
 
 }

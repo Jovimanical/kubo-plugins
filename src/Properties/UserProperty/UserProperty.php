@@ -288,7 +288,9 @@ class UserProperty
                 $base64DataResult = self::checkForAndStoreBase64String($value);
                 if ($base64DataResult["status"]) { // @todo: check properly to ensure
                     $value = $base64DataResult["ref"];
-                } 
+                } else {
+                    $value = json_encode($value);
+                }
             }
 
             $queries[] = "BEGIN TRANSACTION;" .
@@ -395,51 +397,6 @@ class UserProperty
 
     }
 
-    public static function viewPropertyData(int $propertyId, int $floorLevel = 0)
-    {
-        // Getting Estate Data
-        $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = '$propertyId'";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $metadata = [];
-        foreach ($result as $key => $value) {
-            $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
-        }
-
-        return $metadata;
-    }
-
-    public static function editPropertyData(int $propertyId, array $metadata = [])
-    {
-        $queries = [];
-
-        foreach ($metadata as $key => $value) {
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-
-            $keyId = camelToSnakeCase($key);
-
-            $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
-                "COMMIT TRANSACTION;";
-
-        }
-
-        $query = implode(";", $queries);
-
-        $result = DBConnectionFactory::getConnection()->exec($query);
-
-        if ($result) {
-
-            return "Edit Successful!";
-
-        } else {
-            return "Edit Not Successful!";
-        }
-    }
-
     public static function addAllocation(int $userId, array $data)
     {
         $queries = [];
@@ -493,63 +450,7 @@ class UserProperty
 
     }
 
-    public static function viewEstateAllocationsData(int $propertyId)
-    {
-        // $metadata = [];
-
-        $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $result0 = DBConnectionFactory::getConnection()->query($query0)->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($result0 as $key => $value) {
-
-            // Getting Allocations Data
-            $query = "SELECT * FROM Properties.Allocations WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityParent = $value))";
-            $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-            if ($result) {
-                $query1 = "SELECT FieldName, FieldValue FROM Properties.AllocationsMetadata WHERE PropertyId = $propertyId";
-                $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($result1 as $keyItem => $valueItem) {
-                    $result[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"]];
-                }
-
-            }
-
-        }
-
-        return $result;
-
-    }
-
-    public static function viewBlockAllocationsData(int $propertyId)
-    {
-        // $metadata = [];
-
-        $query0 = "SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $result0 = DBConnectionFactory::getConnection()->query($query0)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $resultLinkedEntity = $result0['LinkedEntity'];
-
-        // Getting Allocations Data
-        $query = "SELECT * FROM Properties.Allocations WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityParent = '$resultLinkedEntity'))";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($result) {
-            foreach ($result1 as $key => $value) {
-                $query1 = "SELECT FieldName, FieldValue FROM Properties.AllocationsMetadata WHERE PropertyId = $propertyId";
-                $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($result1 as $key => $value) {
-                    $result[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"]];
-                }
-
-                return $result;
-            }
-        } else {
-            return "No Data Available !";
-        }
-    }
+   
 
     public static function viewUnitAllocationsData(int $propertyId)
     {

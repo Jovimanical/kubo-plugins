@@ -53,14 +53,6 @@ class UserProperty {
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
 
-    public static function editPropertyData(int $propertyId,array $metadata){
-		return UserProperty\UserProperty::editPropertyData($propertyId,$metadata);
-	}
-
-    public static function viewPropertyData(int $propertyId,array $metadata){
-        return UserProperty\UserProperty::viewPropertyData($propertyId,$metadata);
-    }
-
     public static function getDashBoardTotal(int $userId){
         return UserProperty\UserProperty::getDashBoardTotal($userId);
     }
@@ -72,14 +64,6 @@ class UserProperty {
 
     public static function addAllocation(int $userId, array $data){
         return UserProperty\UserProperty::addAllocation($userId,$data);
-    }
-
-    public static function viewEstateAllocationsData(int $propertyId){
-        return UserProperty\UserProperty::viewEstateAllocationsData($propertyId);
-    }
-
-    public static function viewBlockAllocationsData(int $propertyId){
-        return UserProperty\UserProperty::viewBlockAllocationsData($propertyId);
     }
 
     public static function viewUnitAllocationsData(int $propertyId){

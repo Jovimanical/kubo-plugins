@@ -266,6 +266,11 @@ class UserProperty
              * that we have a base64
              * **/
 
+            if(self::isJSON($value)){
+                $value = json_decode($value, true);
+            }
+
+
             if (is_array($value)) {
 
                 foreach ($value as $key=>$valueItem) {
@@ -277,7 +282,7 @@ class UserProperty
                             $value[$key] = $valueItem;
                         }
                     } else {
-                        $value[$key] = json_encode($valueItem);
+                        $value[$key] = $valueItem;
                     }
 
                 }
@@ -488,5 +493,10 @@ class UserProperty
     {
         return strtolower(preg_replace(
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $sc, $string));
+    }
+
+    protected static function isJSON($stringx){
+        $string = str_replace("&#39;","'",$stringx);
+        return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 }

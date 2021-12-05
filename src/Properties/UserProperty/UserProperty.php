@@ -271,7 +271,7 @@ class UserProperty
                 $value = str_replace("&#34;","'",$value);
                 $value = json_decode($value, true);
                 die(print_r($value));
-                
+
 
             }
 
@@ -501,8 +501,8 @@ class UserProperty
     }
 
     protected static function isJSON($stringx){
-        $string = str_replace("&#39;","'",$stringx);
-        $string = str_replace("&#34;","'",$stringx);
+        $string = str_replace("&#39;","'",unserialize($stringx));
+        $string = str_replace("&#34;","'",unserialize($stringx));
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 }

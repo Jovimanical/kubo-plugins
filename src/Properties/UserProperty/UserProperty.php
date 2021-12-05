@@ -254,8 +254,8 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
-        $test = print_r($metadata, true);
-        return $test;
+        //$test = print_r($metadata, true);
+        //return $test;
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -288,15 +288,15 @@ class UserProperty
                 $base64DataResult = self::checkForAndStoreBase64String($value);
                 if ($base64DataResult["status"]) { // @todo: check properly to ensure
                     $value = $base64DataResult["ref"];
-                } else {
-                    $value = json_encode($value);
                 }
             }
 
+            $keyId = self::camelToSnakeCase($key);
+
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$key' AND PropertyId=$propertyId; " .
+                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
                 "BEGIN TRY " .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$key', '$value') END;" .
+                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
         }

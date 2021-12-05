@@ -270,6 +270,7 @@ class UserProperty
                 $value = str_replace("&#39;","'",$value);
                 $value = str_replace("&#34;","'",$value);
                 $value = json_decode($value, true);
+                return print_r($value);
 
             }
 

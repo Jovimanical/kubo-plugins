@@ -267,15 +267,11 @@ class UserProperty
              * **/
 
             if(self::isJSON($value)){
-                $valuex = str_replace("&#39;","'",$value);
-                $valuex = str_replace("&#34;","'",$value);
-                $value = json_decode($value, true);
-
-            } else {
                 $value = str_replace("&#39;","'",$value);
                 $value = str_replace("&#34;","'",$value);
-                $value = json_decode($value, true);
-            }
+                $value = \json_decode($value, true);
+
+            } 
 
 
             if (is_array($value)) {
@@ -503,8 +499,8 @@ class UserProperty
     }
 
     protected static function isJSON($string){
-        $stringx = str_replace("&#39;","'",$string);
-        $stringx = str_replace("&#34;","'",$string);
+        $string = str_replace("&#39;","'",$string);
+        $string = str_replace("&#34;","'",$string);
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 }

@@ -497,6 +497,7 @@ class UserProperty
 
     protected static function isJSON($stringx){
         $string = str_replace("&#39;","'",$stringx);
+        $string = str_replace("&#34;","'",$string);
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 }

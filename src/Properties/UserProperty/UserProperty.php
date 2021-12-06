@@ -286,9 +286,7 @@ class UserProperty
                         } else {
                             $value[$key] = $valueItem;
                         }
-                    } else {
-                        $value[$key] = $valueItem;
-                    }
+                    } 
 
                 }
 

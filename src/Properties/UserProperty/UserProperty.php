@@ -287,7 +287,7 @@ class UserProperty
                             $value[$key] = $valueItem;
                         }
                     } else {
-                        $value[$key] = $valueItem;
+                        $value[$key] = json_encode($valueItem);
                     }
 
                 }

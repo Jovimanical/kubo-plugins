@@ -271,7 +271,8 @@ class UserProperty
                 $value = str_replace('&#34;', '"', $value);
                 $value = json_decode($value, true);
 
-                die($value);
+                print_r($value);
+                die();
 
             }
 

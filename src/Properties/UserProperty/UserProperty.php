@@ -283,8 +283,10 @@ class UserProperty
                         $base64DataResult = self::checkForAndStoreBase64String($valueItem);
                         if ($base64DataResult["status"]) { // @todo: check properly to ensure
                             $value[$key] = $base64DataResult["ref"];
+                        } else {
+                            $value[$key] = $valueItem;
                         }
-                    }
+                    } 
 
                 }
 

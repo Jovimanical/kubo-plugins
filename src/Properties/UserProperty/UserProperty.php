@@ -266,18 +266,19 @@ class UserProperty
              * that we have a base64
              * **/
 
-            if(self::isJSON($value)){
-                $value = str_replace('&#39;','"',$value);
-                $value = str_replace('&#34;','"',$value);
+            if (self::isJSON($value)) {
+                $value = str_replace('&#39;', '"', $value);
+                $value = str_replace('&#34;', '"', $value);
                 $value = json_decode($value, true);
 
-            } 
+                die($value);
 
+            }
 
             if (is_array($value)) {
 
-                foreach ($value as $key=>$valueItem) {
-                    if (is_string($valueItem)){
+                foreach ($value as $key => $valueItem) {
+                    if (is_string($valueItem)) {
                         $base64DataResult = self::checkForAndStoreBase64String($valueItem);
                         if ($base64DataResult["status"]) { // @todo: check properly to ensure
                             $value[$key] = $base64DataResult["ref"];
@@ -316,7 +317,8 @@ class UserProperty
         return $result;
     }
 
-    protected static function checkForAndStoreBase64String($string){
+    protected static function checkForAndStoreBase64String($string)
+    {
         $base64Components = explode(";base64,", $string);
         $result = [];
         if (
@@ -328,7 +330,7 @@ class UserProperty
         } else {
             $result = [
                 "status" => false,
-                "message" => "Not an image"
+                "message" => "Not an image",
             ];
         }
 
@@ -458,8 +460,6 @@ class UserProperty
 
     }
 
-   
-
     public static function viewUnitAllocationsData(int $propertyId)
     {
         // $metadata = [];
@@ -498,9 +498,10 @@ class UserProperty
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $sc, $string));
     }
 
-    protected static function isJSON($stringData){
-        $string = str_replace('&#39;','"',$stringData);
-        $string = str_replace('&#34;','"',$stringData);
+    protected static function isJSON($stringData)
+    {
+        $string = str_replace('&#39;', '"', $stringData);
+        $string = str_replace('&#34;', '"', $stringData);
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 }

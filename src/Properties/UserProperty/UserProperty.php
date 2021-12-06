@@ -284,7 +284,7 @@ class UserProperty
                         if ($base64DataResult["status"]) { // @todo: check properly to ensure
                             $value[$keyItem] = $base64DataResult["ref"];
                         } else {
-                            $value[$keyItem] = json_encode($valueItem);
+                            $value[$keyItem] = $valueItem;
                         }
                     } else {
                         $value[$keyItem] = json_encode($valueItem);

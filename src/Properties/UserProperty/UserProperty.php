@@ -452,6 +452,12 @@ class UserProperty
 
         foreach ($metadata as $key => $value) {
             // Inserting Allocations MetaData
+
+            $base64DataResult = self::checkForAndStoreBase64String($value);
+                if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                        $value = $base64DataResult["ref"];
+                }
+
             $keyId = self::camelToSnakeCase($key);
             $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Properties.AllocationsMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .

@@ -445,6 +445,8 @@ class UserProperty
             "PropertyId" => $propertyId,
         ];
 
+        die(print_r($inputData));
+
         // Inserting Allocations Data
         $queries[] = "BEGIN TRANSACTION;" .
             "INSERT INTO Properties.Allocations (UserId, PropertyId, Recipient, Phone, Email) VALUES ($userId, $propertyId, " . $inputData['Recipient'] . ", " . $inputData['Phone'] . ", " . $inputData['Email'] . ");" .
@@ -454,9 +456,9 @@ class UserProperty
             // Inserting Allocations MetaData
 
             $base64DataResult = self::checkForAndStoreBase64String($value);
-                if ($base64DataResult["status"]) { // @todo: check properly to ensure
-                        $value = $base64DataResult["ref"];
-                }
+            if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                $value = $base64DataResult["ref"];
+            }
 
             $keyId = self::camelToSnakeCase($key);
             $queries[] = "BEGIN TRANSACTION;" .

@@ -36,6 +36,9 @@ class UserInfo
      */
     public static function updateUserInfo(int $userId, array $data)
     {
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $queries = [];
         $companyName = $data["companyName"] ?? '';
         $fullName = $data["fullName"] ?? '';
@@ -105,6 +108,9 @@ class UserInfo
 
     public static function viewUserInfo(int $userId)
     {
+        if($userId == 0){
+            return "Parameter not set";
+        }
         $result = [];
         $query = "SELECT * FROM Users.UserInfo WHERE UserId=$userId";
         $result['data'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -123,6 +129,9 @@ class UserInfo
 
     public static function uploadUserInfoAvatar(int $userId, array $data)
     {
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $avatar = $data["avatar"] ?? '';
 
         $base64DataResult = self::checkForAndStoreBase64String($avatar);

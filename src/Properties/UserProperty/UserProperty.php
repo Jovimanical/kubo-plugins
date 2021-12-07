@@ -257,6 +257,10 @@ class UserProperty
         //$test = print_r($metadata, true);
         //return $test;
 
+        if($propertyId == 0 OR empty($metadata)){
+            return "Parameters not set";
+        }
+
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
@@ -344,6 +348,10 @@ class UserProperty
     {
         $resultArr = [];
 
+        if($userId == 0){
+            return "Parameter not set";
+        }
+
         $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = 1";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -374,6 +382,10 @@ class UserProperty
 
     public static function searchEstateClient(int $userId, array $data)
     {
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
+
         $fetch = "FIRST";
         $offset = 0;
         $searchTerm = $data['searchTerm'];
@@ -410,6 +422,9 @@ class UserProperty
 
     public static function addAllocation(int $userId, array $data)
     {
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $queries = [];
         $metadata = [];
 
@@ -465,6 +480,9 @@ class UserProperty
     {
         // $metadata = [];
         // Getting Allocations Data
+        if($propertyId == 0){
+            return "Parameter not set";
+        }
         $query = "SELECT * FROM Properties.Allocations WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -485,6 +503,9 @@ class UserProperty
 
     public static function viewCompanyName(int $userId)
     {
+        if($userId == 0){
+            return "Parameter not set";
+        }
         $userId = $userId ?? null;
 
         $query = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId = $userId AND FieldId = 2";

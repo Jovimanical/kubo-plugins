@@ -26,6 +26,9 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  */
 class Enquiry {
     public static function newEnquiry(array $data){
+        if(empty($data)){
+            return "Parameter not set";
+        }
         $propertyId = $data["propertyId"];
         $messagePayload = $data["message_payload"] ?? [];
         $name =  $data["name"];
@@ -62,6 +65,9 @@ class Enquiry {
     }
 
     public static function viewEnquiry(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
 
@@ -95,6 +101,9 @@ class Enquiry {
     }
 
     public static function viewEnquiryBySeven(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
         if($data['offset'] != 0){
@@ -132,6 +141,9 @@ class Enquiry {
     }
 
     public static function viewEnquiryByThirty(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
         if($data['offset'] != 0){
@@ -170,6 +182,9 @@ class Enquiry {
 
 
     public static function viewEnquiryByNinety(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
         if($data['offset'] != 0){
@@ -209,6 +224,9 @@ class Enquiry {
 
 
     public static function searchEnquiry(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
         $searchTerm = $data['searchTerm'];
@@ -277,6 +295,9 @@ class Enquiry {
     }
 
     public static function viewEnquiryMetadata(int $EnquiryId){
+        if($EnquiryId == 0){
+            return "Parameter not set";
+        }
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.EnquiryMetadata WHERE EnquiryId = $EnquiryId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -310,6 +331,9 @@ class Enquiry {
     }
 
     public static function editEnquiryMetadata(int $EnquiryId, array $metadata = []){
+        if($EnquiryId == 0 OR empty($metadata)){
+            return "Parameters not set";
+        }
         $queries = [];
         foreach($metadata as $key=>$value){
             $queries[] = "BEGIN TRANSACTION;".

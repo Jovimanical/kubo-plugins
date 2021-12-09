@@ -10,12 +10,12 @@
  *
  */
 
-namespace KuboPlugin\Utils\Storage;
+namespace KuboPlugin\Utils\Utils;
 
 use EmmetBlue\Core\Constant;
 
 /**
- * class KuboPlugin\Utils\Storage
+ * class KuboPlugin\Utils\Utils
  *
  * Util Controller
  *

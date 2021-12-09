@@ -445,7 +445,7 @@ class UserProperty
             "PropertyId" => $propertyId,
         ];
 
-        die(print_r($inputData));
+        // die(print_r($inputData));
 
         // Inserting Allocations Data
         $queries[] = "BEGIN TRANSACTION;" .

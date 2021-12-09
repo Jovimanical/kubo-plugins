@@ -75,6 +75,7 @@ class UserInfo
         foreach ($inputDataCompany as $key => $value) {
             $keyValue = 0;
             foreach($result as $valueItem){
+                $key = \KuboPlugin\Utils\Util::camelToSnakeCase($key);
                 if($key == $valueItem["FieldName"]){
                     $keyValue = $valueItem["FieldId"];
 
@@ -114,8 +115,8 @@ class UserInfo
         $result = [];
         $query = "SELECT * FROM Users.UserInfo WHERE UserId=$userId";
         $result['data'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $queryMeta = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId=$userId";
+        
+        $queryMeta = "SELECT * FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = 3;";
         $result['meta'] = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
 
         if ($result) {
@@ -185,6 +186,8 @@ class UserInfo
 
         return $result;
     }
+
+    
 
 
 

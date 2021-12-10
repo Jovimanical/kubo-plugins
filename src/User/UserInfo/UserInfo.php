@@ -124,19 +124,20 @@ class UserInfo
         
         $query = "SELECT UserId,FirstName,LastName,ProfilePhotoUrl,PhoneNumber FROM Users.UserInfo WHERE UserId=$userId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        
+        foreach($result as $keyItem => $valueItem){
+            $resultData[$keyItem]  =  $valueItem;
+        }
+
         $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = $userId;";
         $resultMeta = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
         
         $resultMetaData = [];
         foreach($resultMeta as $key => $value){
             foreach($value as $keyItem => $valueItem){
-                $resultMetaData[$value["FieldName"]]  =  $value['FieldValue'];
+                $resultData[$value["FieldName"]]  =  $value['FieldValue'];
             }
         }
 
-
-         $resultData = array_merge($result, $resultMeta);  // used array_merge since userInfo and userInfoFieldValues are two different tables with distinct keys
 
         if ($resultData) {
             return $resultData;

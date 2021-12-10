@@ -137,6 +137,8 @@ class UserInfo
             }
         }
 
+        $resultMetaData = array_map("self::combineArrays",$result,$resultMeta);
+
 
         if (!empty($resultData)) {
             return $resultData;
@@ -146,8 +148,10 @@ class UserInfo
 
     }
 
-    protected static function combineArrays($key, $val) {
-        return array($key=>$val);
+    protected static function combineArrays($keyId, $keyItem) {
+        $arrData = [];
+        array_push($arrData,$keyId,$keyItem);
+        return $arrData;
     }
 
 

@@ -96,7 +96,7 @@ class UserInfo
             }
 
 
-            
+
         }
 
         $queries[] = "BEGIN TRANSACTION;" .
@@ -121,7 +121,7 @@ class UserInfo
         if($userId == 0){
             return "Parameter not set";
         }
-        
+        $resultData = [];
         $query = "SELECT UserId,FirstName,LastName,ProfilePhotoUrl,PhoneNumber FROM Users.UserInfo WHERE UserId=$userId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         foreach($result as $keyItem => $valueItem){
@@ -130,8 +130,7 @@ class UserInfo
 
         $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = $userId;";
         $resultMeta = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
-        
-        $resultMetaData = [];
+
         foreach($resultMeta as $key => $value){
             foreach($value as $keyItem => $valueItem){
                 $resultData[$value["FieldName"]]  =  $value['FieldValue'];
@@ -139,7 +138,7 @@ class UserInfo
         }
 
 
-        if ($resultData) {
+        if (!empty($resultData)) {
             return $resultData;
         } else {
             return "No User Info Found";

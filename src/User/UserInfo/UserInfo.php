@@ -125,7 +125,7 @@ class UserInfo
         $query = "SELECT UserId,FirstName,LastName,ProfilePhotoUrl,PhoneNumber FROM Users.UserInfo WHERE UserId=$userId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         
-        $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = 3;";
+        $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = $userId;";
         $result['meta'] = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
 
         if ($result) {

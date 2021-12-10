@@ -133,7 +133,12 @@ class UserInfo
 
         foreach($resultMeta as $key => $value){
             foreach($value as $keyItem => $valueItem){
-                $resultData[$value["FieldName"]]  =  $value['FieldValue'];
+                if($value["FieldName"] == "" OR $value["FieldName"] == null){
+
+                } else {
+                    $resultData[$value["FieldName"]] = $value['FieldValue'];
+                }
+                
             }
         }
 

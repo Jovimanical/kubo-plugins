@@ -68,26 +68,35 @@ class UserInfo
             "about" => QB::wrapString($about, "'"),
         ];
 
+        $inputDataId = [
+            "company_name" => 2,
+            "address" => 7,
+            "about" => 5,
+        ];
+
+
         $query = "SELECT * FROM Users.UserInfoFields";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
 
         foreach ($inputDataCompany as $key => $value) {
             $keyValue = 0;
-            //$key = \KuboPlugin\Utils\Util::camelToSnakeCase($key);
-            foreach($result as $valueItem){
+            // $key = \KuboPlugin\Utils\Util::camelToSnakeCase($key);
+            foreach($inputDataId as $keyItem => $valueItem){
 
-                if($key == $valueItem["FieldName"]){
-                    $keyValue = $valueItem["FieldId"];
-                }
-            }
+                if($keyItem == $key){
+                    $keyValue = $valueItem;
 
-
-            $queries[] = "BEGIN TRANSACTION;" .
+                    $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Users.UserInfoFieldValues SET FieldValue=$value WHERE FieldId=$keyValue AND UserId=$userId;" .
                 "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Users.UserInfoFieldValues (UserId, FieldId, FieldValue) VALUES ($userId, $keyValue, $value) END;" .
                 "COMMIT TRANSACTION;";
 
+                }
+            }
+
+
+            
         }
 
         $queries[] = "BEGIN TRANSACTION;" .

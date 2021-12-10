@@ -124,29 +124,25 @@ class UserInfo
         $resultData = [];
         $query = "SELECT UserId,FirstName,LastName,ProfilePhotoUrl,PhoneNumber FROM Users.UserInfo WHERE UserId=$userId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        // foreach($result as $keyItem => $valueItem){
-           // $resultData[$keyItem]  =  $valueItem;
-        //}
+         foreach($result as $keyItem => $valueItem){
+            $resultData[$keyItem]  =  $valueItem;
+        }
 
         $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = $userId;";
         $resultMeta = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach($resultMeta as $key => $value){
             foreach($value as $keyItem => $valueItem){
-                if($value["FieldName"] == "" OR $value["FieldName"] == null){
-
-                } else {
-                    $resultData[$value["FieldName"]] = $value['FieldValue'];
-                }
+                $resultData[$value["FieldName"]] = $value['FieldValue'];
                 
             }
         }
 
-        $resultMetaData = array_map("self::combineArrays",$result,$resultData);
+       // $resultMetaData = array_map("self::combineArrays",$result,$resultData);
 
 
-        if (!empty($resultMetaData)) {
-            return $resultMetaData;
+        if (!empty($resultData)) {
+            return $resultData;
         } else {
             return "No User Info Found";
         }

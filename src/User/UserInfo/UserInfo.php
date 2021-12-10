@@ -140,8 +140,8 @@ class UserInfo
         $resultMetaData = array_map("self::combineArrays",$result,$resultMeta);
 
 
-        if (!empty($resultData)) {
-            return $resultData;
+        if (!empty($resultMetaData)) {
+            return $resultMetaData;
         } else {
             return "No User Info Found";
         }

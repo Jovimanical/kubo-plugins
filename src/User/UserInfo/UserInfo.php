@@ -128,18 +128,25 @@ class UserInfo
         $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = $userId;";
         $resultMeta = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
          
-        foreach($resultMeta as $key => $value){
-            foreach($value as $keyItem => $valueItem){
-                $result[$value["FieldName"]]  =  $value['FieldValue'];
-            }
-        }
-        
-        if ($result) {
-            return $result;
+       // foreach($resultMeta as $key => $value){
+         //   foreach($value as $keyItem => $valueItem){
+           //     $result[$value["FieldName"]]  =  $value['FieldValue'];
+         //   }
+       // }
+
+
+         $resultData = array_map('self::combineArrays', $result, $resultMeta);
+
+        if ($resultData) {
+            return $resultData;
         } else {
             return "No User Info Found";
         }
 
+    }
+
+    protected static function combineArrays($key, $val) {
+        return array($key=>$val);
     }
 
 

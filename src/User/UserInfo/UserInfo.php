@@ -129,8 +129,9 @@ class UserInfo
         $result['meta'] = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
          
         foreach($result['meta'] as $key => $value){
-
-            $result['data'][$key]  =  $value;
+            foreach($value as $keyItem => $valueItem){
+                $result['data'][$value["FieldName"]]  =  $valueItem;
+            }
         }
         
         if ($result) {

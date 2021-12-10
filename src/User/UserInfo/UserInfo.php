@@ -123,14 +123,14 @@ class UserInfo
         }
         
         $query = "SELECT UserId,FirstName,LastName,ProfilePhotoUrl,PhoneNumber FROM Users.UserInfo WHERE UserId=$userId";
-        $result['data'] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         
         $queryMeta = "SELECT FieldValue,FieldName FROM [Users].[UserInfoFieldValues] LEFT JOIN [Users].[UserInfoFields] ON [Users].[UserInfoFieldValues].FieldId = [Users].[UserInfoFields].FieldId WHERE UserId = $userId;";
-        $result['meta'] = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
+        $resultMeta = DBConnectionFactory::getConnection()->query($queryMeta)->fetchAll(\PDO::FETCH_ASSOC);
          
-        foreach($result['meta'] as $key => $value){
+        foreach($resultMeta as $key => $value){
             foreach($value as $keyItem => $valueItem){
-                $result['data'][$value["FieldName"]]  =  $valueItem;
+                $result[$value["FieldName"]]  =  $value['FieldValue'];
             }
         }
         

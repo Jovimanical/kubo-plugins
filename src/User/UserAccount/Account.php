@@ -97,7 +97,7 @@ class Account {
 
 		return $result[0]["UserId"] ?? -1;
 	}
-	
+
 	public static function updateKycGroup(int $userId){
 		$currGroup = UserKyc::determineKycGroup($userId)["GroupId"];
 

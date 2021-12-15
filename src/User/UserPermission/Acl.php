@@ -41,7 +41,7 @@ class Acl
         foreach ($result as $rule){
             $roleString = $rule["AccountType"]."_".$rule["KycGroup"];
             $acl->addRole($roleString);
-            
+
             $acl->addResource($rule["EndPoint"]);
 
             $can = $rule["EndPointRule"] == 1 ? "can" : "cannot";
@@ -57,7 +57,7 @@ class Acl
         $module = str_replace("-", "_", $module);
         $resource = str_replace("-", "_", $resource);
         $action = str_replace("-", "_", $action);
-        
+
         $aclFormat[] = implode("__", [$module, $resource, $action]);
         $aclFormat[] = implode("__", [$module, $resource]);
         $aclFormat[] = $module;

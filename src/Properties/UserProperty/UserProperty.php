@@ -369,6 +369,41 @@ class UserProperty
         return $resultArr;
 
     }
+    
+    public static function getEstatePropertyTotal(int $propertyId)
+    {
+       
+
+        if($propertyId == 0){
+            return "Parameter not set";
+        }
+        
+        //Fetch total estate property units
+        $squery = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
+        
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+
+    }
+
+    public static function getEstatePropertyAvailable(int $propertyId)
+    {      
+
+        if($propertyId == 0){
+            return "Parameter not set";
+        }
+        
+        //Fetch total estate property units
+        $squery = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId IN(SELECT MetadatId FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId AND FieldName = 'property_status' AND FieldValue != false))";
+        
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+
+    }
 
     protected static function getPropertyCount(int $userId,int $entityType){
         // Fetching property count by type
@@ -526,7 +561,7 @@ class UserProperty
 
     }
 
-    public static function viewCompanyName(int $userId) // @todo change name to something more proper e.g viewOrganizationName
+    public static function viewDeveloperName(int $userId) // @todo change name to something more proper e.g viewOrganizationName
     {
         if($userId == 0){
             return "Parameter not set";

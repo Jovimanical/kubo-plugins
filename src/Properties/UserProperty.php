@@ -70,8 +70,16 @@ class UserProperty {
         return UserProperty\UserProperty::viewUnitAllocationsData($propertyId);
     }
 
-    public static function viewCompanyName(int $userId) {
-        return UserProperty\UserProperty::viewCompanyName($userId);
+    public static function viewDeveloperName(int $userId) {
+        return UserProperty\UserProperty::viewDeveloperName($userId);
     }
 
+    public static function getEstatePropertyTotal(int $propertyId) {
+        return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);
+    }
+
+    public static function getEstatePropertyAvailable(int $propertyId){
+        return UserProperty\UserProperty::getEstatePropertyAvailable($propertyId);
+    }
+    
 }

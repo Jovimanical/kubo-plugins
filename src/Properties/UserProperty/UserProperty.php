@@ -396,7 +396,7 @@ class UserProperty
         }
         
         //Fetch total estate property units
-        $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId IN(SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId AND FieldName = 'property_status' AND FieldValue != 'false')))";
+        $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId IN(SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId AND FieldName = 'property_status' AND FieldValue != 1)))";
         
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 

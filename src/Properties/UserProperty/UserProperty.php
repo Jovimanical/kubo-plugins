@@ -381,10 +381,15 @@ class UserProperty
         //Fetch total estate property units
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
         
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+        $resultx = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
        // $propertyCount = count($result);
        // return $propertyCount;
+       foreach ($resultx as $resultum) {
+           $result[] = $resultum[0];
+       }
+
+       
 
        return $result;
 

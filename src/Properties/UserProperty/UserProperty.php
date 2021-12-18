@@ -381,22 +381,17 @@ class UserProperty
         //Fetch total estate property units
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
         
-        $resultx = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
-       // $propertyCount = count($result);
-       // return $propertyCount;
-       foreach ($resultx as $resultum) {
-           $result[] = $resultum[0];
-       }
-
+       $propertyCount = count($result);
+       return $propertyCount;
        
-
-       return implode(",",$result);
 
     }
 
     public static function getEstatePropertyAvailable(int $propertyId)
     {      
+        $result = [];
 
         if($propertyId == 0){
             return "Parameter not set";
@@ -405,10 +400,16 @@ class UserProperty
         //Fetch total estate property units
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
         
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $resultx = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($resultx as $resultum) {
+            $result[] = $resultum[0];
+        }
+ 
         
+ 
+        $resultx = implode(",",$result);
         //Fetch available estate property units
-        $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId IN(SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId IN(SELECT Properties.UserProperty.PropertyId FROM Properties.UserProperty INNER JOIN SpatialEntities.Entities ON Properties.UserProperty.LinkedEntity = SpatialEntities.Entities.EntityId AND SpatialEntities.Entities.EntityId IN($result)) AND FieldName = 'property_status' AND FieldValue != 1)))";
+        $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId IN(SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId IN(SELECT Properties.UserProperty.PropertyId FROM Properties.UserProperty INNER JOIN SpatialEntities.Entities ON Properties.UserProperty.LinkedEntity = SpatialEntities.Entities.EntityId AND SpatialEntities.Entities.EntityId IN($resultx)) AND FieldName = 'property_status' AND FieldValue != 1)))";
         
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 

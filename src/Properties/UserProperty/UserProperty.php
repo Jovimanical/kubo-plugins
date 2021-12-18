@@ -383,8 +383,10 @@ class UserProperty
         
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $propertyCount = count($result);
-        return $propertyCount;
+       // $propertyCount = count($result);
+       // return $propertyCount;
+
+       return $result;
 
     }
 

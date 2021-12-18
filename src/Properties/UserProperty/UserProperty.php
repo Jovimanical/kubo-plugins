@@ -391,7 +391,7 @@ class UserProperty
 
        
 
-       return $result;
+       return implode(",",$result);
 
     }
 

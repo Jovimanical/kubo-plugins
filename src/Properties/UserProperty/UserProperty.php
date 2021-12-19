@@ -413,14 +413,14 @@ class UserProperty
 
         $resultx = implode(",",$result);
         //Fetch available estate property units
-        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+        $queryx = "SELECT a.* FROM Properties.UserPropertyMetadata a 
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
         WHERE c.EntityParent IN($resultx) AND a.FieldName = 'property_status' AND a.FieldValue != 'false'";
         
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $resultData = DBConnectionFactory::getConnection()->query($queryx)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $propertyCount = count($result);
+        $propertyCount = count($resultData);
         return ((int)$propertyTotal - (int)$propertyCount);
 
     }

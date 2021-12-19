@@ -416,7 +416,7 @@ class UserProperty
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-        WHERE c.EntityParent IN($resultx) AND a.FieldName = 'property_status' AND a.FieldValue = 1";
+        WHERE c.EntityParent IN($resultx) AND a.FieldName = 'property_status' AND a.FieldValue != 'false'";
         
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 

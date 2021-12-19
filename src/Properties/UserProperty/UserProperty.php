@@ -421,7 +421,9 @@ class UserProperty
         $resultData = DBConnectionFactory::getConnection()->query($queryx)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyCount = count($resultData);
-        return ((int)$propertyTotal - (int)$propertyCount);
+        //return ((int)$propertyTotal - (int)$propertyCount);
+
+        return $resultx;
 
     }
 

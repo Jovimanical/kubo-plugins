@@ -307,6 +307,17 @@ class UserProperty
 
             $keyId = self::camelToSnakeCase($key);
 
+            if($keyId == "property_title_photos_data"){
+                foreach ($value as $keyItem => $valueItem) {
+                    $queries[] = "BEGIN TRANSACTION;" .
+                    "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId; " .
+                    "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                    "COMMIT TRANSACTION;";
+                    unlink("files/$valueItem");
+                }
+                
+            }
+
             $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
                 "BEGIN TRY " .
@@ -369,28 +380,28 @@ class UserProperty
         return $resultArr;
 
     }
-    
+
     public static function getEstatePropertyTotal(int $propertyId)
     {
-       
+
 
         if($propertyId == 0){
             return "Parameter not set";
         }
-        
+
         //Fetch total estate property units
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
-        
+
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
        $propertyCount = count($result);
        return $propertyCount;
-       
+
 
     }
 
     public static function getEstatePropertyAvailable(int $propertyId)
-    {      
+    {
         $result = [];
 
         if($propertyId == 0){
@@ -404,7 +415,7 @@ class UserProperty
         WHERE SpatialEntities.Entities.EntityParent
          IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
           WHERE PropertyId = $propertyId))";
-        
+
         $resultOnes = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
         $propertyTotal = count($resultOnes);
         foreach ($resultOnes as $resultOne) {
@@ -413,17 +424,17 @@ class UserProperty
 
         $resultString = implode(",",$result);
         //Fetch available estate property units
-        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a 
+        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-        WHERE c.EntityParent IN($resultString) AND a.FieldName = 'property_status' AND a.FieldValue != 0";
-        
+        WHERE c.EntityParent IN($resultString) AND a.FieldName = 'property_status' AND a.FieldValue = 'false'";
+
         $resultTwos = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyCount = count($resultTwos);
         //return ((int)$propertyTotal - (int)$propertyCount);
 
-        return $resultTwos;
+        return $propertyCount;
 
     }
 

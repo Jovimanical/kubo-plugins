@@ -305,6 +305,7 @@ class UserProperty
                 }
             }
 
+            /**
             $keyId = self::camelToSnakeCase($key);
 
             if($keyId == "property_title_photos_data"){
@@ -317,6 +318,8 @@ class UserProperty
                 }
                 
             }
+
+            **/
 
             $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
@@ -390,13 +393,14 @@ class UserProperty
         }
 
         //Fetch total estate property units
-        $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
+        //$query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
 
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+        //$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
-       $propertyCount = count($result);
-       return $propertyCount;
+        //$propertyCount = count($result);
+        //return $propertyCount;
 
+       return self::getPropertyTotal($propertyId,3);
 
     }
 
@@ -408,7 +412,9 @@ class UserProperty
             return "Parameter not set";
         }
 
+
         //Fetch total estate property units
+        /**
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
         WHERE SpatialEntities.Entities.EntityParent 
         IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -433,14 +439,33 @@ class UserProperty
 
         $propertyCount = count($resultTwos);
         return ((int)$propertyTotal - (int)$propertyCount);
-
+         **/
         //return $propertyCount;
+        return self::getPropertyAvailable($propertyId,3);
 
     }
 
     protected static function getPropertyCount(int $userId,int $entityType){
         // Fetching property count by type
         $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = $entityType";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+    }
+
+    protected static function getPropertyTotal(int $userId,int $entityType){
+        // Fetching property count by type
+        $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = $entityType";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+    }
+
+    protected static function getPropertyAvailable(int $userId,int $entityType){
+        // Fetching property count by type
+        $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId AND PropertyId IN(SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE FieldName = 'property_status' AND FieldValue = '')) AND EntityType = $entityType";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyCount = count($result);

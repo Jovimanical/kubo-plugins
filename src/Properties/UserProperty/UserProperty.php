@@ -200,7 +200,7 @@ class UserProperty
 
         $blockQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
         WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-            SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyId=$propertyId))";
+            SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId=$propertyId))";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
         /** 
         $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
@@ -210,7 +210,7 @@ class UserProperty
         **/
         $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
         WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-            SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = '' AND PropertyId=$propertyId))";
+            SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = 'NULL' AND a.PropertyId=$propertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];

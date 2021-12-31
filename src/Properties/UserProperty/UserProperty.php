@@ -321,7 +321,7 @@ class UserProperty
                 }
             }
 
-
+            /** 
             $keyId = self::camelToSnakeCase($key);
 
             if($keyId == "property_title_photos_data"){
@@ -334,6 +334,7 @@ class UserProperty
                 }
 
             }
+            **/
 
 
             $queries[] = "BEGIN TRANSACTION;" .

@@ -321,7 +321,7 @@ class UserProperty
                 }
             }
 
-            /** 
+            
             $keyId = self::camelToSnakeCase($key);
 
             if($keyId == "property_title_photos_data"){
@@ -334,7 +334,7 @@ class UserProperty
                 }
 
             }
-            **/
+            
 
 
             $queries[] = "BEGIN TRANSACTION;" .
@@ -409,16 +409,16 @@ class UserProperty
         }
 
         //Fetch total estate property units
-        /** 
+        
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities WHERE SpatialEntities.Entities.EntityParent IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId))";
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
         $propertyCount = count($result);
         return $propertyCount;
-        **/
+        
 
-        return self::getPropertyTotal($propertyId,3);
+       // return self::getPropertyTotal($propertyId,3);
 
     }
 
@@ -431,7 +431,7 @@ class UserProperty
         }
 
         //Fetch total estate property units
-        /**
+        
         $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
         WHERE SpatialEntities.Entities.EntityParent
         IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -458,8 +458,8 @@ class UserProperty
         return ((int)$propertyTotal - (int)$propertyCount);
 
         return $propertyCount;
-        **/
-        return self::getPropertyAvailable($propertyId,3);
+        
+        // return self::getPropertyAvailable($propertyId,3);
 
     }
 

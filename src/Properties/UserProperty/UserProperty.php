@@ -436,34 +436,17 @@ class UserProperty
         }
 
         //Fetch total estate property units
-        /**
-        $query = "SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
-        WHERE SpatialEntities.Entities.EntityParent
-        IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
-        WHERE SpatialEntities.Entities.EntityParent
-         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-          WHERE PropertyId = $propertyId))";
+        $query = "SELECT EntityId FROM SpatialEntities.Entities 
+        WHERE SpatialEntities.Entities.EntityParent 
+        IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+        WHERE SpatialEntities.Entities.EntityParent 
+        IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+         WHERE PropertyId = $propertyId))";
 
-          $resultOnes = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
-        $propertyTotal = count($resultOnes);
-        foreach ($resultOnes as $resultOne) {
-            $result[] = $resultOne[0];
-        }
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
-        $resultString = implode(",",$result);
-        //Fetch available estate property units
-        $query = "SELECT a.* FROM Properties.UserPropertyMetadata a
-        INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
-        INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
-        WHERE a.FieldName = 'property_status' AND a.FieldValue != '' AND c.EntityParent IN($resultString)";
+        $propertyCount = count($result);
 
-        $resultTwos = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $propertyCount = count($resultTwos);
-        return ((int)$propertyTotal - (int)$propertyCount);
-
-        return $propertyCount;
-        **/
         $query = "SELECT EntityId FROM SpatialEntities.Entities a
         INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
         INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
@@ -475,9 +458,8 @@ class UserProperty
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
         $propertyTotal = count($result);
 
-        return $propertyTotal;
+        return $propertyCount - $propertyTotal;
 
-        // return self::getPropertyAvailable($propertyId,3);
 
     }
 

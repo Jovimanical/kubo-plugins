@@ -321,7 +321,7 @@ class UserProperty
                 }
             }
 
-            /**
+            
             $keyId = self::camelToSnakeCase($key);
 
             if($keyId == "property_title_photos_data"){
@@ -335,7 +335,7 @@ class UserProperty
                 
             }
 
-            **/
+            
 
             $queries[] = "BEGIN TRANSACTION;" .
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .

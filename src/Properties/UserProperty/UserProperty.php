@@ -210,7 +210,7 @@ class UserProperty
         **/
 
         $blockResultPropertyId = $blockResult[0]['PropertyId'];
-        var_dump($blockResult);
+        //var_dump($blockResult);
         var_dump($blockResultPropertyId);
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
@@ -218,7 +218,7 @@ class UserProperty
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $blockResultPropertyId)";
         $parentBlockConnectQueryResult = DBConnectionFactory::getConnection()->query($parentBlockConnectQuery)->fetchAll(\PDO::FETCH_ASSOC);
  
-        $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult['a.PropertyId'];
+        $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult[0]['a.PropertyId'];
 
         var_dump($parentBlockConnectQueryResultPropertyId);
 

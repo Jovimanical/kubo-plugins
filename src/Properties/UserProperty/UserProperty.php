@@ -209,7 +209,7 @@ class UserProperty
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         **/
 
-        $blockResultPropertyId = $blockResult['c.PropertyId'];
+        $blockResultPropertyId = 1706; // $blockResult['c.PropertyId'];
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.LinkedEntity IN(SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN

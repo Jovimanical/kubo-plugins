@@ -223,13 +223,13 @@ class UserProperty
         }
 
         foreach ($blockResult as $key => $value) {
-            if (!isset($metadata[$value["FieldName"]]) OR $metadata[$value["FieldName"]] == "") {
+            if (!isset($metadata[$value["FieldName"]]) OR $metadata[$value["FieldName"]] == "" OR $metadata[$value["FieldName"]] == "[]") {
                 $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
             }
         }
 
         foreach ($propertyParentResult as $key => $value) {
-            if (!isset($metadata[$value["FieldName"]]) OR $metadata[$value["FieldName"]] == "") {
+            if (!isset($metadata[$value["FieldName"]]) OR $metadata[$value["FieldName"]] == "" OR $metadata[$value["FieldName"]] == "[]") {
                 $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
             }
         }

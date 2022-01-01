@@ -209,7 +209,7 @@ class UserProperty
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         **/
 
-        $blockResultPropertyId = $blockResult['PropertyId'];
+        $blockResultPropertyId = $blockResult['c.PropertyId'][0];
         var_dump($blockResult);
         var_dump($blockResultPropertyId);
 

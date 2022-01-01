@@ -211,7 +211,7 @@ class UserProperty
 
         $blockResultPropertyId = $blockResult['c.PropertyId'];
 
-        echo $blockResultPropertyId;
+        var_dump($blockResultPropertyId);
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.LinkedEntity IN(SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -220,7 +220,7 @@ class UserProperty
  
         $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult['a.PropertyId'];
 
-        echo $parentBlockConnectQueryResultPropertyId;
+        var_dump($parentBlockConnectQueryResultPropertyId);
 
         $propertyParentQuery = "SELECT a.MetadataId, a.FieldName, a.FieldValue FROM Properties.UserPropertyMetadata a 
         LEFT JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId

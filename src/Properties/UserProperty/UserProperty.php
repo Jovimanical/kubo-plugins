@@ -209,8 +209,8 @@ class UserProperty
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         **/
 
-        $blockResultPropertyId = $blockResult['c.PropertyId'];
-
+        $blockResultPropertyId = $blockResult['PropertyId'];
+        var_dump($blockResult);
         var_dump($blockResultPropertyId);
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN

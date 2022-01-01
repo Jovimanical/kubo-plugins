@@ -198,19 +198,29 @@ class UserProperty
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $blockQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
-        WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+        $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+        WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId=$propertyId))";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        /** 
+        /**
         $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
         WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyFloor = $floorLevel AND  PropertyId=$propertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         **/
-        $propertyParentQuery = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata
-        WHERE PropertyId = (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity = (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-            SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = NULL AND a.PropertyId=$propertyId))";
+
+        $blockResultPropertyId = $blockResult['PropertyId'];
+
+        $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
+        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.LinkedEntity IN(SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $blockResultPropertyId)";
+        $parentBlockConnectQueryResult = DBConnectionFactory::getConnection()->query($parentBlockConnectQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult['PropertyId'];
+
+        $propertyParentQuery = "SELECT a.MetadataId, a.FieldName, a.FieldValue FROM Properties.UserPropertyMetadata a 
+        LEFT JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
+        INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId WHERE b.PropertyId =$parentBlockConnectQueryResultPropertyId))";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];
@@ -400,7 +410,7 @@ class UserProperty
 
     }
 
-    public static function getEstatePropertyTotal(int $propertyId)
+    public static function getEstatePropertyTotal(int $propertyId) // @todo refactor later
     {
 
 
@@ -427,7 +437,7 @@ class UserProperty
 
     }
 
-    public static function getEstatePropertyAvailable(int $propertyId)
+    public static function getEstatePropertyAvailable(int $propertyId) // @todo refactor later
     {
         $result = [];
 
@@ -460,6 +470,7 @@ class UserProperty
 
         return $propertyCount - $propertyTotal;
 
+        // return self::getPropertyAvailable($propertyId,3);
 
     }
 
@@ -637,7 +648,7 @@ class UserProperty
 
     }
 
-    public static function viewDeveloperName(int $userId) // @todo change name to something more proper e.g viewOrganizationName
+    public static function viewDeveloperName(int $userId) 
     {
         if($userId == 0){
             return "Parameter not set";

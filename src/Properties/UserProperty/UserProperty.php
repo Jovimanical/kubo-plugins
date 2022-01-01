@@ -211,15 +211,16 @@ class UserProperty
 
         $blockResultPropertyId = $blockResult[0]['PropertyId'];
         //var_dump($blockResult);
-        var_dump($blockResultPropertyId);
+       // var_dump($blockResultPropertyId);
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.LinkedEntity IN(SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $blockResultPropertyId)";
         $parentBlockConnectQueryResult = DBConnectionFactory::getConnection()->query($parentBlockConnectQuery)->fetchAll(\PDO::FETCH_ASSOC);
  
-        $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult[0]['a.PropertyId'];
+        $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult[0]['PropertyId'];
 
+        var_dump($parentBlockConnectQueryResult);
         var_dump($parentBlockConnectQueryResultPropertyId);
 
         $propertyParentQuery = "SELECT a.MetadataId, a.FieldName, a.FieldValue FROM Properties.UserPropertyMetadata a 

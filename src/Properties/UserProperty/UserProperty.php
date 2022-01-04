@@ -229,7 +229,7 @@ class UserProperty
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
-        var_dump($parentParentResult);
+        var_dump($propertyParentResult);
         foreach ($propertyParentResult as $keyId => $valueId) {
             if (!isset($metadata[$valueId["FieldName"]]) OR isset($metadata[$valueId["FieldName"]]) AND empty($metadata[$valueItem["FieldName"]]) OR isset($metadata[$valueId["FieldName"]]) AND $metadata[$valueId["FieldName"]] == "[]") {
                 $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];

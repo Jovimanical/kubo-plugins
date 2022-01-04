@@ -222,12 +222,12 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        //var_dump($blockResult);
+        var_dump($blockResult);
 
         foreach ($blockResult as $keyItem => $valueItem) {
-            if (empty($metadata[$valueItem["FieldName"]]) OR $metadata[$valueItem["FieldName"]] == "[]") {
+           // if (empty($metadata[$valueItem["FieldName"]]) OR $metadata[$valueItem["FieldName"]] == "[]") {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
-            }
+           // }
         }
        // var_dump($propertyParentResult);
         foreach ($propertyParentResult as $keyId => $valueId) {

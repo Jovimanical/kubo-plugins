@@ -197,19 +197,19 @@ class UserProperty
     {
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-     
+
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId))";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         $blockResultPropertyId = $blockResult[0]['PropertyId'] ?? 0;
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.LinkedEntity IN(SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $blockResultPropertyId)";
         $parentBlockConnectQueryResult = DBConnectionFactory::getConnection()->query($parentBlockConnectQuery)->fetchAll(\PDO::FETCH_ASSOC);
- 
+
         $parentBlockConnectQueryResultPropertyId = $parentBlockConnectQueryResult[0]['PropertyId'] ?? 0;
 
         $propertyParentQuery = "SELECT a.MetadataId, a.FieldName, a.FieldValue FROM Properties.UserPropertyMetadata a 
@@ -222,15 +222,15 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        foreach ($blockResult as $key => $value) {
-            if (!isset($metadata[$value["FieldName"]]) OR isset($metadata[$value["FieldName"]]) AND $metadata[$value["FieldName"]] == "" OR isset($metadata[$value["FieldName"]]) AND $metadata[$value["FieldName"]] == "[]") {
-                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+        foreach ($blockResult as $keyItem => $valueItem) {
+            if (!isset($metadata[$valueItem["FieldName"]]) OR isset($metadata[$valueItem["FieldName"]]) AND $metadata[$valueItem["FieldName"]] == "" OR isset($metadata[$value["FieldName"]]) AND $metadata[$valueItem["FieldName"]] == "[]") {
+                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
 
-        foreach ($propertyParentResult as $key => $value) {
-            if (!isset($metadata[$value["FieldName"]]) OR isset($metadata[$value["FieldName"]]) AND $metadata[$value["FieldName"]] == "" OR isset($metadata[$value["FieldName"]]) AND $metadata[$value["FieldName"]] == "[]") {
-                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+        foreach ($propertyParentResult as $keyId => $valueId) {
+            if (!isset($metadata[$valueId["FieldName"]]) OR isset($metadata[$valueId["FieldName"]]) AND $metadata[$valueId["FieldName"]] == "" OR isset($metadata[$valueId["FieldName"]]) AND $metadata[$valueId["FieldName"]] == "[]") {
+                $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];
             }
         }
 

@@ -225,16 +225,16 @@ class UserProperty
         //var_dump($blockResult);
 
         foreach ($blockResult as $keyItem => $valueItem) {
-            if (empty($metadata[$valueItem["FieldValue"]]) OR isset($metadata[$valueItem["FieldValue"]]) AND $metadata[$valueItem["FieldValue"]] == "[]" OR !isset($metadata[$valueItem["FieldValue"]])) {
+            if (isset($metadata[$valueItem["FieldValue"]]) AND empty($metadata[$valueItem["FieldValue"]]) OR isset($metadata[$valueItem["FieldValue"]]) AND $metadata[$valueItem["FieldValue"]] == "[]" OR !isset($metadata[$valueItem["FieldValue"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
        // var_dump($propertyParentResult);
-        foreach ($propertyParentResult as $keyId => $valueId) {
-            if (isset($metadata[$valueId["FieldValue"]]) AND empty($metadata[$valueId["FieldValue"]]) OR isset($metadata[$valueId["FieldValue"]]) AND $metadata[$valueId["FieldValue"]] == "[]" OR !isset($metadata[$valueId["FieldValue"]])) {
-                $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];
-            }
-        }
+       // foreach ($propertyParentResult as $keyId => $valueId) {
+        //    if (isset($metadata[$valueId["FieldValue"]]) AND empty($metadata[$valueId["FieldValue"]]) OR isset($metadata[$valueId["FieldValue"]]) AND $metadata[$valueId["FieldValue"]] == "[]" OR !isset($metadata[$valueId["FieldValue"]])) {
+        //        $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];
+        //    }
+       //}
 
         return $metadata;
     }

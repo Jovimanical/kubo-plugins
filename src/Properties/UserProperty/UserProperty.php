@@ -223,13 +223,13 @@ class UserProperty
         }
 
         foreach ($blockResult as $keyItem => $valueItem) {
-            if (!isset($metadata[$valueItem["FieldName"]]) OR isset($metadata[$valueItem["FieldName"]]) AND $metadata[$valueItem["FieldName"]] == "" OR isset($metadata[$value["FieldName"]]) AND $metadata[$valueItem["FieldName"]] == "[]") {
+            if (!isset($metadata[$valueItem["FieldName"]]) OR isset($metadata[$valueItem["FieldName"]]) AND empty($metadata[$valueItem["FieldName"]]) OR isset($metadata[$value["FieldName"]]) AND $metadata[$valueItem["FieldName"]] == "[]") {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
 
         foreach ($propertyParentResult as $keyId => $valueId) {
-            if (!isset($metadata[$valueId["FieldName"]]) OR isset($metadata[$valueId["FieldName"]]) AND $metadata[$valueId["FieldName"]] == "" OR isset($metadata[$valueId["FieldName"]]) AND $metadata[$valueId["FieldName"]] == "[]") {
+            if (!isset($metadata[$valueId["FieldName"]]) OR isset($metadata[$valueId["FieldName"]]) AND empty($metadata[$valueItem["FieldName"]]) OR isset($metadata[$valueId["FieldName"]]) AND $metadata[$valueId["FieldName"]] == "[]") {
                 $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];
             }
         }

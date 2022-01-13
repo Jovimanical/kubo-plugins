@@ -6,7 +6,7 @@
  * available in the root level of this project
  *
  * @license MIT
- * @author Samuel Adeshina <samueladeshina73@gmail.com>
+ * @author Sixtus Onumajuru <jigga.e10@gmail.com>
  *
  */
 
@@ -15,13 +15,14 @@ namespace KuboPlugin\Properties\UserEnquiry;
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
 use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
+use KuboPlugin\Properties\UserProperty;
 
 /**
  * class KuboPlugin\Properties\UserEnquiry
  *
  * Enquiry Controller
  *
- * @author Samuel Adeshina <samueladeshina73@gmail.com>
+ * @author Sixtus Onumajuru <jigga.e10@gmail.com>
  * @since v0.0.1 24/08/2021 08:10
  */
 class Enquiry {
@@ -52,18 +53,7 @@ class Enquiry {
         return $result;
     }
 
-    public static function viewProperties(int $userId){
-        $query = "SELECT a.* FROM Properties.Enquiries a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($result as $key=>$Enquiry){
-            $result[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$Enquiry["LinkedEntity"]]);
-            $result[$key]["Metadata"] = self::viewEnquiryMetadata((int)$Enquiry["EnquiryId"]);
-        }
-
-        return $result;
-    }
-
+   
     public static function viewEnquiry(int $userId,array $data){
         if($userId == 0 OR empty($data)){
             return "Parameters not set";
@@ -78,9 +68,14 @@ class Enquiry {
 
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
+       
+        
         $resultArr = [];
         foreach($result as $resultum){
+            
+            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
+            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+            
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));

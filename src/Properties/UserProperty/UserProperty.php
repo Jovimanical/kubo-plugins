@@ -285,8 +285,8 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
-        $test = print_r($metadata, true);
-        return $test;
+        //$test = print_r($metadata, true);
+        //return $test;
 
         if($propertyId == 0 OR empty($metadata)){
             return "Parameters not set";
@@ -336,9 +336,9 @@ class UserProperty
                 }
             }
 
-            $keyName = self::camelToSnakeCase($key);
+            $keyId = self::camelToSnakeCase($key);
 
-            if($keyName == "property_title_photos_data"){
+            if($keyId == "property_title_photos_data"){
                 foreach ($value as $keyItem => $valueItem) {
                     $queries[] = "BEGIN TRANSACTION;" .
                     "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId; " .

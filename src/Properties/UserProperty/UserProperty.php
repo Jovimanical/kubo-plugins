@@ -338,9 +338,6 @@ class UserProperty
 
             $keyId = self::camelToSnakeCase($key);
 
-            
-            die(var_dump($keyId));
-
             if($keyId == "property_title_photos_data"){
                 foreach ($value as $keyItem => $valueItem) {
                     $queries[] = "BEGIN TRANSACTION;" .
@@ -360,6 +357,7 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
         }
+        die(var_dump($queries));
 
         $query = implode(";", $queries);
 

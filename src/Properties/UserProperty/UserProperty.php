@@ -285,8 +285,8 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
-        //$test = print_r($metadata, true);
-        //return $test;
+        $test = print_r($metadata, true);
+        return $test;
 
         if($propertyId == 0 OR empty($metadata)){
             return "Parameters not set";

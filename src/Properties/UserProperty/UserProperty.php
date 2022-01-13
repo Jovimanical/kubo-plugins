@@ -336,10 +336,9 @@ class UserProperty
                 }
             }
 
-            
-            $keyId = self::camelToSnakeCase($key);
+            $keyName = self::camelToSnakeCase($key);
 
-            if($keyId == "property_title_photos_data"){
+            if($keyName == "property_title_photos_data"){
                 foreach ($value as $keyItem => $valueItem) {
                     $queries[] = "BEGIN TRANSACTION;" .
                     "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId; " .
@@ -349,7 +348,6 @@ class UserProperty
                 }
 
             }
-            
 
 
             $queries[] = "BEGIN TRANSACTION;" .

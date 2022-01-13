@@ -121,7 +121,7 @@ class UserInfo
         $query = "SELECT UserId,FirstName,LastName,ProfilePhotoUrl,PhoneNumber FROM Users.UserInfo WHERE UserId=$userId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($result as $keyItem => $valueItem) {
-            $valueItem = json_decode($valueItem, true);
+           // $valueItem = json_decode($valueItem, true);
             foreach ($valueItem as $keyId => $valueId) {
                 $resultData['profile'][$keyId] = $valueId;
             }

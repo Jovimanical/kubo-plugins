@@ -115,6 +115,9 @@ class Enquiry {
         // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
         $resultArr = [];
         foreach($result as $resultum){
+            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
+            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+            
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -155,6 +158,9 @@ class Enquiry {
 
         $resultArr = [];
         foreach($result as $resultum){
+            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
+            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+            
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -196,6 +202,9 @@ class Enquiry {
 
         $resultArr = [];
         foreach($result as $resultum){
+            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
+            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+            
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -235,6 +244,9 @@ class Enquiry {
 
         $resultArr = [];
         foreach($result as $resultum){
+            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
+            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+            
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -284,6 +296,9 @@ class Enquiry {
         foreach ($results as $key=>$result){
             $results[$key]["Entity"] = $EnquiryChildren[$result["LinkedEntity"]] ?? [];
             $results[$key]["Metadata"] = $childrenMetadata[$result["EnquiryId"]] ?? [];
+            $results[$key]["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $result["PropertyId"]);
+            $results[$key]["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $result["PropertyId"]);
+            
         }
 
         return $results;

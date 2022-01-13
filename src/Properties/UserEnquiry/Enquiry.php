@@ -276,6 +276,9 @@ class Enquiry {
         if (count($result) > 0){
             $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
             $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+            $results[$key]["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $result["PropertyId"]);
+            $results[$key]["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $result["PropertyId"]);
+            
         }
 
         return $result;

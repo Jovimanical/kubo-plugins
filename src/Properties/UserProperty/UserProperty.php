@@ -122,9 +122,16 @@ class UserProperty
         return $result;
     }
 
-    public static function viewProperties(int $userId)
+    public static function viewProperties(int $userId, array $data = [])
     {
-        $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL";
+        $fetch = "FIRST";
+        $offset = 0;
+
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+        $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.UserId = $userId AND b.EntityParent IS NULL ORDER BY a.PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($result as $key => $property) {

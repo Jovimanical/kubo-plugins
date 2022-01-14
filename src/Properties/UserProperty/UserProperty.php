@@ -287,6 +287,7 @@ class UserProperty
         $queries = [];
         //$test = print_r($metadata, true);
         //return $test;
+        $counter = 0;
 
         if($propertyId == 0 OR empty($metadata)){
             return "Parameters not set";
@@ -351,11 +352,11 @@ class UserProperty
 
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "DECLARE @rowcount INT;".
+                "DECLARE @rowcount$counter++ INT;".
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
-                "SET @rowcount = @@ROWCOUNT;" .
+                "SET @rowcount$counter++ = @@ROWCOUNT;" .
                 "BEGIN TRY " .
-                "IF @rowcount = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                "IF @rowcount$counter++ = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
         }

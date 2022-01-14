@@ -363,7 +363,7 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
         }
-        //die(var_dump($queries));
+        die(var_dump($queries));
 
         $query = implode(";", $queries);
 

@@ -355,13 +355,13 @@ class UserProperty
                 $counter++ .
                 "DECLARE @rowcount".$counter." INT;".
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
-                "SET @rowcount".$counter." = @@ROWCOUNT;" .
+                "SET @rowcount".$counter." = @@ROWCOUNT " .
                 "BEGIN TRY " .
                 "IF @rowcount".$counter." = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
         }
-        die(var_dump($queries));
+        //die(var_dump($queries));
 
         $query = implode(";", $queries);
 

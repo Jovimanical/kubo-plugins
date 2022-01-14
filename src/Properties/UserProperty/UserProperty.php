@@ -350,9 +350,11 @@ class UserProperty
 
             }
 
+            
+            $counter++;
 
-            $queries[] = "BEGIN TRANSACTION;" .
-                $counter++ .
+
+            $queries[] = "BEGIN TRANSACTION;".
                 "DECLARE @rowcount".$counter." INT;".
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
                 "SET @rowcount".$counter." = @@ROWCOUNT " .

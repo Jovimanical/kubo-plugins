@@ -341,7 +341,7 @@ class UserProperty
             if($keyId == "property_title_photos_data"){
                 foreach ($value as $keyItem => $valueItem) {
                     $queries[] = "BEGIN TRANSACTION;" .
-                    "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId; " .
+                    "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                     "COMMIT TRANSACTION;";
                     unlink("files/$valueItem");
@@ -351,9 +351,11 @@ class UserProperty
 
 
             $queries[] = "BEGIN TRANSACTION;" .
-                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId; " .
+                "DECLARE @rowcount INT;".
+                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                "SET @rowcount = @@ROWCOUNT" .
                 "BEGIN TRY " .
-                "IF @@ROWCOUNT = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                "IF @rowcount = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
         }

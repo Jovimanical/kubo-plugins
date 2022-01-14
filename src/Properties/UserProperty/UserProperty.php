@@ -236,7 +236,7 @@ class UserProperty
         // var_dump($blockResult);
 
         foreach ($blockResult as $keyItem => $valueItem) {
-            if (isset($metadata[$valueItem["FieldName"]]) AND empty($metadata[$valueItem["FieldValue"]]) OR isset($metadata[$valueItem["FieldName"]]) AND $metadata[$valueItem["FieldValue"]] == "[]" OR !isset($metadata[$valueItem["FieldName"]])) {
+            if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }

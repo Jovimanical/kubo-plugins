@@ -53,7 +53,7 @@ class Enquiry {
         return $result;
     }
 
-   
+
     public static function viewEnquiry(int $userId,array $data){
         if($userId == 0 OR empty($data)){
             return "Parameters not set";
@@ -68,14 +68,14 @@ class Enquiry {
 
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-       
-        
+
         $resultArr = [];
         foreach($result as $resultum){
-            
+
             $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
             $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-            
+            $resultum["Property"] = UserProperty::viewProperty((int) $resultum["PropertyId"]);
+
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
@@ -117,7 +117,7 @@ class Enquiry {
         foreach($result as $resultum){
             $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
             $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-            
+
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -160,7 +160,7 @@ class Enquiry {
         foreach($result as $resultum){
             $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
             $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-            
+
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -175,8 +175,6 @@ class Enquiry {
         //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
-
-        
 
         return $resultArr;
     }
@@ -204,7 +202,7 @@ class Enquiry {
         foreach($result as $resultum){
             $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
             $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-            
+
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -220,7 +218,7 @@ class Enquiry {
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
-        
+
 
         return $resultArr;
     }
@@ -246,7 +244,7 @@ class Enquiry {
         foreach($result as $resultum){
             $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
             $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-            
+
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
@@ -262,7 +260,7 @@ class Enquiry {
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
-        
+
 
         return $resultArr;
     }
@@ -278,7 +276,7 @@ class Enquiry {
             $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
             $results[$key]["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $result["PropertyId"]);
             $results[$key]["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $result["PropertyId"]);
-            
+
         }
 
         return $result;
@@ -301,7 +299,7 @@ class Enquiry {
             $results[$key]["Metadata"] = $childrenMetadata[$result["EnquiryId"]] ?? [];
             $results[$key]["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $result["PropertyId"]);
             $results[$key]["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $result["PropertyId"]);
-            
+
         }
 
         return $results;
@@ -323,7 +321,7 @@ class Enquiry {
     }
 
     public static function viewEnquiryChildrenMetadata(int $parentId){
-        $query = "SELECT a.* FROM Properties.EnquiryMetadata a 
+        $query = "SELECT a.* FROM Properties.EnquiryMetadata a
                     INNER JOIN Properties.Enquiries b ON a.EnquiryId = b.EnquiryId
                     INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
                     WHERE c.EntityParent = $parentId";

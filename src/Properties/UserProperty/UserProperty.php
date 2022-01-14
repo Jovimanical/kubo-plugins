@@ -212,6 +212,7 @@ class UserProperty
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId))";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
+        /**
         $blockResultPropertyId = $blockResult[0]['PropertyId'] ?? 0;
 
         $parentBlockConnectQuery = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN
@@ -225,16 +226,17 @@ class UserProperty
         LEFT JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId WHERE b.PropertyId = $parentBlockConnectQueryResultPropertyId";
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
+        **/
 
         $metadata = [];
         foreach ($result as $key => $value) {
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        //var_dump($blockResult);
+        // var_dump($blockResult);
 
         foreach ($blockResult as $keyItem => $valueItem) {
-            if (isset($metadata[$valueItem["FieldValue"]]) AND empty($metadata[$valueItem["FieldValue"]]) OR isset($metadata[$valueItem["FieldValue"]]) AND $metadata[$valueItem["FieldValue"]] == "[]" OR !isset($metadata[$valueItem["FieldValue"]])) {
+            if (isset($metadata[$valueItem["FieldName"]]) AND empty($metadata[$valueItem["FieldValue"]]) OR isset($metadata[$valueItem["FieldName"]]) AND $metadata[$valueItem["FieldValue"]] == "[]" OR !isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }

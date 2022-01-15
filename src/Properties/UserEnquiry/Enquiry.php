@@ -36,7 +36,7 @@ class Enquiry {
         $email = $data["email"] ?? null;
         $phone = $data["phone"] ?? null;
         $email = $data["budget"] ?? null;
-        $phone = $data["msg"] ?? null;
+        $msg = $data["msg"] ?? null;
 
         $messageJson = serialize($messagePayload);
 

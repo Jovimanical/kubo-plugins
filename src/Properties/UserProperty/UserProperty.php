@@ -458,10 +458,10 @@ class UserProperty
         }
 
         //Fetch total estate property units
-        $query = "SELECT EntityId FROM SpatialEntities.Entities 
-        WHERE SpatialEntities.Entities.EntityParent 
-        IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
-        WHERE SpatialEntities.Entities.EntityParent 
+        $query = "SELECT EntityId FROM SpatialEntities.Entities
+        WHERE SpatialEntities.Entities.EntityParent
+        IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+        WHERE SpatialEntities.Entities.EntityParent
         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
          WHERE PropertyId = $propertyId))";
 

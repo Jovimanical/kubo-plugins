@@ -94,7 +94,7 @@ class Enquiry {
                                         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
                                         WHERE PropertyId = ".$resultum['PropertyId']."))";
 
-            $propQueries[] .= "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId;"."SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            $propQueries[] .= "SELECT * FROM Properties.UserProperty WHERE PropertyId = ".$resultum['PropertyId'].";"."SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
                              WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
                              SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = ".$resultum['PropertyId']."))";
 

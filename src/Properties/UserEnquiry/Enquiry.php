@@ -84,7 +84,7 @@ class Enquiry {
                                      IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
                                      WHERE SpatialEntities.Entities.EntityParent
                                      IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-                                     WHERE PropertyId = ".$resultum['PropertyId']."))";
+                                     WHERE PropertyId = ".$resultum['PropertyId']."))".";";
 
             $propAvailableQueries[] .= "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
                                         INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
@@ -92,15 +92,17 @@ class Enquiry {
                                         WHERE c.FieldName = 'property_status' AND c.FieldValue != 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
                                         WHERE SpatialEntities.Entities.EntityParent
                                         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-                                        WHERE PropertyId = ".$resultum['PropertyId']."))";
+                                        WHERE PropertyId = ".$resultum['PropertyId']."))".";";
 
-            $propQueries[] .= "SELECT * FROM Properties.UserProperty WHERE PropertyId = ".$resultum['PropertyId'].";"."SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
-                             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-                             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = ".$resultum['PropertyId']."))";
+           // $propQueries[] .= "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+           //                  WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+           //                  SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = ".$resultum['PropertyId']."))";
+
+                             // "SELECT * FROM Properties.UserProperty WHERE PropertyId = ".$resultum['PropertyId'].";".
 
            // $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
            // $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-           // $resultum["Property"] = UserProperty::viewProperty((int) $resultum["PropertyId"]);
+            $resultum["Property"] = UserProperty::viewProperty((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
@@ -114,15 +116,15 @@ class Enquiry {
 
         $propTotalQuery = implode(";", $propTotalQueries);
         $propAvailableQuery = implode(";", $propAvailableQueries);
-        $propQuery = implode(";", $propQueries);
+      //  $propQuery = implode(";", $propQueries);
 
         $propTotalResult = DBConnectionFactory::getConnection()->query($propTotalQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $propAvailableResult = DBConnectionFactory::getConnection()->query($propAvailableQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        $propResult = DBConnectionFactory::getConnection()->query($propQuery)->fetchAll(\PDO::FETCH_ASSOC);
+       // $propResult = DBConnectionFactory::getConnection()->query($propQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         array_push($resultArr,$propTotalResult);
         array_push($resultArr,$propAvailableResult);
-        array_push($resultArr,$propResult);
+       // array_push($resultArr,$propResult);
         /**
         $metadata = [];
         foreach ($result as $key => $value) {

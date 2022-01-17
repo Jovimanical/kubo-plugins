@@ -49,6 +49,10 @@ class UserProperty {
         return UserProperty\UserProperty::viewPropertyMetadata($propertyId);
     }
 
+    public static function viewPropertyInfo(int $propertyId){
+        return UserProperty\UserProperty::viewPropertyInfo($propertyId);
+    }
+
     public static function editPropertyMetadata(int $propertyId, array $data = []){
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }

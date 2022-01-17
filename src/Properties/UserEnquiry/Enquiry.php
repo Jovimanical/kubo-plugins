@@ -71,38 +71,11 @@ class Enquiry {
 
         $resultArr = [];
 
-        $propTotalQueries = [];
-        $propAvailableQueries = [];
-        $propQueries = [];
-
         foreach($result as $resultum){
 
-            //Fetch total estate property units
+            //Fetching estate property data
 
-            $propTotalQueries[] .=  "SELECT COUNT(EntityId) FROM SpatialEntities.Entities
-                                     WHERE SpatialEntities.Entities.EntityParent
-                                     IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
-                                     WHERE SpatialEntities.Entities.EntityParent
-                                     IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-                                     WHERE PropertyId = ".$resultum['PropertyId']."))".";";
-
-            $propAvailableQueries[] .= "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
-                                        INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
-                                        INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
-                                        WHERE c.FieldName = 'property_status' AND c.FieldValue != 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
-                                        WHERE SpatialEntities.Entities.EntityParent
-                                        IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-                                        WHERE PropertyId = ".$resultum['PropertyId']."))".";";
-
-           // $propQueries[] .= "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
-           //                  WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-           //                  SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = ".$resultum['PropertyId']."))";
-
-                             // "SELECT * FROM Properties.UserProperty WHERE PropertyId = ".$resultum['PropertyId'].";".
-
-           // $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
-           // $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
-            $resultum["Property"] = UserProperty::viewProperty((int) $resultum["PropertyId"]);
+            $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
@@ -111,32 +84,6 @@ class Enquiry {
             array_push($resultArr,$resultum);
 
         }
-
-        $meta = [];
-
-        $propTotalQuery = implode(";", $propTotalQueries);
-        $propAvailableQuery = implode(";", $propAvailableQueries);
-      //  $propQuery = implode(";", $propQueries);
-
-        $propTotalResult = DBConnectionFactory::getConnection()->query($propTotalQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        $propAvailableResult = DBConnectionFactory::getConnection()->query($propAvailableQuery)->fetchAll(\PDO::FETCH_ASSOC);
-       // $propResult = DBConnectionFactory::getConnection()->query($propQuery)->fetchAll(\PDO::FETCH_ASSOC);
-
-        array_push($resultArr,$propTotalResult);
-        array_push($resultArr,$propAvailableResult);
-       // array_push($resultArr,$propResult);
-        /**
-        $metadata = [];
-        foreach ($result as $key => $value) {
-            $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
-        }
-
-        foreach ($blockResult as $keyItem => $valueItem) {
-            if (!isset($metadata[$valueItem["FieldName"]])) {
-                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
-            }
-        }
-        **/
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){

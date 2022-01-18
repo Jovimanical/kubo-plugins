@@ -71,11 +71,43 @@ class Enquiry {
 
         $resultArr = [];
 
+        $resultKey = [];
+
+        $propQuery = [];
+        $blockQuery = [];
+
+        $totalQuery = [];
+        $availQuery = [];
+
         foreach($result as $resultum){
 
             //Fetching estate property data
+            $resultPropertyId = $resultum['PropertyId'];
 
-            $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
+            $propQuery .= "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId;";
+
+            $blockQuery .= "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId));";
+
+            array_push($resultKey[],$resultum['PropertyId']);
+
+            $totalQuery .= "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultPropertyId));";
+
+            $availQuery .= "SELECT EntityId FROM SpatialEntities.Entities a
+            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+            WHERE c.FieldName = 'property_status' AND c.FieldValue != 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultPropertyId))";
+
+            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
@@ -84,6 +116,21 @@ class Enquiry {
             array_push($resultArr,$resultum);
 
         }
+
+        $propResult = DBConnectionFactory::getConnection()->query($propQuery)->fetchAll(\PDO::FETCH_ASSOC);
+        $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
+        $totalResult = DBConnectionFactory::getConnection()->query($totalQuery)->fetchAll(\PDO::FETCH_ASSOC);
+        $availResult = DBConnectionFactory::getConnection()->query($availQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $metadata = [];
+
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResult);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResult);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResult);
+        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResult);
+
+
+        array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){

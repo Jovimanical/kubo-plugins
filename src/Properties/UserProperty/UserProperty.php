@@ -265,15 +265,14 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
 
-        $metadata["PropertyTotal"] = self::getEstatePropertyTotal((int) $propertyId);
-        $metadata["PropertyAvailable"] = self::getEstatePropertyAvailable((int) $propertyId);
+        $metadata["PropertyTotal"] = self::getEstatePropertyTotal($propertyId);
+        $metadata["PropertyAvailable"] = self::getEstatePropertyAvailable($propertyId);
 
         return $metadata;
     }

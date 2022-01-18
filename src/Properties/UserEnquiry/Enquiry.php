@@ -122,9 +122,11 @@ class Enquiry {
         $totalQueries = implode(";", $totalQuery);
         $availQueries = implode(";", $availQuery);
 
-        $propResult = DBConnectionFactory::getConnection()->query($propQueries)->fetchAll(\PDO::FETCH_ASSOC);
-        DBConnectionFactory::getConnection()->query($propQueries)->nextRowset();
-        $propResult = DBConnectionFactory::getConnection()->query($propQueries)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+        $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+        $stmtProp->nextRowset();
+        $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
         $blockResult = DBConnectionFactory::getConnection()->query($blockQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);

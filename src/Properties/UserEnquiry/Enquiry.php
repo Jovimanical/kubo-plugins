@@ -127,7 +127,7 @@ class Enquiry {
         $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);
 
-        die(var_dump($propQuery));
+        die(var_dump($propQueries));
 
         $metadata = [];
 

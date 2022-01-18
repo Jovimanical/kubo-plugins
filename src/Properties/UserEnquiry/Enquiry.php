@@ -124,17 +124,28 @@ class Enquiry {
 
 
         $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
-        $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
         $stmtProp->nextRowset();
         $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propResultArr = [];
+
+        do {
+            
+            $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+            if($propResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$propResult);
+            }
+        } while($stmtProp->nextRowset());
+
         $blockResult = DBConnectionFactory::getConnection()->query($blockQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);
 
-         //die(var_dump($propResult));
+         die(var_dump($propResultArr));
          $r = [];
 
-         foreach($propResult as $v){
+         foreach($propResultArr as $v){
              $r[] = $v;
 
          }

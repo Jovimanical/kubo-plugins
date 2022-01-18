@@ -90,7 +90,7 @@ class Enquiry {
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
                 SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId));";
 
-            array_push($resultKey[],$resultum['PropertyId']);
+            array_push($resultKey,$resultum['PropertyId']);
 
             $totalQuery .= "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
             WHERE SpatialEntities.Entities.EntityParent

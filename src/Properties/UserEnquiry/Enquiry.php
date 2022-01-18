@@ -131,7 +131,7 @@ class Enquiry {
             $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
             if($propResult) {
                 // Add $rowset to array
-                array_push($propResultArr,$propResult);
+               // array_push($propResultArr,$propResult);
             }
         } while($stmtProp->nextRowset());
 
@@ -145,7 +145,7 @@ class Enquiry {
             $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
             if($blockResult) {
                 // Add $rowset to array
-                array_push($propResultArr,$blockResult);
+               // array_push($propResultArr,$blockResult);
             }
         } while($stmtBlock->nextRowset());
 
@@ -155,7 +155,7 @@ class Enquiry {
             $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
             if($totalResult) {
                 // Add $rowset to array
-                array_push($propResultArr,$totalResult);
+              //  array_push($propResultArr,$totalResult);
             }
         } while($stmtTotal->nextRowset());
 
@@ -165,7 +165,7 @@ class Enquiry {
             $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
             if($availResult) {
                 // Add $rowset to array
-                array_push($propResultArr,$availResult);
+               // array_push($propResultArr,$availResult);
             }
         } while($stmtAvail->nextRowset());
 

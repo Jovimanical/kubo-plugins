@@ -124,8 +124,8 @@ class Enquiry {
 
 
         $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
-        $stmtProp->nextRowset();
-        $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+        //$stmtProp->nextRowset();
+        //$propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
 
         $propResultArr = [];
 

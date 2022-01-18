@@ -123,6 +123,9 @@ class Enquiry {
         $availQueries = implode(";", $availQuery);
 
         $propResultArr = [];
+        $blockResultArr = [];
+        $totalResultArr = [];
+        $availResultArr = [];
 
         $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
 

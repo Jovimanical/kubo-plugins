@@ -129,6 +129,8 @@ class Enquiry {
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResult);
         $metadata['PropertyAvailable'] = array_combine($resultKey,$availResult);
 
+        die(var_dump($metadata));
+
 
         array_push($resultArr,$metadata);
 

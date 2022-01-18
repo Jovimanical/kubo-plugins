@@ -84,11 +84,11 @@ class Enquiry {
             //Fetching estate property data
             $resultPropertyId = $resultum['PropertyId'];
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId;";
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId));";
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
 
             array_push($resultKey,$resultum['PropertyId']);
 
@@ -97,7 +97,7 @@ class Enquiry {
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-            WHERE PropertyId = $resultPropertyId));";
+            WHERE PropertyId = $resultPropertyId))";
 
             $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
@@ -105,7 +105,7 @@ class Enquiry {
             WHERE c.FieldName = 'property_status' AND c.FieldValue != 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-            WHERE PropertyId = $resultPropertyId));";
+            WHERE PropertyId = $resultPropertyId))";
 
             // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
@@ -127,7 +127,7 @@ class Enquiry {
         $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);
 
-        die(var_dump($resultKey));
+        // die(var_dump($resultKey));
 
         $metadata = [];
 

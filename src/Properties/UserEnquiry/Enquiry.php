@@ -127,7 +127,7 @@ class Enquiry {
         $totalResult = DBConnectionFactory::getConnection()->query($totalQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
-        die(var_dump($propResult));
+        die(var_dump($resultKey));
 
         $metadata = [];
 
@@ -140,8 +140,8 @@ class Enquiry {
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
-        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
-           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
        die(var_dump($resultArr));

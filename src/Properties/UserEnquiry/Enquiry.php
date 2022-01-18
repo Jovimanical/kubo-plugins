@@ -99,13 +99,13 @@ class Enquiry {
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultPropertyId));";
 
-            $availQuery .= "SELECT EntityId FROM SpatialEntities.Entities a
+            $availQuery .= "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
             INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
             WHERE c.FieldName = 'property_status' AND c.FieldValue != 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-            WHERE PropertyId = $resultPropertyId))";
+            WHERE PropertyId = $resultPropertyId));";
 
             // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
@@ -116,6 +116,11 @@ class Enquiry {
             array_push($resultArr,$resultum);
 
         }
+
+        $propQuery = implode(";", $propQuery);
+        $blockQuery = implode(";", $blockQuery);
+        $totalQuery = implode(";", $totalQuery);
+        $availQuery = implode(";", $availQuery);
 
         $propResult = DBConnectionFactory::getConnection()->query($propQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);

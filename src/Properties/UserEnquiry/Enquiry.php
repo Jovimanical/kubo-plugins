@@ -122,15 +122,12 @@ class Enquiry {
         $totalQueries = implode(";", $totalQuery);
         $availQueries = implode(";", $availQuery);
 
-
-        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
-        //$stmtProp->nextRowset();
-        //$propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
-
         $propResultArr = [];
 
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+
         do {
-            
+
             $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
             if($propResult) {
                 // Add $rowset to array
@@ -138,18 +135,40 @@ class Enquiry {
             }
         } while($stmtProp->nextRowset());
 
-        $blockResult = DBConnectionFactory::getConnection()->query($blockQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);
 
-         die(var_dump($propResultArr));
-         $r = [];
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
 
-         foreach($propResultArr as $v){
-             $r[] = $v;
+        do {
 
-         }
-         die(var_dump($r));
+            $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if($blockResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$blockResult);
+            }
+        } while($stmtBlock->nextRowset());
+
+        $stmtTotal = DBConnectionFactory::getConnection()->query($totalQueries);
+
+        do {
+            $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if($totalResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$totalResult);
+            }
+        } while($stmtTotal->nextRowset());
+
+        $stmtAvail = DBConnectionFactory::getConnection()->query($availQueries);
+
+        do {
+            $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
+            if($availResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$availResult);
+            }
+        } while($stmtAvail->nextRowset());
+
 
         $metadata = [];
 

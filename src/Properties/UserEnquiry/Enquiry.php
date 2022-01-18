@@ -131,12 +131,9 @@ class Enquiry {
             $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
             if($propResult) {
                 // Add $rowset to array
-               // array_push($propResultArr,$propResult);
+                array_push($propResultArr,$propResult);
             }
         } while($stmtProp->nextRowset());
-
-        $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
-        $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);
 
         $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
 
@@ -145,7 +142,7 @@ class Enquiry {
             $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
             if($blockResult) {
                 // Add $rowset to array
-               // array_push($propResultArr,$blockResult);
+                array_push($blockResultArr,$blockResult);
             }
         } while($stmtBlock->nextRowset());
 
@@ -155,7 +152,7 @@ class Enquiry {
             $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
             if($totalResult) {
                 // Add $rowset to array
-              //  array_push($propResultArr,$totalResult);
+                array_push($totalResultArr,$totalResult);
             }
         } while($stmtTotal->nextRowset());
 
@@ -165,17 +162,17 @@ class Enquiry {
             $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
             if($availResult) {
                 // Add $rowset to array
-               // array_push($propResultArr,$availResult);
+                array_push($availResultArr,$availResult);
             }
         } while($stmtAvail->nextRowset());
 
 
         $metadata = [];
 
-        $metadata['PropertyUnit'] = array_combine($resultKey,$propResult);
-        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResult);
-        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResult);
-        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResult);
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
+        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
 
         // die(var_dump($metadata));
 

@@ -134,9 +134,6 @@ class Enquiry {
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResult);
         $metadata['PropertyAvailable'] = array_combine($resultKey,$availResult);
 
-        die(var_dump($metadata));
-
-
         array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
@@ -144,6 +141,8 @@ class Enquiry {
         //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
            // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
+
+       die(var_dump($resultArr));
 
 
         return $resultArr;

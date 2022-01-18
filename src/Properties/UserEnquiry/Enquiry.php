@@ -127,6 +127,8 @@ class Enquiry {
         $totalResult = DBConnectionFactory::getConnection()->query($totalQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
+        die(var_dump($propResult));
+
         $metadata = [];
 
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResult);

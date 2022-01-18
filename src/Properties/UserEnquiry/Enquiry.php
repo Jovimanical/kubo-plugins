@@ -117,15 +117,15 @@ class Enquiry {
 
         }
 
-        $propQuery = implode(";", $propQuery);
-        $blockQuery = implode(";", $blockQuery);
-        $totalQuery = implode(";", $totalQuery);
-        $availQuery = implode(";", $availQuery);
+        $propQueries = implode(";", $propQuery);
+        $blockQueries = implode(";", $blockQuery);
+        $totalQueries = implode(";", $totalQuery);
+        $availQueries = implode(";", $availQuery);
 
-        $propResult = DBConnectionFactory::getConnection()->query($propQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        $totalResult = DBConnectionFactory::getConnection()->query($totalQuery)->fetchAll(\PDO::FETCH_ASSOC);
-        $availResult = DBConnectionFactory::getConnection()->query($availQuery)->fetchAll(\PDO::FETCH_ASSOC);
+        $propResult = DBConnectionFactory::getConnection()->query($propQueries)->fetchAll(\PDO::FETCH_ASSOC);
+        $blockResult = DBConnectionFactory::getConnection()->query($blockQueries)->fetchAll(\PDO::FETCH_ASSOC);
+        $totalResult = DBConnectionFactory::getConnection()->query($totalQueries)->fetchAll(\PDO::FETCH_ASSOC);
+        $availResult = DBConnectionFactory::getConnection()->query($availQueries)->fetchAll(\PDO::FETCH_ASSOC);
 
        // die(var_dump($resultKey));
 

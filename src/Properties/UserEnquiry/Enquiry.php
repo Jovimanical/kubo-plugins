@@ -127,7 +127,7 @@ class Enquiry {
         $totalResult = DBConnectionFactory::getConnection()->query($totalQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $availResult = DBConnectionFactory::getConnection()->query($availQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
-        die(var_dump($resultKey));
+       // die(var_dump($resultKey));
 
         $metadata = [];
 
@@ -135,6 +135,8 @@ class Enquiry {
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResult);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResult);
         $metadata['PropertyAvailable'] = array_combine($resultKey,$availResult);
+
+        die(var_dump($metadata));
 
         array_push($resultArr,$metadata);
 
@@ -144,7 +146,7 @@ class Enquiry {
           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
-       die(var_dump($resultArr));
+       // die(var_dump($resultArr));
 
 
         return $resultArr;

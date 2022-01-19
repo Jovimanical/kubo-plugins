@@ -62,13 +62,14 @@ class Enquiry {
         }
         $fetch = "FIRST";
         $offset = 0;
+        $limit = $data['limit'] ?? 1000;
 
         if($data['offset'] != 0){
             $fetch = "NEXT";
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -178,7 +179,7 @@ class Enquiry {
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
-        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+        $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         // die(var_dump($metadata));
 
@@ -202,6 +203,8 @@ class Enquiry {
         }
         $fetch = "FIRST";
         $offset = 0;
+        $limit = $data['limit'] ?? 1000;
+
         if($data['offset'] != 0){
             $fetch = "NEXT";
             $offset = $data['offset'];
@@ -210,7 +213,7 @@ class Enquiry {
         $fromDate = date('Y-m-d');
         $toDate = date('Y-m-d', strtotime('-7 days', strtotime(date('Y-m-d'))));
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"; 
+        $query = "SELECT * FROM Properties.Enquiries WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         //  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND
         // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
@@ -321,7 +324,7 @@ class Enquiry {
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
-        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+        $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         // die(var_dump($metadata));
 
@@ -345,6 +348,8 @@ class Enquiry {
         }
         $fetch = "FIRST";
         $offset = 0;
+        $limit = $data['limit'] ?? 1000;
+
         if($data['offset'] != 0){
             $fetch = "NEXT";
             $offset = $data['offset'];
@@ -354,7 +359,7 @@ class Enquiry {
         $toDate = date('Y-m-d', strtotime('-30 days', strtotime(date('Y-m-d'))));
 
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  <  $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  <  $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -464,7 +469,7 @@ class Enquiry {
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
-        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+        $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         // die(var_dump($metadata));
 
@@ -489,6 +494,8 @@ class Enquiry {
         }
         $fetch = "FIRST";
         $offset = 0;
+        $limit = $data['limit'] ?? 1000;
+
         if($data['offset'] != 0){
             $fetch = "NEXT";
             $offset = $data['offset'];
@@ -498,7 +505,7 @@ class Enquiry {
         $toDate = date('Y-m-d', strtotime('-90 days', strtotime(date('Y-m-d'))));
 
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  // EnquiryId = $EnquiryId
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -608,7 +615,7 @@ class Enquiry {
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
-        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+        $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         // die(var_dump($metadata));
 
@@ -634,13 +641,15 @@ class Enquiry {
         }
         $fetch = "FIRST";
         $offset = 0;
+        $limit = $data['limit'] ?? 1000;
+
         $searchTerm = $data['searchTerm'];
         if($data['offset'] != 0){
             $fetch = "NEXT";
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND EnquiryId LIKE '%$searchTerm%' OR DateCreated LIKE '%$searchTerm%' OR 'Name' LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' OR MessageJson LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";  
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND EnquiryId LIKE '%$searchTerm%' OR DateCreated LIKE '%$searchTerm%' OR 'Name' LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' OR MessageJson LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -750,7 +759,7 @@ class Enquiry {
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
-        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+        $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         // die(var_dump($metadata));
 
@@ -767,6 +776,8 @@ class Enquiry {
 
         return $resultArr;
     }
+
+    // @todo not been used for now 19/1/2022 
 
     public static function viewEnquiryChildren(int $EnquiryId){
         $query = "SELECT a.*, b.EntityParent FROM Properties.Enquiries a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.Enquiries WHERE EnquiryId = $EnquiryId)";

@@ -87,9 +87,7 @@ class Enquiry {
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId;"."SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
-            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -107,7 +105,7 @@ class Enquiry {
             $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
             INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
-            WHERE c.FieldName = 'property_status' AND c.FieldValue != 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultEstateId))";
@@ -217,25 +215,125 @@ class Enquiry {
         //  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND
         // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
         $resultArr = [];
+
+        $resultKey = [];
+
+        $propQuery = [];
+        $blockQuery = [];
+
+        $totalQuery = [];
+        $availQuery = [];
+
         foreach($result as $resultum){
-            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
-            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+
+            //Fetching estate property data
+            $resultPropertyId = $resultum['PropertyId'];
+            $resultEstateId = $resultum['EstateId'];
+
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+
+            $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
+
+            array_push($resultKey,$resultum['PropertyId']);
+
+            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
+            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
-            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
 
+        $propQueries = implode(";", $propQuery);
+        $blockQueries = implode(";", $blockQuery);
+        $totalQueries = implode(";", $totalQuery);
+        $availQueries = implode(";", $availQuery);
+
+        $propResultArr = [];
+        $blockResultArr = [];
+        $totalResultArr = [];
+        $availResultArr = [];
+
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+
+        do {
+
+            $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+            if($propResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$propResult);
+            }
+        } while($stmtProp->nextRowset());
+
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
+
+        do {
+
+            $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if($blockResult) {
+                // Add $rowset to array
+                array_push($blockResultArr,$blockResult);
+            }
+        } while($stmtBlock->nextRowset());
+
+        $stmtTotal = DBConnectionFactory::getConnection()->query($totalQueries);
+
+        do {
+            $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if($totalResult) {
+                // Add $rowset to array
+                array_push($totalResultArr,$totalResult);
+            }
+        } while($stmtTotal->nextRowset());
+
+        $stmtAvail = DBConnectionFactory::getConnection()->query($availQueries);
+
+        do {
+            $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
+            if($availResult) {
+                // Add $rowset to array
+                array_push($availResultArr,$availResult);
+            }
+        } while($stmtAvail->nextRowset());
+
+
+        $metadata = [];
+
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
+        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+
+        // die(var_dump($metadata));
+
+        array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
-        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
-           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
+       // die(var_dump($resultArr));
 
 
         return $resultArr;
@@ -260,24 +358,126 @@ class Enquiry {
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
+
+        $resultKey = [];
+
+        $propQuery = [];
+        $blockQuery = [];
+
+        $totalQuery = [];
+        $availQuery = [];
+
         foreach($result as $resultum){
-            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
-            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+
+            //Fetching estate property data
+            $resultPropertyId = $resultum['PropertyId'];
+            $resultEstateId = $resultum['EstateId'];
+
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+
+            $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
+
+            array_push($resultKey,$resultum['PropertyId']);
+
+            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
+            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
-            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
 
+        $propQueries = implode(";", $propQuery);
+        $blockQueries = implode(";", $blockQuery);
+        $totalQueries = implode(";", $totalQuery);
+        $availQueries = implode(";", $availQuery);
+
+        $propResultArr = [];
+        $blockResultArr = [];
+        $totalResultArr = [];
+        $availResultArr = [];
+
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+
+        do {
+
+            $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+            if($propResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$propResult);
+            }
+        } while($stmtProp->nextRowset());
+
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
+
+        do {
+
+            $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if($blockResult) {
+                // Add $rowset to array
+                array_push($blockResultArr,$blockResult);
+            }
+        } while($stmtBlock->nextRowset());
+
+        $stmtTotal = DBConnectionFactory::getConnection()->query($totalQueries);
+
+        do {
+            $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if($totalResult) {
+                // Add $rowset to array
+                array_push($totalResultArr,$totalResult);
+            }
+        } while($stmtTotal->nextRowset());
+
+        $stmtAvail = DBConnectionFactory::getConnection()->query($availQueries);
+
+        do {
+            $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
+            if($availResult) {
+                // Add $rowset to array
+                array_push($availResultArr,$availResult);
+            }
+        } while($stmtAvail->nextRowset());
+
+
+        $metadata = [];
+
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
+        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+
+        // die(var_dump($metadata));
+
+        array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
-        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
-           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
+
+       // die(var_dump($resultArr));
+
 
         return $resultArr;
     }
@@ -302,25 +502,125 @@ class Enquiry {
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
+
+        $resultKey = [];
+
+        $propQuery = [];
+        $blockQuery = [];
+
+        $totalQuery = [];
+        $availQuery = [];
+
         foreach($result as $resultum){
-            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
-            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+
+            //Fetching estate property data
+            $resultPropertyId = $resultum['PropertyId'];
+            $resultEstateId = $resultum['EstateId'];
+
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+
+            $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
+
+            array_push($resultKey,$resultum['PropertyId']);
+
+            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
+            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
-            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
 
+        $propQueries = implode(";", $propQuery);
+        $blockQueries = implode(";", $blockQuery);
+        $totalQueries = implode(";", $totalQuery);
+        $availQueries = implode(";", $availQuery);
+
+        $propResultArr = [];
+        $blockResultArr = [];
+        $totalResultArr = [];
+        $availResultArr = [];
+
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+
+        do {
+
+            $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+            if($propResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$propResult);
+            }
+        } while($stmtProp->nextRowset());
+
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
+
+        do {
+
+            $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if($blockResult) {
+                // Add $rowset to array
+                array_push($blockResultArr,$blockResult);
+            }
+        } while($stmtBlock->nextRowset());
+
+        $stmtTotal = DBConnectionFactory::getConnection()->query($totalQueries);
+
+        do {
+            $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if($totalResult) {
+                // Add $rowset to array
+                array_push($totalResultArr,$totalResult);
+            }
+        } while($stmtTotal->nextRowset());
+
+        $stmtAvail = DBConnectionFactory::getConnection()->query($availQueries);
+
+        do {
+            $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
+            if($availResult) {
+                // Add $rowset to array
+                array_push($availResultArr,$availResult);
+            }
+        } while($stmtAvail->nextRowset());
+
+
+        $metadata = [];
+
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
+        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+
+        // die(var_dump($metadata));
+
+        array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
-        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
-           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
+       // die(var_dump($resultArr));
 
 
         return $resultArr;
@@ -344,45 +644,128 @@ class Enquiry {
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
+
+        $resultKey = [];
+
+        $propQuery = [];
+        $blockQuery = [];
+
+        $totalQuery = [];
+        $availQuery = [];
+
         foreach($result as $resultum){
-            $resultum["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $resultum["PropertyId"]);
-            $resultum["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $resultum["PropertyId"]);
+
+            //Fetching estate property data
+            $resultPropertyId = $resultum['PropertyId'];
+            $resultEstateId = $resultum['EstateId'];
+
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+
+            $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
+
+            array_push($resultKey,$resultum['PropertyId']);
+
+            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
+            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
 
             $resultMsg = $resultum['MessageJson'];
 
-            $resultum['MessageJsonX'] = str_replace("&#39;","'",htmlspecialchars_decode(unserialize($resultMsg)));
-            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
             array_push($resultArr,$resultum);
 
         }
 
+        $propQueries = implode(";", $propQuery);
+        $blockQueries = implode(";", $blockQuery);
+        $totalQueries = implode(";", $totalQuery);
+        $availQueries = implode(";", $availQuery);
+
+        $propResultArr = [];
+        $blockResultArr = [];
+        $totalResultArr = [];
+        $availResultArr = [];
+
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+
+        do {
+
+            $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+            if($propResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$propResult);
+            }
+        } while($stmtProp->nextRowset());
+
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
+
+        do {
+
+            $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if($blockResult) {
+                // Add $rowset to array
+                array_push($blockResultArr,$blockResult);
+            }
+        } while($stmtBlock->nextRowset());
+
+        $stmtTotal = DBConnectionFactory::getConnection()->query($totalQueries);
+
+        do {
+            $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if($totalResult) {
+                // Add $rowset to array
+                array_push($totalResultArr,$totalResult);
+            }
+        } while($stmtTotal->nextRowset());
+
+        $stmtAvail = DBConnectionFactory::getConnection()->query($availQueries);
+
+        do {
+            $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
+            if($availResult) {
+                // Add $rowset to array
+                array_push($availResultArr,$availResult);
+            }
+        } while($stmtAvail->nextRowset());
+
+
+        $metadata = [];
+
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
+        $metadata['PropertyAvailable'] = array_combine($resultKey,$availResultArr);
+
+        // die(var_dump($metadata));
+
+        array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
-        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
-           // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
        // }
 
+       // die(var_dump($resultArr));
 
 
         return $resultArr;
-    }
-
-    public static function viewEnquiryByName(array $data){
-        $name = $data["name"] ?? 0;
-        $query = "SELECT * FROM Properties.Enquiries WHERE EnquiryTitle = '$name'";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        $result = $result[0] ?? [];
-        if (count($result) > 0){
-            $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId"=>$result["LinkedEntity"]]);
-            $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
-            $results[$key]["PropertyTotal"] = UserProperty::getEstatePropertyTotal((int) $result["PropertyId"]);
-            $results[$key]["PropertyAvailable"] = UserProperty::getEstatePropertyAvailable((int) $result["PropertyId"]);
-
-        }
-
-        return $result;
     }
 
     public static function viewEnquiryChildren(int $EnquiryId){

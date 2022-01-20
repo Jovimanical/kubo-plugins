@@ -259,7 +259,7 @@ class UserProperty
 
         } while($stmtResult->nextRowset());
 
-        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQuery);
 
         do {
 

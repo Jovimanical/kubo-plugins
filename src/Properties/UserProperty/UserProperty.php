@@ -251,20 +251,15 @@ class UserProperty
             if($resultArr) {
                 // Add $rowset to array
                 array_push($resultSetArr,$resultArr);
-            }
-        } while($stmtResult->nextRowset());
-
-
-
-            foreach ($results as $keyId => $valueId) {
-                foreach ($resultSetArr as $keyItem => $valueItem) {
-                    if($keyId = $keyItem){
-                        $results[$keyId]["Metadata"] = $valueItem;
-                    }
+                foreach ($results as $keyId => $valueId) {
+                        $results[$keyId]["Metadata"] = $resultArr;
 
                 }
 
             }
+
+        } while($stmtResult->nextRowset());
+
 
            // die(var_dump($results));
 

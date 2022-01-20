@@ -242,7 +242,7 @@ class UserProperty
 
             $resultData = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
     
-            die(var_dump($resultData));
+            die(var_dump($queries));
             foreach ($resultData as $keyItem => $resultItem) {
                 foreach ($resultItem as $keyId => $valueId) {
                     $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];

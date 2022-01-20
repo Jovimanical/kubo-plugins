@@ -253,7 +253,10 @@ class UserProperty
             $unitResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
             if($unitResultArr) {
                 // Add $rowset to array
-                array_push($unitResultSetArr,$unitResultArr);
+               // array_push($unitResultSetArr,$unitResultArr);
+                foreach ($unitResultArr as $keySet => $valueSet) {
+                    $metadata[$valueSet["FieldName"]] = ["FieldValue" => $valueSet["FieldValue"], "MetadataId" => $valueSet["MetadataId"]];
+                }
 
             }
 
@@ -266,20 +269,14 @@ class UserProperty
             $blockResultArr = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
             if($blockResultArr) {
                 // Add $rowset to array
-                array_push($blockResultSetArr,$blockResultArr);
+                // array_push($blockResultSetArr,$blockResultArr);
+                foreach ($blockResultArr as $keyItem => $valueItem) {
+                    if (!isset($metadata[$valueItem["FieldName"]])) {
+                        $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                    }
+                }
             }
         } while($stmtBlock->nextRowset());
-
-
-        foreach ($unitResultSetArr as $keyId => $valueId) {
-            $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];
-        }
-
-        foreach ($blockResultSetArr as $keyItem => $valueItem) {
-            if (!isset($metadata[$valueItem["FieldName"]])) {
-                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
-            }
-        }
 
         foreach ($results as $keyId => $valueId) {
             $results[$keyId]["Metadata"] = $metadata;

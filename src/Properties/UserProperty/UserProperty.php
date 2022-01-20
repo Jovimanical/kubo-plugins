@@ -241,9 +241,20 @@ class UserProperty
 
             $query = implode(";", $queries);
 
-            $resultData = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-    
-            die(var_dump($resultData));
+            $resultSetArr = [];
+
+            $stmtResult = DBConnectionFactory::getConnection()->query($query);
+
+        do {
+
+            $resultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
+            if($resultArr) {
+                // Add $rowset to array
+                array_push($resultSetArr,$resultArr);
+            }
+        } while($stmtResult->nextRowset());
+
+            die(var_dump($resultSetArr));
             foreach ($resultData as $keyItem => $resultItem) {
                 foreach ($resultItem as $keyId => $valueId) {
                     $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];

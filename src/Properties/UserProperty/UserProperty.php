@@ -266,7 +266,7 @@ class UserProperty
 
             }
 
-            die(var_dump($results));
+           // die(var_dump($results));
 
         return $results;
     }

@@ -254,13 +254,20 @@ class UserProperty
             }
         } while($stmtResult->nextRowset());
 
-            die(var_dump($resultSetArr));
-            foreach ($resultData as $keyItem => $resultItem) {
-                foreach ($resultItem as $keyId => $valueId) {
-                    $metadata[$valueId["FieldName"]] = ["FieldValue" => $valueId["FieldValue"], "MetadataId" => $valueId["MetadataId"]];
+
+
+            foreach ($results as $keyId => $valueId) {
+                foreach ($resultSetArr as $keyItem => $valueItem) {
+                    if($keyId = $keyItem){
+                        $results[$keyId]["Metadata"] = $valueItem;
+                    }
+
                 }
+
             }
-        array_push($results, $metadata);
+
+            die(var_dump($results));
+
         return $results;
     }
 

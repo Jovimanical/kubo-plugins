@@ -238,7 +238,7 @@ class UserProperty
            // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
 
-            $query = implode(";", $queries);
+            $query = implode(";", $query);
 
             $resultData = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
     

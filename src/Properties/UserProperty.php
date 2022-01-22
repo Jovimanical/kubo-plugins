@@ -53,10 +53,6 @@ class UserProperty {
         return UserProperty\UserProperty::viewPropertyMetadata($propertyId);
     }
 
-    public static function viewPropertyInfo(int $propertyId){
-        return UserProperty\UserProperty::viewPropertyInfo($propertyId);
-    }
-
     public static function editPropertyMetadata(int $propertyId, array $data = []){
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
@@ -82,12 +78,4 @@ class UserProperty {
         return UserProperty\UserProperty::viewDeveloperName($userId);
     }
 
-    public static function getEstatePropertyTotal(int $propertyId) {
-        return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);
-    }
-
-    public static function getEstatePropertyAvailable(int $propertyId){
-        return UserProperty\UserProperty::getEstatePropertyAvailable($propertyId);
-    }
-    
 }

@@ -767,7 +767,7 @@ class UserProperty
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 
-    protected static function getBlockProperties(int $propertyId, array $floorData = [])
+    protected static function getPropertyChildrenIds(int $propertyId, array $floorData = [])
     {
         $floorLevel = 0;
 

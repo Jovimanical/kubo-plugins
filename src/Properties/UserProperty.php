@@ -78,4 +78,12 @@ class UserProperty {
         return UserProperty\UserProperty::viewDeveloperName($userId);
     }
 
+    public static function getEstatePropertyTotal(int $propertyId) {
+        return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);
+    }
+
+    public static function getEstatePropertyAvailable(int $propertyId){
+        return UserProperty\UserProperty::getEstatePropertyAvailable($propertyId);
+    }
+    
 }

@@ -56,7 +56,7 @@ class Enquiry {
     }
 
 
-    public static function viewEnquiry(int $userId,array $data){
+    public static function viewEnquiries(int $userId,array $data){
         if($userId == 0 OR empty($data)){
             return "Parameters not set";
         }

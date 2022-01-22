@@ -502,6 +502,71 @@ class UserProperty
     }
 
 
+    public static function getEstatePropertyTotal(int $propertyId) // @todo refactor later
+    {
+
+
+        if($propertyId == 0){
+            return "Parameter not set";
+        }
+
+        //Fetch total estate property units
+
+        $query = "SELECT EntityId FROM SpatialEntities.Entities 
+        WHERE SpatialEntities.Entities.EntityParent 
+        IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+        WHERE SpatialEntities.Entities.EntityParent 
+        IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+         WHERE PropertyId = $propertyId))";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+
+
+       // return self::getPropertyTotal($propertyId,3);
+
+    }
+
+    public static function getEstatePropertyAvailable(int $propertyId) // @todo refactor later
+    {
+        $result = [];
+
+        if($propertyId == 0){
+            return "Parameter not set";
+        }
+
+        //Fetch total estate property units
+        $query = "SELECT EntityId FROM SpatialEntities.Entities
+        WHERE SpatialEntities.Entities.EntityParent
+        IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+        WHERE SpatialEntities.Entities.EntityParent
+        IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+         WHERE PropertyId = $propertyId))";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+
+        $propertyCount = count($result);
+
+        $query = "SELECT EntityId FROM SpatialEntities.Entities a
+        INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+        INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+        WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+        WHERE SpatialEntities.Entities.EntityParent
+        IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+        WHERE PropertyId = $propertyId))";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+        $propertyTotal = count($result);
+
+        return $propertyCount - $propertyTotal;
+
+        // return self::getPropertyAvailable($propertyId,3);
+
+    }
+
+
     protected static function getPropertyCount(int $userId,int $entityType){
         // Fetching property count by type
         $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = $entityType";

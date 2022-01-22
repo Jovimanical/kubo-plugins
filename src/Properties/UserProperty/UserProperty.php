@@ -776,7 +776,10 @@ class UserProperty
     {
         $floorLevel = 0;
 
-        $query = "SELECT a.PropertyId FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
+        $query = "SELECT a.PropertyId FROM Properties.UserProperty a 
+        INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+         WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty
+          WHERE PropertyId = $propertyId)";
 
         if (isset($floorData["floorLevel"])) {
             $floorLevel = $floorData["floorLevel"];
@@ -785,7 +788,7 @@ class UserProperty
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $result;
+        return $results;
     }
 
 }

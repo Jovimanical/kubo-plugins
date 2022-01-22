@@ -364,6 +364,7 @@ class UserProperty
 
         // fetching block children IDs
         $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
+        die(var_dump($valueUnit));
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -436,7 +437,7 @@ class UserProperty
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                     $valueUnit = json_decode($valueUnit,true);
-                    die(\var_dump($valueUnit));
+                    die(var_dump($valueUnit));
                     $queries[] = "BEGIN TRANSACTION;".
                         "DECLARE @rowcount".$counter." INT;".
                         "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[0][PropertyId] " .

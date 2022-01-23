@@ -361,7 +361,7 @@ class UserProperty
         }
 
         // fetching block children IDs
-        $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
+        //$blockChildrenIds = self::getPropertyChildrenIds($propertyId);
         // die(var_dump($blockChildrenIds));
 
         foreach ($metadata as $key => $value) {
@@ -431,7 +431,7 @@ class UserProperty
                 "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
-
+/** 
             if ($blockChildrenIds) {
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
@@ -448,6 +448,7 @@ class UserProperty
 
                 }
             }
+            */
 
         }
 

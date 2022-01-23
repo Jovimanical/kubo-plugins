@@ -435,7 +435,7 @@ class UserProperty
             if ($blockChildrenIds) {
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
-                    $valueUnit = json_decode($valueUnit, true);
+                   // $valueUnit = json_decode($valueUnit, true);
                     die(var_dump($valueUnit));
                     $queries[] = "BEGIN TRANSACTION;" .
                         "DECLARE @rowcount" . $counter . " INT;" .

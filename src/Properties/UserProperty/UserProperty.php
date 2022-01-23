@@ -432,7 +432,7 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
 
-            if (!isset($blockChildrenIds) and count($blockChildrenIds) != 0) {
+            if (isset($blockChildrenIds) and count($blockChildrenIds) = 0) {
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                     $valueUnit = json_decode($valueUnit, true);

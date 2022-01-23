@@ -436,7 +436,7 @@ class UserProperty
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
-                    die(var_dump($valueUnit));
+                   // die(var_dump($valueUnit));
                     $queries[] = "BEGIN TRANSACTION;" .
                         "DECLARE @rowcount" . $counter . " INT;" .
                         "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[0][PropertyId] " .

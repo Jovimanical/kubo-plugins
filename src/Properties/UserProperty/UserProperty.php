@@ -362,7 +362,7 @@ class UserProperty
 
         // fetching block children IDs
         $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
-        die(var_dump($blockChildrenIds));
+        // die(var_dump($blockChildrenIds));
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.

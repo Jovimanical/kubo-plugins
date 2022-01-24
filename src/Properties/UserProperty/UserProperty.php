@@ -232,19 +232,21 @@ class UserProperty
             $resultPropertyId = $result["PropertyId"];
 
             $unitQueries[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
-            /**
+            
             $blockQueries[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
-             */
+             
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
 
         $unitQuery = implode(";", $unitQueries);
-        //  $blockQuery = implode(";", $blockQueries);
+        $blockQuery = implode(";", $blockQueries);
 
         $unitResultSetArr = [];
-        // $blockResultSetArr = [];
+        $blockResultSetArr = [];
+
+        $resultSetArr = [];
 
         $stmtResult = DBConnectionFactory::getConnection()->query($unitQuery);
 
@@ -253,15 +255,13 @@ class UserProperty
             $unitResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
             if ($unitResultArr) {
                 // Add $rowset to array
-                // array_push($unitResultSetArr,$unitResultArr);
-                foreach ($unitResultArr as $keySet => $valueSet) {
-                    $metadata[$valueSet["FieldName"]] = ["FieldValue" => $valueSet["FieldValue"], "MetadataId" => $valueSet["MetadataId"]];
-                }
+                 array_push($unitResultSetArr,$unitResultArr);
+                
 
             }
 
         } while ($stmtResult->nextRowset());
-        /**
+
         $stmtBlock = DBConnectionFactory::getConnection()->query($blockQuery);
 
         do {
@@ -269,22 +269,18 @@ class UserProperty
         $blockResultArr = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
         if($blockResultArr) {
         // Add $rowset to array
-        // array_push($blockResultSetArr,$blockResultArr);
-        foreach ($blockResultArr as $keyItem => $valueItem) {
-        if (!isset($metadata[$valueItem["FieldName"]])) {
-        $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
-        }
-        }
+          array_push($blockResultSetArr,$blockResultArr);
+
         }
         } while($stmtBlock->nextRowset());
-         */
+         
 
         foreach ($results as $keyId => $valueId) {
             $results[$keyId]["Metadata"] = $metadata;
 
         }
 
-        // die(var_dump($results));
+        // die(var_dump($unitResultSetArr));
 
         return $results;
     }
@@ -293,24 +289,24 @@ class UserProperty
     {
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        /**
+        
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId))";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
-         */
+         
         $metadata = [];
         foreach ($result as $key => $value) {
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        /**
+        
         foreach ($blockResult as $keyItem => $valueItem) {
         if (!isset($metadata[$valueItem["FieldName"]])) {
         $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
         }
         }
-         */
+        
 
         return $metadata;
     }

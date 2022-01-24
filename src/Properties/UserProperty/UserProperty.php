@@ -280,7 +280,7 @@ class UserProperty
 
         }
 
-        // die(var_dump($unitResultSetArr));
+         die(var_dump($unitResultSetArr));
 
         return $results;
     }

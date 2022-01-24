@@ -306,11 +306,11 @@ class UserProperty
         }
 
 
-         die(var_dump($results));
+        // die(var_dump($results));
 
-       // return $results;
+        return $results;
 
-       return $metadata;
+      // return $metadata;
     }
 
     public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)

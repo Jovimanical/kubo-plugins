@@ -368,7 +368,7 @@ class UserProperty
         if (count($blockChildrenIds) > 0) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetchAll(\PDO::FETCH_ASSOC);
-            die(var_dump(is_null($resultInitial["Initial"])));
+            die(var_dump(isset($resultInitial["Initial"])));
 
             if(isset($resultInitial["Initial"]) AND is_null($resultInitial["Initial"])) {
                 $initialCheck = true;

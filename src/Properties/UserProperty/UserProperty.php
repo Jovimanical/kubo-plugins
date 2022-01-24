@@ -255,8 +255,7 @@ class UserProperty
             $unitResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
             if ($unitResultArr) {
                 // Add $rowset to array
-                 array_push($unitResultSetArr,$unitResultArr);
-                
+                array_push($unitResultSetArr,$unitResultArr);
 
             }
 
@@ -273,14 +272,33 @@ class UserProperty
 
         }
         } while($stmtBlock->nextRowset());
-         
 
-        foreach ($results as $keyId => $valueId) {
-            $results[$keyId]["Metadata"] = $metadata;
+        foreach ($results as $keySetId => $valueSetId) {
+
+            
+
+        foreach ($unitResultSetArr as $keySet => $valueSet) {
+            foreach ($valueSet as $keyItemId => $valueItemId) {
+                $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
+            }
 
         }
 
-         die(var_dump($unitResultSetArr));
+        foreach ($blockResultSetArr as $keyItem => $valueItem) {
+            foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
+                if (!isset($metadata[$valueItemIdSet["FieldName"]])) {
+                    $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"]];
+                }
+            }
+
+        }
+
+        $results[$keySetId]["Metadata"] = $metadata;
+
+        }
+
+
+         die(var_dump($results));
 
         return $results;
     }
@@ -289,24 +307,24 @@ class UserProperty
     {
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId))";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
-         
+
         $metadata = [];
         foreach ($result as $key => $value) {
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        
+
         foreach ($blockResult as $keyItem => $valueItem) {
-        if (!isset($metadata[$valueItem["FieldName"]])) {
-        $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+            if (!isset($metadata[$valueItem["FieldName"]])) {
+                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+            }
         }
-        }
-        
+
 
         return $metadata;
     }

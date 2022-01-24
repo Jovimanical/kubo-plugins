@@ -367,12 +367,11 @@ class UserProperty
 
         if ($blockChildrenIds) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId AND Initial IS NULL";
-            $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
-            if($resultInitial["Initial"] = NULL) {
+            $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetchAll(\PDO::FETCH_ASSOC);
+            if(is_null($resultInitial["Initial"])) {
                 $initialCheck = true;
                 $queries[] = "BEGIN TRANSACTION;" .
-                        "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId;" .
-                        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                        "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId" .
                         "COMMIT TRANSACTION;";
             }
 

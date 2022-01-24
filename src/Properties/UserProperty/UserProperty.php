@@ -371,8 +371,16 @@ class UserProperty
            // die(var_dump($resultInitial));
             if(isset($resultInitial["Initial"]) AND is_null($resultInitial["Initial"])) {
                 $initialCheck = true;
+               // $queries[] = "BEGIN TRANSACTION;" .
+                 //            "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId" .
+                   //          "COMMIT TRANSACTION;";
+
                 $queries[] = "BEGIN TRANSACTION;" .
-                             "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId" .
+                             "DECLARE @rowcounts INT;" .
+                             "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId" .
+                             "SET @rowcounts = @@ROWCOUNT " .
+                             "BEGIN TRY " .
+                             "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                              "COMMIT TRANSACTION;";
             }
 

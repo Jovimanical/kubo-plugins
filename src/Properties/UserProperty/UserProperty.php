@@ -368,7 +368,7 @@ class UserProperty
         if (!empty($blockChildrenIds)) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId AND Initial IS NULL";
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetchAll(\PDO::FETCH_ASSOC);
-            die(var_dump($resultInitial));
+           // die(var_dump($resultInitial));
             if(isset($resultInitial["Initial"]) AND is_null($resultInitial["Initial"])) {
                 $initialCheck = true;
                 $queries[] = "BEGIN TRANSACTION;" .
@@ -452,7 +452,7 @@ class UserProperty
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
                    // die(var_dump($valueUnit));
-                   
+
                     $queries[] = "BEGIN TRANSACTION;" .
                         "DECLARE @rowcounter" . $counter . " INT;" .
                         "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[0][PropertyId] " .

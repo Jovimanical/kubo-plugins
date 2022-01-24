@@ -366,7 +366,7 @@ class UserProperty
         // die(var_dump($blockChildrenIds));
 
         if (!empty($blockChildrenIds)) {
-            $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId AND Initial IS NULL";
+            $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetchAll(\PDO::FETCH_ASSOC);
            // die(var_dump($resultInitial));
             if(isset($resultInitial["Initial"]) AND is_null($resultInitial["Initial"])) {

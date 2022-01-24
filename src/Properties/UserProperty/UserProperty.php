@@ -368,7 +368,7 @@ class UserProperty
         if ($blockChildrenIds) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId AND Initial IS NOT NULL";
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
-            if($resultInitial) {
+            if($resultInitial["Initial"] = NULL) {
                 $initialCheck = true;
                 $queries[] = "BEGIN TRANSACTION;" .
                         "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId;" .

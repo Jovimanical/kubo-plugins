@@ -355,6 +355,7 @@ class UserProperty
         //$test = print_r($metadata, true);
         //return $test;
         $counter = 0;
+        $initialCheck = false;
 
         if ($propertyId == 0 or empty($metadata)) {
             return "Parameters not set";
@@ -363,6 +364,19 @@ class UserProperty
         // fetching block children IDs
         $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
         // die(var_dump($blockChildrenIds));
+
+        if ($blockChildrenIds) {
+            $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId AND Initial IS NOT NULL";
+            $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
+            if($resultInitial) {
+                $initialCheck = true;
+                $queries[] = "BEGIN TRANSACTION;" .
+                        "UPDATE Properties.UserProperty SET Initial=true WHERE Initial IS NULL AND PropertyId=$propertyId;" .
+                        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                        "COMMIT TRANSACTION;";
+            }
+
+        }
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -431,8 +445,9 @@ class UserProperty
                 "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
-            
-            if ($blockChildrenIds) {
+
+            if ($blockChildrenIds AND $initialCheck) {
+
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);

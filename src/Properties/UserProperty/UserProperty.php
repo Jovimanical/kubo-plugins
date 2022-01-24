@@ -355,7 +355,6 @@ class UserProperty
         //$test = print_r($metadata, true);
         //return $test;
         $counter = 0;
-        $counterExtra = 0;
         $initialCheck = false;
 
         if ($propertyId == 0 or empty($metadata)) {
@@ -448,17 +447,17 @@ class UserProperty
 
             if ($blockChildrenIds AND $initialCheck) {
 
-                
+
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
                    // die(var_dump($valueUnit));
-                   $counterExtra++;
+                   
                     $queries[] = "BEGIN TRANSACTION;" .
-                        "DECLARE @rowcount" . $counterExtra . " INT;" .
+                        "DECLARE @rowcounter" . $counter . " INT;" .
                         "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[0][PropertyId] " .
-                        "SET @rowcount" . $counterExtra . " = @@ROWCOUNT " .
+                        "SET @rowcounter" . $counter . " = @@ROWCOUNT " .
                         "BEGIN TRY " .
-                        "IF @rowcount" . $counterExtra . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[0][PropertyId], '$keyId', '$value') END;" .
+                        "IF @rowcounter" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[0][PropertyId], '$keyId', '$value') END;" .
                         "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                         "COMMIT TRANSACTION;";
 

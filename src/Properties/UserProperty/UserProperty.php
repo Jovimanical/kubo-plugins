@@ -275,8 +275,6 @@ class UserProperty
 
         foreach ($results as $keySetId => $valueSetId) {
 
-            
-
         foreach ($unitResultSetArr as $keySet => $valueSet) {
             foreach ($valueSet as $keyItemId => $valueItemId) {
                 $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
@@ -301,7 +299,9 @@ class UserProperty
 
        //  die(var_dump($results));
 
-        return $results;
+       // return $results;
+
+       return $metadata;
     }
 
     public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)

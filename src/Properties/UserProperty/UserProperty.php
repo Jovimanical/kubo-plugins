@@ -365,7 +365,7 @@ class UserProperty
         $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
         // die(var_dump($blockChildrenIds));
 
-        if (!empty($blockChildrenIds)) {
+        if (count($blockChildrenIds) > 0) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetchAll(\PDO::FETCH_ASSOC);
            // die(var_dump($resultInitial));
@@ -450,7 +450,7 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
 
-            if (!empty($blockChildrenIds) AND $initialCheck) {
+            if (count($blockChildrenIds) > 0 AND $initialCheck) {
 
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {

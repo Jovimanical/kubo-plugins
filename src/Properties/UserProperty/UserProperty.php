@@ -283,7 +283,7 @@ class UserProperty
             }
 
         }
-
+/*
         foreach ($blockResultSetArr as $keyItem => $valueItem) {
             foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
                 if (!isset($metadata[$valueItemIdSet["FieldName"]])) {
@@ -292,6 +292,7 @@ class UserProperty
             }
 
         }
+        */
 
         $results[$keySetId]["Metadata"] = $metadata;
 

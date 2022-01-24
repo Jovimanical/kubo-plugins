@@ -455,7 +455,7 @@ class UserProperty
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
-                   // die(var_dump($valueUnit));
+                    die(var_dump($blockChildrenIds));
 
                    $counterExtra++;
 

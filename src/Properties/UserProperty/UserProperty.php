@@ -368,6 +368,7 @@ class UserProperty
         if (!empty($blockChildrenIds)) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId AND Initial IS NULL";
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetchAll(\PDO::FETCH_ASSOC);
+            die(var_dump($resultInitial));
             if(is_null($resultInitial["Initial"])) {
                 $initialCheck = true;
                 $queries[] = "BEGIN TRANSACTION;" .

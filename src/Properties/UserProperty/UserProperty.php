@@ -371,7 +371,7 @@ class UserProperty
             if($resultInitial) {
                 $initialCheck = true;
                 $queries[] = "BEGIN TRANSACTION;" .
-                        "UPDATE Properties.UserProperty SET Initial=true WHERE Initial IS NULL AND PropertyId=$propertyId;" .
+                        "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId;" .
                         "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                         "COMMIT TRANSACTION;";
             }

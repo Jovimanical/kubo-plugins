@@ -455,7 +455,7 @@ class UserProperty
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
-                    die(var_dump($valueUnit));
+                    //die(var_dump($valueUnit));
 
                    $counterExtra++;
 
@@ -475,7 +475,7 @@ class UserProperty
         }
 
         $query = implode(";", $queries);
-        // die(var_dump($query));
+         die(var_dump($query));
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 

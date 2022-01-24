@@ -472,7 +472,7 @@ class UserProperty
         }
 
         $query = implode(";", $queries);
-        die(var_dump($query));
+        // die(var_dump($query));
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 

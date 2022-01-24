@@ -363,7 +363,7 @@ class UserProperty
 
         // fetching block children IDs
         $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
-         die(var_dump(count($blockChildrenIds)));
+        // die(var_dump(count($blockChildrenIds)));
 
         if (count($blockChildrenIds) > 0) {
             $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
@@ -376,6 +376,7 @@ class UserProperty
                              "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId;" .
                              "COMMIT TRANSACTION;";
             }
+            die(var_dump($queries));
 
         }
 

@@ -280,24 +280,33 @@ class UserProperty
                 $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
             }
 
+            $resultSetArr[$keySet] = $metadata;
+
         }
-        
+
         foreach ($blockResultSetArr as $keyItem => $valueItem) {
             foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
-                if (!isset($metadata[$valueItemIdSet["FieldName"]])) {
-                    $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"]];
+                foreach($resultSetArr as $keyItemSet => $valueItemSet) {
+                    if($keyItem = $keyItemSet){
+                        if (!isset($metadata[$valueItemIdSet["FieldName"]])) {
+                            $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"]];
+                        }
+                        $resultSetArr[$keyItemSet] = $metadata;
+                    }
+                    
                 }
+                
             }
 
         }
-        
 
-        $results[$keySetId]["Metadata"] = $metadata;
+
+        $results[$keySetId]["Metadata"] = $resultSetArr;
 
         }
 
 
-       //  die(var_dump($results));
+         die(var_dump($results));
 
        // return $results;
 

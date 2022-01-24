@@ -371,8 +371,8 @@ class UserProperty
             if(is_null($resultInitial["Initial"])) {
                 $initialCheck = true;
                 $queries[] = "BEGIN TRANSACTION;" .
-                        "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId" .
-                        "COMMIT TRANSACTION;";
+                             "UPDATE Properties.UserProperty SET Initial='true' WHERE Initial IS NULL AND PropertyId=$propertyId" .
+                             "COMMIT TRANSACTION;";
             }
 
         }
@@ -447,7 +447,7 @@ class UserProperty
 
             if ($blockChildrenIds AND $initialCheck) {
 
-
+                /**
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
                    // die(var_dump($valueUnit));
@@ -461,6 +461,7 @@ class UserProperty
                         "COMMIT TRANSACTION;";
 
                 }
+                */
             }
 
         }

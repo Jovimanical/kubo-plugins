@@ -455,16 +455,16 @@ class UserProperty
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
                    // $valueUnit = json_decode($valueUnit, true);
-                    die(var_dump($blockChildrenIds));
+                    die(var_dump($valueUnit));
 
                    $counterExtra++;
 
                     $queries[] = "BEGIN TRANSACTION;" .
                         "DECLARE @rowcounter" . $counterExtra . " INT;" .
-                        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[0][PropertyId] " .
+                        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[PropertyId] " .
                         "SET @rowcounter" . $counterExtra . " = @@ROWCOUNT " .
                         "BEGIN TRY " .
-                        "IF @rowcounter" . $counterExtra . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[0][PropertyId], '$keyId', '$value') END;" .
+                        "IF @rowcounter" . $counterExtra . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[PropertyId], '$keyId', '$value') END;" .
                         "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                         "COMMIT TRANSACTION;";
 

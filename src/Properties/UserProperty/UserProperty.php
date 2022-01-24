@@ -306,9 +306,9 @@ class UserProperty
         }
 
 
-        // die(var_dump($results));
+         die(print_r($results));
 
-        return $results;
+       // return $results;
 
       // return $metadata;
     }

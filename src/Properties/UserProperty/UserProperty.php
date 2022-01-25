@@ -277,7 +277,9 @@ class UserProperty
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
                 foreach ($valueSet as $keyItemId => $valueItemId) {
-                    $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
+                    if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
+                        $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
+                    }
                 }
 
                 $resultSetArr[$keySet] = $metadata;
@@ -302,7 +304,7 @@ class UserProperty
 
             */
 
-            $results[$keySetId]["Metadata"] = $metadata;
+            $results[$keySetId]["Metadata"] = $resultSetArr[$keySet];
 
         }
 

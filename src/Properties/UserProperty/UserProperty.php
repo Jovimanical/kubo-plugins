@@ -285,14 +285,16 @@ class UserProperty
 
                 }
                 // $results[$keySetId]["Metadata"] = $metadata;
-                $resultSetArr[$keySet] = $metadata;
+                
 
                 // $results[$keySetId]["Metadata"] = $metadata;
 
 
             }
 
-            die(print_r($resultSetArr));
+            $resultSetArr[$keySet] = $metadata;
+
+            die(var_dump($resultSetArr));
 
 
           //  $metadata = $resultSetArr;

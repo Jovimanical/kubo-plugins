@@ -96,9 +96,10 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+            WHERE b.EntityType = 3 AND b.EntityParent 
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultEstateId))";
@@ -180,6 +181,41 @@ class Enquiry {
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
+
+        foreach($result as $resultum){
+            foreach($metadata['PropertyTotal'] as $key => $value){
+                if($key == $resultum['PropertyId']){
+                    $resultum['PropertyTotal'] = $value;
+                }
+
+            }
+            foreach($metadata['PropertySold'] as $keyId => $valueId){
+                if($keyId == $resultum['PropertyId']){
+                    $resultum['PropertySold'] = $valueId;
+                }
+
+            }
+
+            $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+
+            foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnit'] = $valueItem;
+                }
+
+            }
+
+            $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+
+            foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnitBlock'] = $valueItem;
+                }
+
+            }
+             array_push($resultArr,$resultum);
+
+        }
 
         // die(var_dump($metadata));
 

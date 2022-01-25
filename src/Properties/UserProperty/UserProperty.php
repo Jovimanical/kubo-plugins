@@ -255,7 +255,7 @@ class UserProperty
             $unitResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
             if ($unitResultArr) {
                 // Add $rowset to array
-                array_push($unitResultSetArr,$unitResultArr);
+                array_push($unitResultSetArr, $unitResultArr);
 
             }
 
@@ -265,52 +265,49 @@ class UserProperty
 
         do {
 
-        $blockResultArr = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
-        if($blockResultArr) {
-        // Add $rowset to array
-          array_push($blockResultSetArr,$blockResultArr);
+            $blockResultArr = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if ($blockResultArr) {
+                // Add $rowset to array
+                array_push($blockResultSetArr, $blockResultArr);
 
-        }
-        } while($stmtBlock->nextRowset());
+            }
+        } while ($stmtBlock->nextRowset());
 
         foreach ($results as $keySetId => $valueSetId) {
 
-        foreach ($unitResultSetArr as $keySet => $valueSet) {
-            foreach ($valueSet as $keyItemId => $valueItemId) {
-                $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
-            }
-
-            $resultSetArr[$keySet] = $metadata;
-
-        }
-
-        foreach ($blockResultSetArr as $keyItem => $valueItem) {
-            foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
-                foreach($resultSetArr as $keyItemSet => $valueItemSet) {
-                    if($keyItem = $keyItemSet){
-                        if (!isset($metadata[$valueItemIdSet["FieldName"]])) {
-                            $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"]];
-                        }
-                        $resultSetArr[$keyItemSet] = $metadata;
-                    }
-                    
+            foreach ($unitResultSetArr as $keySet => $valueSet) {
+                foreach ($valueSet as $keyItemId => $valueItemId) {
+                    $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"]];
                 }
-                
+
+                $resultSetArr[$keySet] = $metadata;
+
             }
 
+            foreach ($blockResultSetArr as $keyItem => $valueItem) {
+                foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
+                    foreach ($resultSetArr as $keyItemSet => $valueItemSet) {
+                        if ($keyItem == $keyItemSet) {
+                            if (!isset($resultSetArr[$keyItem][$valueItemIdSet["FieldName"]])) {
+                                $resultSetArr[$keyItem][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"]];
+                            }
+                            $metadata = $resultSetArr[$keyItemSet];
+                        }
+
+                    }
+
+                }
+
+            }
+
+            $results[$keySetId]["Metadata"] = $metadata;
+
         }
 
+        //die(print_r($results));
 
-        $results[$keySetId]["Metadata"] = $resultSetArr;
+        return $results;
 
-        }
-
-
-         die(print_r($results));
-
-       // return $results;
-
-      // return $metadata;
     }
 
     public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)
@@ -328,13 +325,11 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
-
 
         return $metadata;
     }
@@ -395,14 +390,13 @@ class UserProperty
             $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
             // die(var_dump(isset($resultInitial)));
 
-            if(isset($resultInitial) AND is_null($resultInitial["Initial"])) {
+            if (isset($resultInitial) and is_null($resultInitial["Initial"])) {
                 $initialCheck = true;
-                
+
                 $queries[] = "BEGIN TRANSACTION;" .
-                             "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId;" .
-                             "COMMIT TRANSACTION;";
+                    "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId;" .
+                    "COMMIT TRANSACTION;";
             }
-            
 
         }
 
@@ -474,14 +468,13 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
 
-            if (count($blockChildrenIds) > 0 AND $initialCheck) {
-
+            if (count($blockChildrenIds) > 0 and $initialCheck) {
 
                 foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
-                   // $valueUnit = json_decode($valueUnit, true);
+                    // $valueUnit = json_decode($valueUnit, true);
                     //die(var_dump($valueUnit));
 
-                   $counterExtra++;
+                    $counterExtra++;
 
                     $queries[] = "BEGIN TRANSACTION;" .
                         "DECLARE @rowcounter" . $counterExtra . " INT;" .
@@ -499,7 +492,7 @@ class UserProperty
         }
 
         $query = implode(";", $queries);
-         die(var_dump($query));
+        die(var_dump($query));
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
@@ -582,7 +575,7 @@ class UserProperty
 
     public static function getEstatePropertyAvailable(int $propertyId)
     {
-         // @todo refactor later
+        // @todo refactor later
         $result = [];
 
         if ($propertyId == 0) {

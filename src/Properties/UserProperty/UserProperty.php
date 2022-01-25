@@ -214,7 +214,7 @@ class UserProperty
         }
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
+        die(var_dump($results));
         if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
         }

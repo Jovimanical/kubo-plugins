@@ -632,16 +632,18 @@ class UserProperty
     {
         if($entityType == 1){
             // Fetching property count by type
-            $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId IN (SELECT LinkedEntity FROM Properties.UserProperty WHERE UserId = $userId) AND EntityType = $entityType";
-        } else if($entityType == 3){
+            $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId
+            IN (SELECT LinkedEntity FROM Properties.UserProperty
+             WHERE UserId = $userId) AND EntityType = $entityType";
+        } else {
             // Fetching property count by type
-            $query = "SELECT * FROM Properties.UserProperty a 
+            $query = "SELECT a.PropertyId FROM Properties.UserProperty a 
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
             WHERE b.EntityType = $entityType AND b.EntityParent 
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-            WHERE UserId = $userId";
+            WHERE UserId = $userId))";
         }
         
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

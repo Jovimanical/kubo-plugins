@@ -231,7 +231,7 @@ class UserProperty
 
             $resultPropertyId = $result["PropertyId"];
 
-            $unitQueries[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $unitQueries[] = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
             $blockQueries[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -287,7 +287,7 @@ class UserProperty
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
                 foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
                     foreach ($resultSetArr as $keyItemSet => $valueItemSet) {
-                        if ($keyItem == $keyItemSet) {
+                        if ($valueItemSet['PropertyId'] == $valueItemIdSet['PropertyId']) {   // if ($keyItem == $keyItemSet) {
                             if (!isset($resultSetArr[$keyItem][$valueItemIdSet["FieldName"]])) {
                                 $resultSetArr[$keyItem][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"]];
                             }

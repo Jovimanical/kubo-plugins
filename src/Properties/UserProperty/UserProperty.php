@@ -280,7 +280,8 @@ class UserProperty
                     if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
                         $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
                     }
-                    $results[$keySetId]["Metadata"] = $metadata;
+                    die(print_r($metadata));
+                   // $results[$keySetId]["Metadata"] = $metadata;
                 }
 
                // $resultSetArr[$keySet] = $metadata;

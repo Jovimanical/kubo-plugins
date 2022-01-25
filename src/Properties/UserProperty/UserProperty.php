@@ -292,7 +292,7 @@ class UserProperty
 
             }
 
-            $resultSetArr[$keySet] = $metadata;
+            $resultSetArr[$keySetId] = $metadata;
 
             
 

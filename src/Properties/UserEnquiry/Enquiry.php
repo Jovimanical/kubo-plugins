@@ -196,7 +196,7 @@ class Enquiry {
 
             }
 
-            $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+           // $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
 
             foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
                 if($keyItem == $resultum['PropertyId']){
@@ -205,7 +205,7 @@ class Enquiry {
 
             }
 
-            $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+          //  $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
 
             foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
                 if($keyItem == $resultum['PropertyId']){

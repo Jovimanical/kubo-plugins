@@ -323,7 +323,7 @@ class UserProperty
 
         }
 
-        die(var_dump(array_unique($resultSetArr)));
+        die(var_dump($resultSetArr));
 
         die(print_r($resultSetArr));
 

@@ -272,16 +272,17 @@ class UserProperty
 
             }
         } while ($stmtBlock->nextRowset());
-        die(var_dump($unitResultSetArr));
+       // die(var_dump($unitResultSetArr));
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
                 foreach ($valueSet as $keyItemId => $valueItemId) {
-                    if ((int)$valueSetId['PropertyId'] === (int)$valueItemId['PropertyId']) {
-                        $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
-                    }
+                    
+                        if ((int)$valueSetId['PropertyId'] === (int)$valueItemId['PropertyId']) {
+                            $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+                        }
+                    
 
-                   
                 }
                 // $results[$keySetId]["Metadata"] = $metadata;
                // die(print_r($metadata));
@@ -295,8 +296,8 @@ class UserProperty
 
           //  $metadata = $resultSetArr;
 
-            
-/*
+
+            /*
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
                 foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
                     foreach ($resultSetArr as $keyItemSet => $valueItemSet) {

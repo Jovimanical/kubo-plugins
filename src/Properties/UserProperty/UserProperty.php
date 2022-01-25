@@ -313,15 +313,12 @@ class UserProperty
 
             */
 
-            //$results[$keySetId]["Metadata"] = $metadata[''];
+            $results[$keySetId]["Metadata"] = $resultSetArr[$keySetId];
 
         }
 
-        die(var_dump($resultSetArr));
+       // die(var_dump($resultSetArr));
 
-        die(print_r($resultSetArr));
-
-        //die(print_r($results));
 
         return $results;
 

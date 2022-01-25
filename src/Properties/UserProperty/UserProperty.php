@@ -173,7 +173,7 @@ class UserProperty
         return $result;
     }
 
-    public static function viewPropertyChildrenTest(int $propertyId, array $floorData = [])
+    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
     {
         $floorLevel = 0;
 
@@ -202,7 +202,7 @@ class UserProperty
         return $results;
     }
 
-    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
+    public static function viewPropertyChildrenTest(int $propertyId, array $floorData = [])
     {
         $floorLevel = 0;
 

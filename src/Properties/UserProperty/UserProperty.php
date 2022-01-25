@@ -272,13 +272,13 @@ class UserProperty
 
             }
         } while ($stmtBlock->nextRowset());
-        die(var_dump($unitResultSetArr));
+         // die(var_dump($unitResultSetArr));
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                        if ((int)$valueSetId['PropertyId'] === (int)$valueItemId['PropertyId']) {
+                        if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
                             $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
                         }
 

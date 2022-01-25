@@ -285,7 +285,7 @@ class UserProperty
                 $resultSetArr[$keySet] = $metadata;
 
             }
-/*
+
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
                 foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
                     foreach ($resultSetArr as $keyItemSet => $valueItemSet) {
@@ -302,9 +302,9 @@ class UserProperty
 
             }
 
-            */
+            
 
-            $results[$keySetId]["Metadata"] = $resultSetArr[$keySet];
+            $results[$keySetId]["Metadata"] = $metadata;
 
         }
 

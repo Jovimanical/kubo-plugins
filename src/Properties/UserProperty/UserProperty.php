@@ -272,7 +272,7 @@ class UserProperty
 
             }
         } while ($stmtBlock->nextRowset());
-
+        die(var_dump($unitResultSetArr));
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {

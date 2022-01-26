@@ -185,13 +185,13 @@ class Enquiry {
         foreach($result as $resultum){
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
-                    $resultum['PropertyTotal'] = $value;
+                    $resultum['PropertyTotal'] = json_decode($value,true)[0];
                 }
 
             }
             foreach($metadata['PropertySold'] as $keyId => $valueId){
                 if($keyId == $resultum['PropertyId']){
-                    $resultum['PropertySold'] = $valueId;
+                    $resultum['PropertySold'] = json_decode($valueId,true)[0];
                 }
 
             }

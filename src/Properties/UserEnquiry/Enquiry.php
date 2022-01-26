@@ -277,9 +277,10 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+            WHERE b.EntityType = 3 AND b.EntityParent 
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultEstateId))";
@@ -453,9 +454,10 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+            WHERE b.EntityType = 3 AND b.EntityParent 
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultEstateId))";
@@ -634,9 +636,10 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+            WHERE b.EntityType = 3 AND b.EntityParent 
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultEstateId))";
@@ -813,9 +816,10 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities 
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+            WHERE b.EntityType = 3 AND b.EntityParent 
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultEstateId))";

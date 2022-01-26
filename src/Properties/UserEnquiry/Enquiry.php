@@ -219,7 +219,7 @@ class Enquiry {
 
         // die(var_dump($metadata));
 
-        array_push($resultArr,$metadata);
+       // array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){

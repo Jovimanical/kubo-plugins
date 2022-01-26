@@ -298,7 +298,7 @@ class Enquiry {
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+           // array_push($resultArr,$resultum);
 
         }
 
@@ -362,9 +362,40 @@ class Enquiry {
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
-        // die(var_dump($metadata));
+        foreach($result as $resultum){
+            foreach($metadata['PropertyTotal'] as $key => $value){
+                if($key == $resultum['PropertyId']){
+                    $resultum['PropertyTotal'] = $value[0][''];
+                }
 
-        array_push($resultArr,$metadata);
+            }
+            foreach($metadata['PropertySold'] as $keyId => $valueId){
+                if($keyId == $resultum['PropertyId']){
+                    $resultum['PropertySold'] = $valueId[0][''];
+                }
+
+            }
+
+           // $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+
+            foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnit'] = $valueItem;
+                }
+
+            }
+
+          //  $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+
+            foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnitBlock'] = $valueItem;
+                }
+
+            }
+             array_push($resultArr,$resultum);
+
+        }
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
@@ -443,7 +474,7 @@ class Enquiry {
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+           // array_push($resultArr,$resultum);
 
         }
 
@@ -507,9 +538,44 @@ class Enquiry {
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
+        foreach($result as $resultum){
+            foreach($metadata['PropertyTotal'] as $key => $value){
+                if($key == $resultum['PropertyId']){
+                    $resultum['PropertyTotal'] = $value[0][''];
+                }
+
+            }
+            foreach($metadata['PropertySold'] as $keyId => $valueId){
+                if($keyId == $resultum['PropertyId']){
+                    $resultum['PropertySold'] = $valueId[0][''];
+                }
+
+            }
+
+           // $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+
+            foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnit'] = $valueItem;
+                }
+
+            }
+
+          //  $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+
+            foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnitBlock'] = $valueItem;
+                }
+
+            }
+             array_push($resultArr,$resultum);
+
+        }
+
         // die(var_dump($metadata));
 
-        array_push($resultArr,$metadata);
+       // array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
@@ -589,7 +655,7 @@ class Enquiry {
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+           // array_push($resultArr,$resultum);
 
         }
 
@@ -653,9 +719,44 @@ class Enquiry {
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
+        foreach($result as $resultum){
+            foreach($metadata['PropertyTotal'] as $key => $value){
+                if($key == $resultum['PropertyId']){
+                    $resultum['PropertyTotal'] = $value[0][''];
+                }
+
+            }
+            foreach($metadata['PropertySold'] as $keyId => $valueId){
+                if($keyId == $resultum['PropertyId']){
+                    $resultum['PropertySold'] = $valueId[0][''];
+                }
+
+            }
+
+           // $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+
+            foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnit'] = $valueItem;
+                }
+
+            }
+
+          //  $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+
+            foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnitBlock'] = $valueItem;
+                }
+
+            }
+             array_push($resultArr,$resultum);
+
+        }
+
         // die(var_dump($metadata));
 
-        array_push($resultArr,$metadata);
+       // array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
@@ -733,7 +834,7 @@ class Enquiry {
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+           // array_push($resultArr,$resultum);
 
         }
 
@@ -797,9 +898,44 @@ class Enquiry {
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
+        foreach($result as $resultum){
+            foreach($metadata['PropertyTotal'] as $key => $value){
+                if($key == $resultum['PropertyId']){
+                    $resultum['PropertyTotal'] = $value[0][''];
+                }
+
+            }
+            foreach($metadata['PropertySold'] as $keyId => $valueId){
+                if($keyId == $resultum['PropertyId']){
+                    $resultum['PropertySold'] = $valueId[0][''];
+                }
+
+            }
+
+           // $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+
+            foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnit'] = $valueItem;
+                }
+
+            }
+
+          //  $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+
+            foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnitBlock'] = $valueItem;
+                }
+
+            }
+             array_push($resultArr,$resultum);
+
+        }
+
         // die(var_dump($metadata));
 
-        array_push($resultArr,$metadata);
+        // array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){

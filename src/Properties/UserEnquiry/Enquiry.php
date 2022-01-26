@@ -398,6 +398,10 @@ class Enquiry {
 
         }
 
+        // die(var_dump($metadata));
+
+       // array_push($resultArr,$metadata);
+
        // $result = $result[0] ?? [];
        // if (count($result) > 0){
        //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]

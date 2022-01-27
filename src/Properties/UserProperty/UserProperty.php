@@ -240,7 +240,7 @@ class UserProperty
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
 
-        return $results;
+       // return $results;
 
         $unitQuery = implode(";", $unitQueries);
         $blockQuery = implode(";", $blockQueries);
@@ -274,7 +274,11 @@ class UserProperty
 
             }
         } while ($stmtBlock->nextRowset());
+
+        return $unitResultSetArr;
+
          // die(var_dump($unitResultSetArr));
+
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {

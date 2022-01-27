@@ -278,12 +278,14 @@ class UserProperty
             }
         } while ($stmtBlock->nextRowset());
 
+        $connectChecker = [];
+
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
-                $connectChecker = "";
+                
                 foreach ($valueSet as $keyItemId => $valueItemId) {
-                    $connectChecker = [];
+                   
 
                         if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
                             $connectChecker[] = $valueItemId['PropertyId'];

@@ -233,6 +233,190 @@ class Enquiry {
         return $resultArr;
     }
 
+    public static function viewEnquiryByDate(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
+        $fetch = "FIRST";
+        $offset = 0;
+        $limit = $data['limit'] ?? 1000;
+
+        $dateTerm = $data['dateTerm'] ?? "-1 days";
+
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $fromDate = date('Y-m-d');
+        $toDate = date('Y-m-d', strtotime($dateTerm, strtotime(date('Y-m-d'))));
+
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated >= $toDate AND DateCreated < $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        //  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND
+        // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
+        
+        $resultArr = [];
+
+        $resultKey = [];
+
+        $propQuery = [];
+        $blockQuery = [];
+
+        $totalQuery = [];
+        $availQuery = [];
+
+        foreach($result as $resultum){
+
+            //Fetching estate property data
+            $resultPropertyId = $resultum['PropertyId'];
+            $resultEstateId = $resultum['EstateId'];
+
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+
+            $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId))";
+
+            array_push($resultKey,$resultum['PropertyId']);
+
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+            WHERE b.EntityType = 3 AND b.EntityParent 
+            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
+            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
+            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
+            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
+            WHERE SpatialEntities.Entities.EntityParent
+            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
+            WHERE PropertyId = $resultEstateId))";
+
+            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
+
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+           // array_push($resultArr,$resultum);
+
+        }
+
+        $propQueries = implode(";", $propQuery);
+        $blockQueries = implode(";", $blockQuery);
+        $totalQueries = implode(";", $totalQuery);
+        $availQueries = implode(";", $availQuery);
+
+        $propResultArr = [];
+        $blockResultArr = [];
+        $totalResultArr = [];
+        $availResultArr = [];
+
+        $stmtProp = DBConnectionFactory::getConnection()->query($propQueries);
+
+        do {
+
+            $propResult = $stmtProp->fetchAll(\PDO::FETCH_ASSOC);
+            if($propResult) {
+                // Add $rowset to array
+                array_push($propResultArr,$propResult);
+            }
+        } while($stmtProp->nextRowset());
+
+        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQueries);
+
+        do {
+
+            $blockResult = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
+            if($blockResult) {
+                // Add $rowset to array
+                array_push($blockResultArr,$blockResult);
+            }
+        } while($stmtBlock->nextRowset());
+
+        $stmtTotal = DBConnectionFactory::getConnection()->query($totalQueries);
+
+        do {
+            $totalResult = $stmtTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if($totalResult) {
+                // Add $rowset to array
+                array_push($totalResultArr,$totalResult);
+            }
+        } while($stmtTotal->nextRowset());
+
+        $stmtAvail = DBConnectionFactory::getConnection()->query($availQueries);
+
+        do {
+            $availResult = $stmtAvail->fetchAll(\PDO::FETCH_ASSOC);
+            if($availResult) {
+                // Add $rowset to array
+                array_push($availResultArr,$availResult);
+            }
+        } while($stmtAvail->nextRowset());
+
+
+        $metadata = [];
+
+        $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
+        $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
+        $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);
+        $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
+
+        foreach($result as $resultum){
+            foreach($metadata['PropertyTotal'] as $key => $value){
+                if($key == $resultum['PropertyId']){
+                    $resultum['PropertyTotal'] = $value[0][''];
+                }
+
+            }
+            foreach($metadata['PropertySold'] as $keyId => $valueId){
+                if($keyId == $resultum['PropertyId']){
+                    $resultum['PropertySold'] = $valueId[0][''];
+                }
+
+            }
+
+           // $metadata['PropertyUnit'] = (array)json_decode($metadata['PropertyUnit'],true);
+
+            foreach($metadata['PropertyUnit'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnit'] = $valueItem;
+                }
+
+            }
+
+          //  $metadata['PropertyUnitBlock'] = (array)json_decode($metadata['PropertyUnitBlock'],true);
+
+            foreach($metadata['PropertyUnitBlock'] as $keyItem => $valueItem){
+                if($keyItem == $resultum['PropertyId']){
+                    $resultum['PropertyUnitBlock'] = $valueItem;
+                }
+
+            }
+             array_push($resultArr,$resultum);
+
+        }
+
+        // die(var_dump($metadata));
+
+       // array_push($resultArr,$metadata);
+
+       // $result = $result[0] ?? [];
+       // if (count($result) > 0){
+       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
+          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
+       // }
+
+       // die(var_dump($resultArr));
+
+
+        return $resultArr;
+    }
+
     public static function viewEnquiryBySeven(int $userId,array $data){
         if($userId == 0 OR empty($data)){
             return "Parameters not set";
@@ -249,11 +433,11 @@ class Enquiry {
         $fromDate = date('Y-m-d');
         $toDate = date('Y-m-d', strtotime('-7 days', strtotime(date('Y-m-d'))));
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated >= $fromDate AND DateCreated < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated >= $toDate AND DateCreated < $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         //  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND
         // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
-        die(\var_dump($toDate));
+       
         $resultArr = [];
 
         $resultKey = [];
@@ -432,7 +616,7 @@ class Enquiry {
         $toDate = date('Y-m-d', strtotime('-30 days', strtotime(date('Y-m-d'))));
 
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  <  $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $toDate AND DateCreated  <  $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];
@@ -614,7 +798,7 @@ class Enquiry {
         $toDate = date('Y-m-d', strtotime('-90 days', strtotime(date('Y-m-d'))));
 
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  // EnquiryId = $EnquiryId
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $toDate AND DateCreated  < $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultArr = [];

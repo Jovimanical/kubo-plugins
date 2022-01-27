@@ -298,12 +298,12 @@ class UserProperty
 
             }
 
-            $resultSetArr[$keySetId] = $metadata;
+           // $resultSetArr[$keySetId] = $metadata;
         }
 
-        $metadata = $resultSetArr;
+        //$metadata = $resultSetArr;
 
-        return $connectChecker;
+        return $metadata;
 
         foreach ($results as $keySetId => $valueSetId) {
 

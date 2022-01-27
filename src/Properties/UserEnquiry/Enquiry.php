@@ -813,7 +813,7 @@ class Enquiry {
         if(count($result) == 0){
             return "No enquiries found";
         }
-        
+
         $resultArr = [];
 
         $resultKey = [];
@@ -993,7 +993,9 @@ class Enquiry {
 
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND EnquiryId LIKE '%$searchTerm%' OR DateCreated LIKE '%$searchTerm%' OR 'Name' LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' OR MessageJson LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
+        if(count($result) == 0){
+            return "No results found";
+        }
         $resultArr = [];
 
         $resultKey = [];

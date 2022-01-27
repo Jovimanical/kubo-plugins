@@ -216,6 +216,8 @@ class UserProperty
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        return $results;
+        
         if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
         }
@@ -296,8 +298,6 @@ class UserProperty
 
 
             $metadata = $resultSetArr[$keySetId];
-
-            die(var_dump($metadata));
 
 
         foreach ($resultSetArr as $keyItemSet => $valueItemSet) {

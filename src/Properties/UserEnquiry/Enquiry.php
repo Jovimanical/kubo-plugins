@@ -255,7 +255,9 @@ class Enquiry {
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         //  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND
         // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
-        
+        if(count($result) == 0){
+            return "No enquiries found";
+        }
         $resultArr = [];
 
         $resultKey = [];
@@ -433,12 +435,14 @@ class Enquiry {
         $fromDate = date('Y-m-d');
         $toDate = date('Y-m-d', strtotime('-7 days', strtotime(date('Y-m-d'))));
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated >= '2021-1-21' AND DateCreated < '2022-1-27' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated >= $toDate AND DateCreated < $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         //  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND
         // WHERE DateCreated  >= $fromDate AND DateCreated  < $toDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY"
-       
-        die(var_dump($result));
+
+        if(count($result) == 0){
+            return "No enquiries found";
+        }
         $resultArr = [];
 
         $resultKey = [];
@@ -619,6 +623,10 @@ class Enquiry {
 
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $toDate AND DateCreated  <  $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if(count($result) == 0){
+            return "No enquiries found";
+        }
 
         $resultArr = [];
 
@@ -802,6 +810,10 @@ class Enquiry {
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) AND DateCreated  >= $toDate AND DateCreated  < $fromDate ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";  // EnquiryId = $EnquiryId
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        if(count($result) == 0){
+            return "No enquiries found";
+        }
+        
         $resultArr = [];
 
         $resultKey = [];

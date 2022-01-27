@@ -297,13 +297,15 @@ class UserProperty
             $metadata = $resultSetArr[$keySetId];
 
 
-        foreach ($resultSetArr as $keyItemSet => $valueItemSet) {
+        foreach ($metadata as $keyItemSet => $valueItemSet) {
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
                 foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
 
-                        if (!self::inArrayRec($valueSetId['PropertyId'],$resultSetArr)) {   // if ($keyItem == $keyItemSet) {
+                        if (!self::inArrayRec($valueSetId['PropertyId'],$metadata)) {   // if ($keyItem == $keyItemSet) {
                             if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
-                                $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueSetId["MetadataId"]];
+                                if (!$metadata[$valueItemIdSet["FieldName"]]) {
+                                    $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueSetId["MetadataId"]];
+                                }
                             }
 
                         }

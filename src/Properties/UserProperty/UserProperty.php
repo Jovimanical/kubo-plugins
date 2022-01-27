@@ -294,9 +294,14 @@ class UserProperty
             }
 
 
-            $metadata = $resultSetArr;
+            
+        }
 
-            return $metadata;
+        $metadata = $resultSetArr;
+
+        return $metadata;
+
+        foreach ($results as $keySetId => $valueSetId) {
 
 
         foreach ($metadata as $keyItemSet => $valueItemSet) {

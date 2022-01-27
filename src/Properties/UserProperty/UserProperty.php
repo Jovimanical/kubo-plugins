@@ -212,11 +212,8 @@ class UserProperty
             $floorLevel = $floorData["floorLevel"];
             $query .= " AND a.PropertyFloor = $floorLevel";
         }
-        
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
-        
 
         if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
@@ -286,31 +283,29 @@ class UserProperty
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                        if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
-                            $connectChecker[] = $valueSetId['PropertyId'];
-                            $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
-                        }
+                    if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
+                        $connectChecker[] = $valueSetId['PropertyId'];
+                        $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+                    }
 
                 }
 
-
             }
 
-           // $resultSetArr[$keySetId] = $metadata;
+            // $resultSetArr[$keySetId] = $metadata;
         }
 
         //$metadata = $resultSetArr;
 
-        return $metadata;
+        return $connectChecker;
 
         foreach ($results as $keySetId => $valueSetId) {
 
+            foreach ($metadata as $keyItemSet => $valueItemSet) {
+                foreach ($blockResultSetArr as $keyItem => $valueItem) {
+                    foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
 
-        foreach ($metadata as $keyItemSet => $valueItemSet) {
-            foreach ($blockResultSetArr as $keyItem => $valueItem) {
-                foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
-
-                        if (!self::inArrayRec($valueSetId['PropertyId'],$metadata)) {   // if ($keyItem == $keyItemSet) {
+                        if (!self::inArrayRec($valueSetId['PropertyId'], $metadata)) { // if ($keyItem == $keyItemSet) {
                             if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
                                 if (!$metadata[$valueItemIdSet["FieldName"]]) {
                                     $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueSetId["MetadataId"]];
@@ -319,15 +314,14 @@ class UserProperty
 
                         }
 
-                }
+                    }
 
+                }
             }
-        }
 
             $results[$keySetId]["Metadata"] = $metadata;
 
         }
-
 
         return $results;
 
@@ -343,7 +337,7 @@ class UserProperty
 
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId)) AND c.PropertyFloor = ".$resultFloor['PropertyFloor']." ";
+        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId)) AND c.PropertyFloor = " . $resultFloor['PropertyFloor'] . " ";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];
@@ -359,7 +353,6 @@ class UserProperty
 
         return $metadata;
     }
-
 
     public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0)
     {
@@ -413,20 +406,20 @@ class UserProperty
         // die(var_dump(count($blockChildrenIds)));
         /*
         if (count($blockChildrenIds) > 0) {
-            $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-            $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
-            // die(var_dump(isset($resultInitial)));
+        $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+        $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
+        // die(var_dump(isset($resultInitial)));
 
-            if (isset($resultInitial) and is_null($resultInitial["Initial"])) {
-                $initialCheck = true;
+        if (isset($resultInitial) and is_null($resultInitial["Initial"])) {
+        $initialCheck = true;
 
-                $queries[] = "BEGIN TRANSACTION;" .
-                    "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId;" .
-                    "COMMIT TRANSACTION;";
-            }
+        $queries[] = "BEGIN TRANSACTION;" .
+        "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId;" .
+        "COMMIT TRANSACTION;";
+        }
 
         }
-        */
+         */
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -496,28 +489,28 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
 
-            /* 
-            if (count($blockChildrenIds) > 0 and $initialCheck) {
+            /*
+        if (count($blockChildrenIds) > 0 and $initialCheck) {
 
-                foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
-                    // $valueUnit = json_decode($valueUnit, true);
-                    //die(var_dump($valueUnit));
+        foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
+        // $valueUnit = json_decode($valueUnit, true);
+        //die(var_dump($valueUnit));
 
-                    $counterExtra++;
+        $counterExtra++;
 
-                    $queries[] = "BEGIN TRANSACTION;" .
-                        "DECLARE @rowcounter" . $counterExtra . " INT;" .
-                        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[PropertyId] " .
-                        "SET @rowcounter" . $counterExtra . " = @@ROWCOUNT " .
-                        "BEGIN TRY " .
-                        "IF @rowcounter" . $counterExtra . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[PropertyId], '$keyId', '$value') END;" .
-                        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                        "COMMIT TRANSACTION;";
+        $queries[] = "BEGIN TRANSACTION;" .
+        "DECLARE @rowcounter" . $counterExtra . " INT;" .
+        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[PropertyId] " .
+        "SET @rowcounter" . $counterExtra . " = @@ROWCOUNT " .
+        "BEGIN TRY " .
+        "IF @rowcounter" . $counterExtra . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[PropertyId], '$keyId', '$value') END;" .
+        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+        "COMMIT TRANSACTION;";
 
-                }
+        }
 
-            }
-            */
+        }
+         */
 
         }
 
@@ -587,9 +580,9 @@ class UserProperty
 
         //Fetch total estate property units
 
-        $query = "SELECT * FROM Properties.UserProperty a 
+        $query = "SELECT * FROM Properties.UserProperty a
         INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-        WHERE b.EntityType = 3 AND b.EntityParent 
+        WHERE b.EntityType = 3 AND b.EntityParent
         IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
         WHERE SpatialEntities.Entities.EntityParent
         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -599,7 +592,6 @@ class UserProperty
 
         $propertyCount = count($result);
         return $propertyCount;
-
 
     }
 
@@ -613,9 +605,9 @@ class UserProperty
         }
 
         //Fetch total estate property units
-        $query = "SELECT * FROM Properties.UserProperty a 
+        $query = "SELECT * FROM Properties.UserProperty a
         INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-        WHERE b.EntityType = 3 AND b.EntityParent 
+        WHERE b.EntityType = 3 AND b.EntityParent
         IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
         WHERE SpatialEntities.Entities.EntityParent
         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -638,27 +630,26 @@ class UserProperty
 
         return $propertyCount - $propertyTotal;
 
-
     }
 
     protected static function getPropertyCount(int $userId, int $entityType)
     {
-        if($entityType == 1){
+        if ($entityType == 1) {
             // Fetching property count by type
             $query = "SELECT EntityType FROM SpatialEntities.Entities WHERE EntityId
             IN (SELECT LinkedEntity FROM Properties.UserProperty
              WHERE UserId = $userId) AND EntityType = $entityType";
         } else {
             // Fetching property count by type
-            $query = "SELECT a.PropertyId FROM Properties.UserProperty a 
+            $query = "SELECT a.PropertyId FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = $entityType AND b.EntityParent 
+            WHERE b.EntityType = $entityType AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE UserId = $userId))";
         }
-        
+
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propertyCount = count($result);
@@ -859,13 +850,14 @@ class UserProperty
         return $results;
     }
 
-    protected static function inArrayRec($needle, $haystack, $strict = false) {
+    protected static function inArrayRec($needle, $haystack, $strict = false)
+    {
         foreach ($haystack as $item) {
             if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && self::inArrayRec($needle, $item, $strict))) {
                 return true;
             }
         }
-    
+
         return false;
     }
 

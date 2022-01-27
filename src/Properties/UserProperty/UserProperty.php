@@ -283,18 +283,16 @@ class UserProperty
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
-                
+
                 foreach ($valueSet as $keyItemId => $valueItemId) {
-                   
 
                         if ($valueSetId['PropertyId'] == $valueItemId['PropertyId']) {
-                            $connectChecker[] = $valueItemId['PropertyId'];
+                            $connectChecker[] = $valueSetId['PropertyId'];
                             $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
                         }
 
                 }
 
-                
 
             }
 

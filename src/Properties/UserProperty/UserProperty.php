@@ -296,6 +296,8 @@ class UserProperty
 
             $metadata = $resultSetArr[$keySetId];
 
+            return $metadata;
+
 
         foreach ($metadata as $keyItemSet => $valueItemSet) {
             foreach ($blockResultSetArr as $keyItem => $valueItem) {

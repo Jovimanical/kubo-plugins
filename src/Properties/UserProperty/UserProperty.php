@@ -216,8 +216,8 @@ class UserProperty
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $results;
         
+
         if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
         }
@@ -246,6 +246,8 @@ class UserProperty
 
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
+
+        return $blockQueries;
 
 
         $unitQuery = implode(";", $unitQueries);

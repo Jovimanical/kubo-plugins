@@ -214,7 +214,7 @@ class UserProperty
         }
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        die(var_dump($results));
+        
         if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
         }
@@ -239,6 +239,8 @@ class UserProperty
 
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
+
+        return $results;
 
         $unitQuery = implode(";", $unitQueries);
         $blockQuery = implode(";", $blockQueries);
@@ -325,6 +327,30 @@ class UserProperty
     }
 
     public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)
+    {
+        $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+        WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
+        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId))";
+        $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $metadata = [];
+        foreach ($result as $key => $value) {
+            $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+        }
+
+        foreach ($blockResult as $keyItem => $valueItem) {
+            if (!isset($metadata[$valueItem["FieldName"]])) {
+                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+            }
+        }
+
+        return $metadata;
+    }
+
+    protected static function viewPropertyInfo(int $propertyId, int $floorLevel = 0)
     {
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

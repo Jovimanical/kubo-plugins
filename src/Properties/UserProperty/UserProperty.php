@@ -255,7 +255,7 @@ class UserProperty
         do {
 
             $unitResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
-            if ($unitResultArr) {
+            if (count($unitResultArr) > 0) {
                 // Add $rowset to array
                 array_push($unitResultSetArr, $unitResultArr);
 
@@ -268,14 +268,14 @@ class UserProperty
         do {
 
             $blockResultArr = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
-            if ($blockResultArr) {
+            if (count($blockResultArr) > 0) {
                 // Add $rowset to array
                 array_push($blockResultSetArr, $blockResultArr);
 
             }
         } while ($stmtBlock->nextRowset());
 
-        return $blockResultSetArr;
+          return $unitResultSetArr;
 
          // die(var_dump($unitResultSetArr));
 

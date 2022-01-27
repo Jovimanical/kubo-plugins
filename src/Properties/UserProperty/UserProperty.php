@@ -231,7 +231,7 @@ class UserProperty
 
             $resultPropertyId = $result["PropertyId"];
 
-            $resultPropertyFloor = $result["PropertyFloor"];
+            $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
             $unitQueries[] = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
@@ -277,26 +277,24 @@ class UserProperty
 
         $connectChecker = [];
 
-        foreach ($unitResultSetArr as $keySet => $valueSet) {
+        foreach ($results as $keySetId => $valueSetId) {
 
-            foreach ($valueSet as $keyItemId => $valueItemId) {
+            foreach ($unitResultSetArr as $keySet => $valueSet) {
 
-                foreach ($results as $keySetId => $valueSetId) {
+                foreach ($valueSet as $keyItemId => $valueItemId) {
 
                     if ((int) $valueSetId['PropertyId'] === (int) $valueItemId['PropertyId']) {
                         $connectChecker[] = $valueSetId['PropertyId'];
                         $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+                    } else {
+                        break;
                     }
 
                 }
-              //  return $metadata;
 
             }
 
-            // $resultSetArr[$keySetId] = $metadata;
         }
-
-        //$metadata = $resultSetArr;
 
         foreach ($results as $keySetId => $valueSetId) {
 
@@ -331,7 +329,7 @@ class UserProperty
         $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $resultFloorPoint  = $resultFloor['PropertyFloor'] ?? 0;
+        $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
 
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -392,8 +390,7 @@ class UserProperty
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
         $queries = [];
-        //$test = print_r($metadata, true);
-        //return $test;
+
         $counter = 0;
         $counterExtra = 0;
         $initialCheck = false;
@@ -435,9 +432,6 @@ class UserProperty
                 $value = str_replace('&#39;', '"', $value);
                 $value = str_replace('&#34;', '"', $value);
                 $value = json_decode($value, true);
-
-                //  print_r($value);
-                // die();
 
             }
 

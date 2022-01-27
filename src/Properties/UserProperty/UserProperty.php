@@ -275,7 +275,7 @@ class UserProperty
             }
         } while ($stmtBlock->nextRowset());
 
-        return $unitResultSetArr;
+        return $blockResultSetArr;
 
          // die(var_dump($unitResultSetArr));
 

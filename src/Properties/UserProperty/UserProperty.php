@@ -850,7 +850,7 @@ class UserProperty
 
     protected static function inArrayRec($needle, $haystack, $strict = false) {
         foreach ($haystack as $item) {
-            if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && inArrayRec($needle, $item, $strict))) {
+            if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && self::inArrayRec($needle, $item, $strict))) {
                 return true;
             }
         }

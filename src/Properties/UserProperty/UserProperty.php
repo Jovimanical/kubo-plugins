@@ -238,17 +238,12 @@ class UserProperty
 
             $unitQueries[] = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
-            $blockQueries[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
+            $blockQueries[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId, ($resultPropertyId) as ConnectId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId)) AND c.PropertyFloor = $resultPropertyFloor";
 
-            $blockQueries['ConnectId'] = $resultPropertyId;
-
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], (int) $floorLevel);
         }
-
-        return $blockQueries;
-
 
         $unitQuery = implode(";", $unitQueries);
         $blockQuery = implode(";", $blockQueries);
@@ -305,22 +300,18 @@ class UserProperty
         foreach ($resultSetArr as $keyItemSet => $valueItemSet) {
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
                 foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
-                    
+
                         if (!self::inArrayRec($valueSetId['PropertyId'],$resultSetArr)) {   // if ($keyItem == $keyItemSet) {
                             if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
-                                $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
+                                $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueSetId["MetadataId"]];
                             }
-                            
-                        }
 
-                    
+                        }
 
                 }
 
             }
         }
-
-            
 
             $results[$keySetId]["Metadata"] = $metadata;
 

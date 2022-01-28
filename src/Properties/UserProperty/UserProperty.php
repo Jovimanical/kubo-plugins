@@ -291,7 +291,7 @@ class UserProperty
 
                     }
 
-                    $resultSetArr[0] = $valueItemId;
+                    $resultSetArr[] = $valueItemId;
 
 
                 }
@@ -299,7 +299,7 @@ class UserProperty
              //   $resultSetArr[$keySetId] = $metadata;
 
             }
-            $resultSetArr[1] = $valueSetId;
+            $resultSetArr[][] = $valueSetId;
         }
 
         return $resultSetArr;

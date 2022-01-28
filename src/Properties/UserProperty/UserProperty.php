@@ -291,18 +291,18 @@ class UserProperty
 
                     }
 
-                    
-
                 }
-                $resultSetArr[] = $metadata;
 
-             //   $resultSetArr[$keySetId] = $metadata;
+                $resultSetArr[$keySetId] = $metadata;
 
             }
-            //$resultSetArr[][] = $valueSetId;
+
+            $metadata = $resultSetArr;
+
+            $results[$keySetId]["Metadata"] = $metadata;
         }
 
-        return $resultSetArr;
+        return $results;
 
         foreach ($results as $keySetId => $valueSetId) {
 
@@ -407,7 +407,6 @@ class UserProperty
             return "Parameters not set";
         }
 
-
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
@@ -472,7 +471,6 @@ class UserProperty
                 "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
-
 
         }
 

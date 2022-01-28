@@ -291,7 +291,7 @@ class UserProperty
 
                     }
 
-                    $resultSetArr[] = $valueItemId;
+                    $resultSetArr[] = $metadata;
 
 
                 }

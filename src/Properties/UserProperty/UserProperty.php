@@ -275,25 +275,25 @@ class UserProperty
             }
         } while ($stmtBlock->nextRowset());
 
-        $connectChecker = [];
-
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                    if ((int) $valueSetId['PropertyId'] === (int) $valueItemId['PropertyId']) {
-                        $connectChecker[] = $valueSetId['PropertyId'];
-                        $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+                    if ((int) $valueSetId['PropertyId'] !== (int) $valueItemId['PropertyId']) {
+
+                        
                     } else {
-                        break;
+                        $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
                     }
 
                 }
 
-            }
+                $resultSetArr[$keySet] = $metadata;
 
+            }
+                return $resultSetArr;
         }
 
         foreach ($results as $keySetId => $valueSetId) {

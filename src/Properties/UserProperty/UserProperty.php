@@ -399,25 +399,6 @@ class UserProperty
             return "Parameters not set";
         }
 
-        // fetching block children IDs
-        // $blockChildrenIds = self::getPropertyChildrenIds($propertyId);
-        // die(var_dump(count($blockChildrenIds)));
-        /*
-        if (count($blockChildrenIds) > 0) {
-        $initialQuery = "SELECT Initial FROM Properties.UserProperty WHERE PropertyId = $propertyId";
-        $resultInitial = DBConnectionFactory::getConnection()->query($initialQuery)->fetch(\PDO::FETCH_ASSOC);
-        // die(var_dump(isset($resultInitial)));
-
-        if (isset($resultInitial) and is_null($resultInitial["Initial"])) {
-        $initialCheck = true;
-
-        $queries[] = "BEGIN TRANSACTION;" .
-        "UPDATE Properties.UserProperty SET Initial='true' WHERE PropertyId=$propertyId;" .
-        "COMMIT TRANSACTION;";
-        }
-
-        }
-         */
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -484,33 +465,10 @@ class UserProperty
                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                 "COMMIT TRANSACTION;";
 
-            /*
-        if (count($blockChildrenIds) > 0 and $initialCheck) {
-
-        foreach ($blockChildrenIds as $keyUnit => $valueUnit) {
-        // $valueUnit = json_decode($valueUnit, true);
-        //die(var_dump($valueUnit));
-
-        $counterExtra++;
-
-        $queries[] = "BEGIN TRANSACTION;" .
-        "DECLARE @rowcounter" . $counterExtra . " INT;" .
-        "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$valueUnit[PropertyId] " .
-        "SET @rowcounter" . $counterExtra . " = @@ROWCOUNT " .
-        "BEGIN TRY " .
-        "IF @rowcounter" . $counterExtra . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($valueUnit[PropertyId], '$keyId', '$value') END;" .
-        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-        "COMMIT TRANSACTION;";
-
-        }
-
-        }
-         */
 
         }
 
         $query = implode(";", $queries);
-        die(var_dump($query));
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 

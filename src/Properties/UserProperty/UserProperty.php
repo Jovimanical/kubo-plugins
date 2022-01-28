@@ -300,8 +300,10 @@ class UserProperty
                 $resultSetArr[] = $metadata;
 
             }
-                return $metadata;
+                
         }
+
+        return $metadata;
 
         foreach ($results as $keySetId => $valueSetId) {
 

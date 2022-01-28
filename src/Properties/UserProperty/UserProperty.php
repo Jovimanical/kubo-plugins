@@ -314,7 +314,7 @@ class UserProperty
           //  $results[$keySetId]["Metadata"] = $metadata;
         }
 
-        return $unitResultSetArr;
+        return $results;
 
         foreach ($results as $keySetId => $valueSetId) {
 

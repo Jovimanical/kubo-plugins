@@ -299,7 +299,7 @@ class UserProperty
              //   $resultSetArr[$keySetId] = $metadata;
 
             }
-            $resultSetArr[][] = $valueSetId;
+            //$resultSetArr[][] = $valueSetId;
         }
 
         return $resultSetArr;

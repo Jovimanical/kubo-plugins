@@ -281,8 +281,6 @@ class UserProperty
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                   
-
                     switch ((int) $valueSetId['PropertyId'] === (int) $valueItemId['PropertyId']) {
                         case "true":
                             $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
@@ -293,17 +291,15 @@ class UserProperty
 
                     }
 
+                    $resultSetArr[0] = $valueItemId;
+
 
                 }
 
-                $resultSetArr[$keySetId] = $metadata;
-
-
-                
+             //   $resultSetArr[$keySetId] = $metadata;
 
             }
-            
-                
+            $resultSetArr[1] = $valueSetId;
         }
 
         return $resultSetArr;

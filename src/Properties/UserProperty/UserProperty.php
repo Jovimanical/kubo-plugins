@@ -285,7 +285,7 @@ class UserProperty
 
                     switch ((int) $valueSetId['PropertyId'] === (int) $valueItemId['PropertyId']) {
                         case "true":
-                            $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+                          //  $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
                             break;
                         case "false":
                             break;

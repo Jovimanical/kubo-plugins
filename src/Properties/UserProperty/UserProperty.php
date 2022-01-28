@@ -280,6 +280,14 @@ class UserProperty
             foreach ($unitResultSetArr as $keySet => $valueSet) {
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
+
+                    if($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+
+                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = $valueItemId["FieldValue"];
+
+                    }
+
+                    /*
                     if(end($valueSet) == $valueItemId) {
                        break;
                     }
@@ -293,6 +301,8 @@ class UserProperty
                         default:
 
                     }
+
+                    */
 
                 }
 

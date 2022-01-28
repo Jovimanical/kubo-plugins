@@ -287,56 +287,28 @@ class UserProperty
 
                     }
 
-                    /*
-                    if(end($valueSet) == $valueItemId) {
-                       break;
-                    }
-
-                    switch ((int) $valueSetId['PropertyId'] === (int) $valueItemId['PropertyId']) {
-                        case "true":
-                            $metadata[$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
-                            break;
-                        case "false":
-                            break;
-                        default:
-
-                    }
-
-                    */
-
                 }
 
-               
 
             }
 
-
-          //  $results[$keySetId]["Metadata"] = $metadata;
         }
-
-        return $results;
 
         foreach ($results as $keySetId => $valueSetId) {
 
-            foreach ($metadata as $keyItemSet => $valueItemSet) {
                 foreach ($blockResultSetArr as $keyItem => $valueItem) {
+
                     foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
 
-                        if (!self::inArrayRec($valueSetId['PropertyId'], $metadata)) { // if ($keyItem == $keyItemSet) {
                             if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
-                                if (!$metadata[$valueItemIdSet["FieldName"]]) {
-                                    $metadata[$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueSetId["MetadataId"]];
+                                if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) OR !isset($results[$keySetId]["Metadata"])) {
+                                    $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
                                 }
                             }
-
-                        }
 
                     }
 
                 }
-            }
-
-            $results[$keySetId]["Metadata"] = $metadata;
 
         }
 

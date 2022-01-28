@@ -280,6 +280,9 @@ class UserProperty
             foreach ($unitResultSetArr as $keySet => $valueSet) {
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
+                    if(end($valueSet) == $valueItemId) {
+                       break;
+                    }
 
                     switch ((int) $valueSetId['PropertyId'] === (int) $valueItemId['PropertyId']) {
                         case "true":
@@ -298,7 +301,7 @@ class UserProperty
             }
 
 
-            $results[$keySetId]["Metadata"] = $metadata;
+          //  $results[$keySetId]["Metadata"] = $metadata;
         }
 
         return $results;

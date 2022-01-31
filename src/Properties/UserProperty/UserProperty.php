@@ -93,9 +93,22 @@ class UserProperty
             "PropertyTitle" => QB::wrapString($title, "'"),
         ];
 
-        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+        $queryCheck = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+        $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $propId = $result["lastInsertId"];
+        if(count($resultCheck) > 0){
+
+            $queryUpdate = "UPDATE Properties.UserProperty SET UserId = ".$inputData['UserId'].", LinkedEntity = ".$inputData['LinkedEntity'].", PropertyFloor = ".$inputData['PropertyFloor'].", PropertyTitle = ".$inputData['PropertyTitle']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $resultUpdate = DBConnectionFactory::getConnection()->query($queryUpdate)->fetchAll(\PDO::FETCH_ASSOC);
+
+            return $resultUpdate;
+
+            $propId = $resultUpdate["lastInsertId"];
+        } else {
+            $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+
+            $propId = $result["lastInsertId"];
+        }
 
         return $propId;
 

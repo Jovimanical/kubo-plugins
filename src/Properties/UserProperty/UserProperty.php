@@ -106,7 +106,7 @@ class UserProperty
             $propId = $result["lastInsertId"];
         }
 
-        if (self::isJSON($metadata)) {
+        if (self::isJSONExtra($metadata)) {
             $metadata = str_replace('&#39;', '\'', $metadata);
             $metadata = str_replace('&#34;', '"', $metadata);
             $metadata = json_decode($metadata, true);
@@ -794,6 +794,13 @@ class UserProperty
     protected static function isJSON($stringData)
     {
         $string = str_replace('&#39;', '"', $stringData);
+        $string = str_replace('&#34;', '"', $stringData);
+        return is_string($string) && is_array(json_decode($string, true)) ? true : false;
+    }
+
+    protected static function isJSONExtra($stringData)
+    {
+        $string = str_replace('&#39;', '\'', $stringData);
         $string = str_replace('&#34;', '"', $stringData);
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }

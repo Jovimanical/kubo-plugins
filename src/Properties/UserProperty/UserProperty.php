@@ -103,7 +103,7 @@ class UserProperty
             $queryCheck = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
 
-            return $resultCheck["PropertyId"];
+            return $resultCheck;
 
             $propId = $resultUpdate["lastInsertId"];
         } else {

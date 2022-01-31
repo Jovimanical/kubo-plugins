@@ -99,7 +99,7 @@ class UserProperty
         if(count($resultCheck) > 0){
 
             $queryUpdate = "UPDATE Properties.UserProperty SET UserId = ".$inputData['UserId'].", LinkedEntity = ".$inputData['LinkedEntity'].", PropertyFloor = ".$inputData['PropertyFloor'].", PropertyTitle = ".$inputData['PropertyTitle']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
-            $resultUpdate = DBConnectionFactory::getConnection()->query($queryUpdate)->fetchAll(\PDO::FETCH_ASSOC);
+            $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
 
             return $resultUpdate;
 

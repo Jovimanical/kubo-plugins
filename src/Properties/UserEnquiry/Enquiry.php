@@ -1073,7 +1073,7 @@ class Enquiry {
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-           // array_push($resultArr,$resultum);
+            array_push($resultArr,$resultum);
 
         }
 

@@ -100,8 +100,10 @@ class UserProperty
 
             $queryUpdate = "UPDATE Properties.UserProperty SET UserId = ".$inputData['UserId'].", LinkedEntity = ".$inputData['LinkedEntity'].", PropertyFloor = ".$inputData['PropertyFloor'].", PropertyTitle = ".$inputData['PropertyTitle']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
+            $queryCheck = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
 
-            return $resultUpdate;
+            return $resultCheck["PropertyId"];
 
             $propId = $resultUpdate["lastInsertId"];
         } else {

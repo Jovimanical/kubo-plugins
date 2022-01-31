@@ -77,10 +77,6 @@ class UserProperty
         $propertyId = $data["property_id"];
         $floorLevel = $data["floor_level"];
 
-        //$metadata = json_decode($metadata, true);
-
-        //return $metadata;
-
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -111,7 +107,7 @@ class UserProperty
         }
 
         if (self::isJSON($metadata)) {
-            $metadata = str_replace('&#39;', '"', $metadata);
+            $metadata = str_replace('&#39;', '\'', $metadata);
             $metadata = str_replace('&#34;', '"', $metadata);
             $metadata = json_decode($metadata, true);
 

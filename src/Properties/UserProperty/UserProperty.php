@@ -77,6 +77,8 @@ class UserProperty
         $propertyId = $data["property_id"];
         $floorLevel = $data["floor_level"];
 
+        return $metadata;
+
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 

@@ -110,8 +110,6 @@ class UserProperty
             $propId = $result["lastInsertId"];
         }
 
-        return $propId;
-
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {

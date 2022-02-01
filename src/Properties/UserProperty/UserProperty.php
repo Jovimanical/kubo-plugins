@@ -800,9 +800,9 @@ class UserProperty
 
     protected static function isJSONExtra($stringData)
     {
-        $string = str_replace('&#34;', '"', $stringData);
-        $string = str_replace('&#39;', "'", $stringData);
-        return is_string($string) && is_array(json_decode($string, true)) ? true : false;
+        $stringData = str_replace('&#34;', '"', $stringData);
+        $stringData = str_replace('&#39;', "'", $stringData);
+        return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
     }
 
     protected static function getPropertyChildrenIds(int $propertyId, array $floorData = [])

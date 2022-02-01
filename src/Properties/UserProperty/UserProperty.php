@@ -791,10 +791,10 @@ class UserProperty
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $sc, $string));
     }
 
-    protected static function isJSON($stringData)
+    protected static function isJSON($stringDataX)
     {
-        $stringData = str_replace('&#39;', '"', $stringData);
-        $stringData = str_replace('&#34;', '"', $stringData);
+        $stringData = str_replace('&#39;', '"', $stringDataX);
+        $stringData = str_replace('&#34;', '"', $stringDataX);
         return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
     }
 

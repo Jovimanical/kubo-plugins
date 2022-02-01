@@ -94,7 +94,7 @@ class Enquiry {
             $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
             $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue, ($resultFloorEntityName) as EntityName FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ($resultFloorEntityName) as EntityName FROM Properties.UserPropertyMetadata a LEFT JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN

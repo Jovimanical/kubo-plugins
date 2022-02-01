@@ -800,8 +800,8 @@ class UserProperty
 
     protected static function isJSONExtra($stringData)
     {
-        $string = str_replace('&#39;', '\'', $stringData);
         $string = str_replace('&#34;', '"', $stringData);
+        $string = str_replace('&#39;', "'", $stringData);
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
     }
 

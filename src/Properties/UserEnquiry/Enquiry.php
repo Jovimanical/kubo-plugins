@@ -124,7 +124,7 @@ class Enquiry {
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
             // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+            // array_push($resultArr,$resultum);
 
         }
 
@@ -189,6 +189,10 @@ class Enquiry {
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+            
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];

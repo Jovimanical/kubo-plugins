@@ -72,6 +72,8 @@ class Enquiry {
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        return $result;
+        
         $resultArr = [];
 
         $resultKey = [];

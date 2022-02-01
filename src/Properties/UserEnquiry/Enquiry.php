@@ -90,14 +90,16 @@ class Enquiry {
 
             $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
-
+ 
+            return $resultFloor;
+            
             $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
             $resultFloorEntityName = $resultFloor['EntityName'];
 
             $propQuery[] = "SELECT MetadataId, FieldName, FieldValue, ($resultFloorEntityName) as EntityName FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
             return $propQuery;
-            
+
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
                 SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId)) AND c.PropertyFloor = $resultFloorPoint";

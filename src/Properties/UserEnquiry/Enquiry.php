@@ -72,8 +72,6 @@ class Enquiry {
         $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $result;
-        
         $resultArr = [];
 
         $resultKey = [];
@@ -98,6 +96,8 @@ class Enquiry {
 
             $propQuery[] = "SELECT MetadataId, FieldName, FieldValue, ($resultFloorEntityName) as EntityName FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
 
+            return $propQuery;
+            
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
                 SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId)) AND c.PropertyFloor = $resultFloorPoint";

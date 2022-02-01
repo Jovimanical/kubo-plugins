@@ -192,7 +192,7 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
-            
+
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];
@@ -284,12 +284,13 @@ class Enquiry {
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
 
-            $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
+            $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
+            $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ('$resultFloorEntityName') as EntityName FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -297,9 +298,9 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = 3 AND b.EntityParent 
+            WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -318,8 +319,8 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
-           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            // array_push($resultArr,$resultum);
 
         }
 
@@ -384,6 +385,10 @@ class Enquiry {
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+            
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];
@@ -474,12 +479,13 @@ class Enquiry {
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
 
-            $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
+            $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
+            $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ('$resultFloorEntityName') as EntityName FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -487,9 +493,9 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = 3 AND b.EntityParent 
+            WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -508,8 +514,8 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
-           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            // array_push($resultArr,$resultum);
 
         }
 
@@ -574,6 +580,10 @@ class Enquiry {
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+            
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];
@@ -664,12 +674,13 @@ class Enquiry {
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
 
-            $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
+            $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
+            $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ('$resultFloorEntityName') as EntityName FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -677,9 +688,9 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = 3 AND b.EntityParent 
+            WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -698,8 +709,8 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
-           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            // array_push($resultArr,$resultum);
 
         }
 
@@ -764,6 +775,10 @@ class Enquiry {
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+            
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];
@@ -855,12 +870,13 @@ class Enquiry {
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
 
-            $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
+            $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
+            $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ('$resultFloorEntityName') as EntityName FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -868,9 +884,9 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = 3 AND b.EntityParent 
+            WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -889,8 +905,8 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
-           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            // array_push($resultArr,$resultum);
 
         }
 
@@ -955,6 +971,10 @@ class Enquiry {
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+            
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];
@@ -1042,12 +1062,13 @@ class Enquiry {
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
 
-            $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
+            $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
+            $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
 
-            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ('$resultFloorEntityName') as EntityName FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
 
             $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
@@ -1055,9 +1076,9 @@ class Enquiry {
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a 
+            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = 3 AND b.EntityParent 
+            WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
             WHERE SpatialEntities.Entities.EntityParent
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
@@ -1076,8 +1097,8 @@ class Enquiry {
             $resultMsg = $resultum['MessageJson'];
 
             $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
-           // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
-            array_push($resultArr,$resultum);
+            // $result["PropertyData"] = UserProperty::viewProperty((int)$result["PropertyId"]);
+            // array_push($resultArr,$resultum);
 
         }
 
@@ -1142,6 +1163,10 @@ class Enquiry {
         $metadata['PropertySold'] = array_combine($resultKey,$availResultArr);
 
         foreach($result as $resultum){
+            $resultMsg = $resultum['MessageJson'];
+
+            $resultum['MessageJsonX'] = str_replace("&#39;","'",unserialize($resultMsg));
+            
             foreach($metadata['PropertyTotal'] as $key => $value){
                 if($key == $resultum['PropertyId']){
                     $resultum['PropertyTotal'] = $value[0][''];
@@ -1178,7 +1203,7 @@ class Enquiry {
 
         // die(var_dump($metadata));
 
-        // array_push($resultArr,$metadata);
+       // array_push($resultArr,$metadata);
 
        // $result = $result[0] ?? [];
        // if (count($result) > 0){

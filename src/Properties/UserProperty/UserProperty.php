@@ -113,7 +113,7 @@ class UserProperty
 
         }
 
-        return $metadata;
+        return self::isJSONExtra($metadata);
 
         //STEP 3: Index Metadata
         $values = [];

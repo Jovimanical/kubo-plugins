@@ -107,8 +107,8 @@ class UserProperty
         }
 
         if (self::isJSONExtra($metadata)) {
-            $metadata = str_replace('&#39;', '\'', $metadata);
             $metadata = str_replace('&#34;', '"', $metadata);
+            $metadata = str_replace('&#39;', "'", $metadata);
             $metadata = json_decode($metadata, true);
 
         }

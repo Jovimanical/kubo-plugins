@@ -113,7 +113,7 @@ class UserProperty
 
         }
 
-        return self::isJSON($metadata);
+        return $metadata;
 
         //STEP 3: Index Metadata
         $values = [];

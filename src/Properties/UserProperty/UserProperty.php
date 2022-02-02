@@ -113,8 +113,6 @@ class UserProperty
             $metadata = json_decode($metadata, true);
         }
 
-        return $metadata;
-
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
@@ -122,6 +120,8 @@ class UserProperty
         }
 
         $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
+
+        return $query;
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 

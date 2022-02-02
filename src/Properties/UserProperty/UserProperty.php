@@ -106,6 +106,8 @@ class UserProperty
             $propId = $result["lastInsertId"];
         }
 
+        return self::isJSON($metadata);
+
        
         if (self::isJSON($metadata)) {
             $metadata = str_replace('&#34;', '"', $metadata);
@@ -114,8 +116,7 @@ class UserProperty
 
         }
 
-        return $metadata;
-
+        
        
 
         //STEP 3: Index Metadata

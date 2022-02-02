@@ -114,7 +114,7 @@ class UserProperty
 
         }
 
-        return $metadata;
+        return self::isJSON($metadata);
 
        
 

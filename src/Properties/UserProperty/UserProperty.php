@@ -106,14 +106,14 @@ class UserProperty
             $propId = $result["lastInsertId"];
         }
 
-        if (self::isJSONExtra($metadata)) {
+        if (self::isJSON($metadata)) {
             $metadata = str_replace('&#34;', '"', $metadata);
-            $metadata = str_replace('&#39;', "'", $metadata);
+            $metadata = str_replace('&#39;', '"', $metadata);
             $metadata = json_decode($metadata, true);
 
         }
 
-        return self::isJSONExtra($metadata);
+        return self::isJSON($metadata);
 
         //STEP 3: Index Metadata
         $values = [];
@@ -122,8 +122,6 @@ class UserProperty
         }
 
         $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
-
-        return $query;
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
@@ -791,17 +789,10 @@ class UserProperty
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $sc, $string));
     }
 
-    protected static function isJSON($stringDataX)
+    protected static function isJSON($stringData)
     {
-        $stringData = str_replace('&#39;', '"', $stringDataX);
-        $stringData = str_replace('&#34;', '"', $stringDataX);
-        return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
-    }
-
-    protected static function isJSONExtra($stringData)
-    {
+        $stringData = str_replace('&#39;', '"', $stringData);
         $stringData = str_replace('&#34;', '"', $stringData);
-        $stringData = str_replace('&#39;', "'", $stringData);
         return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
     }
 

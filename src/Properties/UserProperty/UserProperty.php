@@ -137,9 +137,8 @@ class UserProperty
 
             $query = implode(";", $queries);
 
-            return $query;
             $result = DBConnectionFactory::getConnection()->exec($query);
-            
+            return $result;
         } else {
             $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
             $result = DBConnectionFactory::getConnection()->exec($query);

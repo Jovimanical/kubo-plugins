@@ -92,6 +92,7 @@ class UserProperty
         $queryCheck = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
         $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
 
+        $propId = 0;
         if(count($resultCheck) > 0){
 
             $queryUpdate = "UPDATE Properties.UserProperty SET UserId = ".$inputData['UserId'].", LinkedEntity = ".$inputData['LinkedEntity'].", PropertyFloor = ".$inputData['PropertyFloor'].", PropertyTitle = ".$inputData['PropertyTitle']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
@@ -117,16 +118,26 @@ class UserProperty
         $values = [];
         foreach ($metadata as $key => $value) {
             if(is_array($value)){
-               // $value = json_encode($value);
+                $value = json_encode($value);
             }
             $values[] .= "($propId, '$key', '$value')";
         }
 
-        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
+        $queryChecker = "SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $propId";
+        $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
+        $queries = [];
 
-        return $query;
-
-        $result = DBConnectionFactory::getConnection()->exec($query);
+        if(count($resultChecker) > 0){
+            foreach($values as $keyId => $valueId){
+                $queries[] = "UPDATE Properties.UserPropertyMetadata SET PropertyId = ,SET FieldName = ,SET FieldValue = WHERE PropertyId = $propId";
+            }
+            $query = implode(";", $queries);
+            $result = DBConnectionFactory::getConnection()->exec($query);
+            
+        } else {
+            $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
+            $result = DBConnectionFactory::getConnection()->exec($query);
+        }
 
         $propertyChildren = self::viewPropertyChildren((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);
 

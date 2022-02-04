@@ -131,7 +131,7 @@ class UserProperty
 
         if(count($resultChecker) > 0){
             foreach($valueExtra[$propId] as $keyId => $valueId){
-                $queries[] = "UPDATE Properties.UserPropertyMetadata SET PropertyId = $propId,SET FieldName = '$keyId',SET FieldValue = '$valueId' WHERE PropertyId = $propId";
+                $queries[] = "UPDATE Properties.UserPropertyMetadata SET PropertyId = $propId,FieldName = '$keyId',FieldValue = '$valueId' WHERE PropertyId = $propId";
             }
 
 

@@ -129,8 +129,6 @@ class UserProperty
         $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
         $queries = [];
 
-        return count($resultChecker);
-
         if(count($resultChecker) > 0){
             foreach($valueExtra[$propId] as $keyId => $valueId){
                 $queries[] = "UPDATE Properties.UserPropertyMetadata SET FieldName = '$keyId',FieldValue = '$valueId' WHERE PropertyId = $propId";
@@ -138,6 +136,8 @@ class UserProperty
 
 
             $query = implode(";", $queries);
+
+            return $query;
             $result = DBConnectionFactory::getConnection()->exec($query);
             
         } else {

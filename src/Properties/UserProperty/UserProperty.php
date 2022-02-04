@@ -117,7 +117,7 @@ class UserProperty
         $values = [];
         foreach ($metadata as $key => $value) {
             if(is_array($value)){
-                $value = json_encode($value);
+               // $value = json_encode($value);
             }
             $values[] .= "($propId, '$key', '$value')";
         }
@@ -125,7 +125,7 @@ class UserProperty
         $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
 
         return $query;
-        
+
         $result = DBConnectionFactory::getConnection()->exec($query);
 
         $propertyChildren = self::viewPropertyChildren((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);

@@ -93,9 +93,9 @@ class UserProperty
         $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
 
         $propId = 0;
-        if(count($resultCheck) > 0){
+        if (count($resultCheck) > 0) {
 
-            $queryUpdate = "UPDATE Properties.UserProperty SET UserId = ".$inputData['UserId'].", LinkedEntity = ".$inputData['LinkedEntity'].", PropertyFloor = ".$inputData['PropertyFloor'].", PropertyTitle = ".$inputData['PropertyTitle']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $queryUpdate = "UPDATE Properties.UserProperty SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . " WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
             $queryCheck = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
@@ -114,34 +114,34 @@ class UserProperty
             $metadata = json_decode($metadata, true);
         }
 
-        //STEP 3: Index Metadata
-        $values = [];
-        $valueExtra = [];
+        // STEP 3: Index Metadata
+        // $values = [];
+        // $valueExtra = [];
         foreach ($metadata as $key => $value) {
-            if(is_array($value)){
+            if (is_array($value)) {
                 $value = json_encode($value);
             }
-            $values[] .= "($propId, '$key', '$value')";
-            $valueExtra[$propId][$key] = $value;
-        }
+           // $values[] .= "($propId, '$key', '$value')";
+           // $valueExtra[$propId][$key] = $value;
 
-        $queryChecker = "SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $propId";
-        $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
-        $queries = [];
+            $queryChecker = "SELECT PropertyId,FieldName FROM Properties.UserPropertyMetadata WHERE PropertyId = $propId AND FieldName = '$key'";
+            $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
+           // $queries = [];
 
-        if(count($resultChecker) > 0){
-            foreach($valueExtra[$propId] as $keyId => $valueId){
-                $queries[] = "UPDATE Properties.UserPropertyMetadata SET FieldName = '$keyId',FieldValue = '$valueId' WHERE PropertyId = $propId";
+            if (count($resultChecker) > 0) {
+                //  foreach($valueExtra[$propId] as $keyId => $valueId){
+                $query = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
+                $result = DBConnectionFactory::getConnection()->exec($query);
+                //   }
+
+                // $query = implode(";", $queries);
+
+                // return $result;
+            } else {
+                $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propId, '$key', '$value')"; // " . implode(",", $values);
+                $result = DBConnectionFactory::getConnection()->exec($query);
             }
 
-
-            $query = implode(";", $queries);
-
-            $result = DBConnectionFactory::getConnection()->exec($query);
-            return $result;
-        } else {
-            $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
-            $result = DBConnectionFactory::getConnection()->exec($query);
         }
 
         $propertyChildren = self::viewPropertyChildren((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);
@@ -322,7 +322,7 @@ class UserProperty
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                    if($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
 
                         $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 
@@ -330,26 +330,25 @@ class UserProperty
 
                 }
 
-
             }
 
         }
 
         foreach ($results as $keySetId => $valueSetId) {
 
-                foreach ($blockResultSetArr as $keyItem => $valueItem) {
+            foreach ($blockResultSetArr as $keyItem => $valueItem) {
 
-                    foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
+                foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
 
-                            if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
-                                if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) OR !isset($results[$keySetId]["Metadata"])) {
-                                    $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
-                                }
-                            }
-
+                    if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
+                        if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
+                            $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
+                        }
                     }
 
                 }
+
+            }
 
         }
 

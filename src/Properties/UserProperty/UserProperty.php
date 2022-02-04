@@ -116,11 +116,13 @@ class UserProperty
 
         //STEP 3: Index Metadata
         $values = [];
+        $valueExtra = [];
         foreach ($metadata as $key => $value) {
             if(is_array($value)){
                 $value = json_encode($value);
             }
             $values[] .= "($propId, '$key', '$value')";
+            $valueExtra[$propId][$key] = $value;
         }
 
         $queryChecker = "SELECT PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $propId";
@@ -128,9 +130,11 @@ class UserProperty
         $queries = [];
 
         if(count($resultChecker) > 0){
-            foreach($values as $keyId => $valueId){
-                $queries[] = "UPDATE Properties.UserPropertyMetadata SET PropertyId = ,SET FieldName = ,SET FieldValue = WHERE PropertyId = $propId";
+            foreach($valueExtra[$propId] as $keyId => $valueId){
+                $queries[] = "UPDATE Properties.UserPropertyMetadata SET PropertyId = $propId,SET FieldName = '$keyId',SET FieldValue = '$valueId' WHERE PropertyId = $propId";
             }
+
+
             $query = implode(";", $queries);
             $result = DBConnectionFactory::getConnection()->exec($query);
             

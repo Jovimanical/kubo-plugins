@@ -216,11 +216,22 @@ class UserProperty
     {
         $fetch = "FIRST";
         $offset = 0;
-        $limit = $data['limit'] ?? 10;
+        $limit =  10;
 
         if ($data['offset'] != 0) {
             $fetch = "NEXT";
             $offset = $data['offset'];
+        }
+
+        if ($data['limit'] == "") {
+            $limit = 10;
+        } else {
+            $limit = $data['limit'] ?? 10;
+        }
+
+        if (!isset($propertyId) or empty($data)) {
+
+            return "Parameters not set";
         }
 
         $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityType = 1 AND b.EntityParent IS NULL ORDER BY a.PropertyId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";

@@ -210,7 +210,7 @@ class UserProperty
         return $result;
     }
 
-    public static function listAllProperties(array $data)
+    public static function listAllProperties(int $propertyId = 1, array $data)
     {
         $fetch = "FIRST";
         $offset = 0;

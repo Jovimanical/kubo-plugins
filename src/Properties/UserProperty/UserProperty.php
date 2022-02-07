@@ -200,7 +200,6 @@ class UserProperty
             $resultFloorData[] = $floor['PropertyFloor'];
         }
 
-        return $resultFloorData;
         $resultFloorCount = count(array_unique($resultFloorData));
 
         $result = $result[0] ?? [];

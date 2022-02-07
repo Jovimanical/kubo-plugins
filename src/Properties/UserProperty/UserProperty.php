@@ -194,6 +194,7 @@ class UserProperty
         $queryFloor = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
         $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
+        return $resultFloor;
         $resultFloorData = [];
         foreach($resultFloor as $key => $floor) {
             $resultFloorData[] = $floor;

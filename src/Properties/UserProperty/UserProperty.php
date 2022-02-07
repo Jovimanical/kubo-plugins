@@ -225,7 +225,7 @@ class UserProperty
 
         $query = "SELECT a.* FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent IS NULL ORDER BY a.PropertyId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
+        return $result;
         $result = $result[0] ?? [];
         if (count($result) > 0) {
             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);

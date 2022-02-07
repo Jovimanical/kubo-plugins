@@ -197,7 +197,7 @@ class UserProperty
         
         $resultFloorData = [];
         foreach($resultFloor as $key => $floor) {
-            $resultFloorData[] = $floor;
+            $resultFloorData[] = $floor['PropertyFloor'];
         }
 
         return $resultFloorData;

@@ -37,6 +37,10 @@ class UserProperty {
         return UserProperty\UserProperty::viewProperty($propertyId);
     }
 
+    public static function listAllProperties(array $data){
+        return UserProperty\UserProperty::listAllProperties($data);
+    }
+
     public static function viewPropertyByName(array $data){
         return UserProperty\UserProperty::viewPropertyByName($data);
     }

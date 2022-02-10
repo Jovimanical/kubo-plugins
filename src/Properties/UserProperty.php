@@ -49,6 +49,10 @@ class UserProperty {
         return UserProperty\UserProperty::viewPropertyChildren($propertyId, $floorLevel);
     }
 
+    public static function getPropertyChildren(int $propertyId, array $floorLevel = []){
+        return UserProperty\UserProperty::getPropertyChildren($propertyId, $floorLevel);
+    }
+
     public static function viewPropertyChildrenTest(int $propertyId, array $floorLevel = []){
         return UserProperty\UserProperty::viewPropertyChildrenTest($propertyId, $floorLevel);
     }

@@ -961,7 +961,8 @@ class UserProperty
         return $result;
     }
 
-    public static function uploadMapData(int $userId, array $data){
+    public static function uploadMapData(int $userId, array $data)
+    {
 
         if ($userId == 0 or empty($data)) {
             return "Parameters not set";
@@ -976,52 +977,52 @@ class UserProperty
             return "Parameters not set";
         }
 
-        if (isset($_POST["uploadBtn"])){
-            if ($_FILES["geojsons"]["name"] !== ""){
+        if (isset($_POST["uploadBtn"])) {
+            if ($_FILES["geojsons"]["name"] !== "") {
 
                 $fileNameParts = explode(".", $_FILES["geojsons"]["name"]);
-                if ($fileNameParts[1] == "zip"){
-                    if(file_exists("./tmp/data")){
+                if ($fileNameParts[1] == "zip") {
+                    if (file_exists("./tmp/data")) {
 
                     } else {
                         mkdir("tmp/data");
                     }
 
                     $path = "tmp/data";
-                    $location = $path.$_FILES["geojsons"]["name"];
+                    $location = $path . $_FILES["geojsons"]["name"];
 
-                    if(move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
+                    if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
                         $zip = new ZipArchive();
-                        if ($zip->open($location)){
+                        if ($zip->open($location)) {
                             $zip->extractTo($path);
                             $zip->close();
                         }
 
-                        $files = scandir($path.$fileNameParts[0]);
+                        $files = scandir($path . $fileNameParts[0]);
                         $fileNames = [];
                         $fileBlockNames = [];
-                        foreach ($files as $key=>$value) {
+                        foreach ($files as $key => $value) {
                             $fileNames[] = $value;
                         }
 
                         $blockLength = 0;
                         $blockNumberLength = 0;
-                        if(in_array("ESTATE_BOUNDARY.geojson",$fileNames) AND in_array("BLOCKS",$fileNames)){
+                        if (in_array("ESTATE_BOUNDARY.geojson", $fileNames) and in_array("BLOCKS", $fileNames)) {
 
-                            foreach ($fileNames as $key=>$value) {
-                                 if($value == "BLOCKS"){
-                                    $blocks = scandir($path.$fileNames[$key]);
+                            foreach ($fileNames as $key => $value) {
+                                if ($value == "BLOCKS") {
+                                    $blocks = scandir($path . $fileNames[$key]);
                                     $blockLength = count($blocks);
-                                 }
+                                }
 
-                                 if($value == "BLOCK NUMBERS"){
-                                    $blockNumbers = scandir($path.$fileNames[$key]);
+                                if ($value == "BLOCK NUMBERS") {
+                                    $blockNumbers = scandir($path . $fileNames[$key]);
                                     $blockNumberLength = count($blockNumbers);
-                                 }
+                                }
 
-                                 if($blockLength == $blockNumberLength){
+                                if ($blockLength == $blockNumberLength) {
 
-                                    $login =  self::scriptLogin($username, $password);
+                                    $login = self::scriptLogin($username, $password);
                                     $login = $login["contentData"];
 
                                     $boundary_geojson = file_get_contents(
@@ -1037,60 +1038,71 @@ class UserProperty
                                     $dir = "tmp/data/$foldername/BLOCKS/";
                                     $files = scandir($dir);
                                     $blocks = [];
-                                    $i = 0;
-                                    foreach ($files as $file){
-                                        if (pathinfo($dir.$file, PATHINFO_EXTENSION) == "geojson"){
-                                            $geojson = file_get_contents($dir.$file);
+                                    foreach ($files as $file) {
+                                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                                            $geojson = file_get_contents($dir . $file);
                                             $geojson = str_replace("\"", "'", $geojson);
                                             try {
                                                 $file = str_replace(".geojson", " $initials", $file);
-                                                $result = self::indexBlock($login, $geojson, $file, $result['EntityId']);  // edit last insert entityId of Estate
-                                                $blocks[] = $result['Entityname']." => ".$result['EntityId']; // @todo build $blocks array
-                                            }
-                                            catch(Exception $e) {
-                                              return  $file." failed  \n".$e->getMessage();  // @todo  return the Exception error and/or terminate
+                                                $result = self::indexBlock($login, $geojson, $file, $result['EntityId']); // edit last insert entityId of Estate
+                                                $blocks[] = $result['Entityname'] . " => " . $result['EntityId']; // @todo build $blocks array
+                                            } catch (Exception $e) {
+                                                return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                             }
 
+                                        }
+                                        if ($value == "BLOCK EXTRA") {
+                                            $dir = "tmp/data/$foldername/BLOCK EXTRA/";
+                                            $files = scandir($dir);
+                                            $blocks = [];
+                                            foreach ($files as $file) {
+                                                if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                                                    $geojson = file_get_contents($dir . $file);
+                                                    $geojson = str_replace("\"", "'", $geojson);
+                                                    try {
+                                                        $file = str_replace(".geojson", " $initials", $file);
+                                                        $result = self::indexBlock($login, $geojson, $file, $result['EntityId']); // edit last insert entityId of Estate
+                                                        $blocks[] = $result['Entityname'] . " => " . $result['EntityId']; // @todo build $blocks array
+                                                    } catch (Exception $e) {
+                                                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                                                    }
+    
+                                                }
+                                            }
                                         }
                                     }
 
                                     sleep(10);
 
-                                    for ($i = 1; $i <= count($blocks); $i++){
+                                    for ($i = 1; $i <= count($blocks); $i++) {
                                         $block = "BLOCK $i";
                                         $dir = "tmp/data/$foldername/$block/PLOTS/";
                                         $files = scandir($dir);
-                                        foreach ($files as $file){
-                                            if (pathinfo($dir.$file, PATHINFO_EXTENSION) == "geojson"){
-                                                $geojson = file_get_contents($dir.$file);
+                                        foreach ($files as $file) {
+                                            if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                                                $geojson = file_get_contents($dir . $file);
                                                 $geojson = str_replace("\"", "'", $geojson);
                                                 try {
                                                     $file = str_replace("Name_", "$block (", $file);
                                                     $file = str_replace(".geojson", "", $file);
-                                                    $result = self::indexProperty($login, $geojson, "$initials ".$file, $blocks[$block]);
-                                                }
-                                                catch(Exception $e) {
-                                                    return  $file." failed  \n".$e->getMessage();   // @todo  return the Exception error and/or terminate
+                                                    $result = self::indexProperty($login, $geojson, "$initials " . $file, $blocks[$block]);
+                                                } catch (Exception $e) {
+                                                    return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                                 }
 
-                                               echo "\nDone with ".$file; // @todo  return the success data
-                                               sleep(5);
+                                                echo "\nDone with " . $file; // @todo  return the success data
+                                                sleep(5);
                                             }
                                         }
 
-                                        echo "\nDone with $block";  // @todo  return the success data
+                                        echo "\nDone with $block"; // @todo  return the success data
                                     }
 
-
-
-
-                                  }
+                                }
 
                             }
 
-
-                        }
-                        else {
+                        } else {
                             return "Estate Boundary File not found !!! \n";
                         }
 

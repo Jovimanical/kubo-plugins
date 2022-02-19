@@ -85,6 +85,10 @@ class UserProperty {
         return UserProperty\UserProperty::viewDeveloperName($userId);
     }
 
+    public static function uploadMapData(int $userId, array $data){
+        return UserProperty\UserProperty::uploadMapData($userId,$data);
+    }
+
     public static function getEstatePropertyTotal(int $propertyId) {
         return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);
     }

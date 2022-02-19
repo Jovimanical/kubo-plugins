@@ -33,4 +33,9 @@ class Util
     {
         return Utils\Util::isJSON($stringData);
     }
+
+    public static function clientRequest(String $url, String $method = 'GET', array $data = [], String $header = "")
+    {
+        return Utils\Util::clientRequest($url,$method,$data,$header);
+    }
 }

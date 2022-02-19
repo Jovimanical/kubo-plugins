@@ -12,8 +12,6 @@
 
 namespace KuboPlugin\Utils\Utils;
 
-use EmmetBlue\Core\Constant;
-
 /**
  * class KuboPlugin\Utils\Utils
  *
@@ -35,5 +33,33 @@ class Util
         $string = str_replace('&#39;', '"', $stringData);
         $string = str_replace('&#34;', '"', $stringData);
         return is_string($string) && is_array(json_decode($string, true)) ? true : false;
+    }
+
+    public static function clientRequest(String $url, String $method = 'GET', array $data = [], String $header = "")
+    {
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        if($header != ""){
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array($header));
+        }
+
+        if ($method == 'POST') {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+
+        }
+
+        // Receive server response ...
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $result;
+
     }
 }

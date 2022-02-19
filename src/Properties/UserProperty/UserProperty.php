@@ -66,6 +66,8 @@ class UserProperty
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
+        $result['EntityId'] = $entityId;
+
         return $result;
     }
 
@@ -123,17 +125,16 @@ class UserProperty
             if (is_array($value)) {
                 $value = json_encode($value);
             }
-          
+
             // checking exisiting metadata
             $queryChecker = "SELECT PropertyId,FieldName FROM Properties.UserPropertyMetadata WHERE PropertyId = $propId AND FieldName = '$key'";
             $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
-           
 
             if (count($resultChecker) > 0) {
                 //  Updating the existing field
                 $query = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
                 $result = DBConnectionFactory::getConnection()->exec($query);
-               
+
             } else {
                 // Inserting a new field
                 $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propId, '$key', '$value')"; // " . implode(",", $values);
@@ -195,7 +196,7 @@ class UserProperty
         $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultFloorData = [];
-        foreach($resultFloor as $key => $floor) {
+        foreach ($resultFloor as $key => $floor) {
             $resultFloorData[] = $floor['PropertyFloor'];
         }
 
@@ -215,7 +216,7 @@ class UserProperty
     {
         $fetch = "FIRST";
         $offset = 0;
-        $limit =  10;
+        $limit = 10;
 
         if ($data['offset'] != 0) {
             $fetch = "NEXT";
@@ -960,6 +961,153 @@ class UserProperty
         return $result;
     }
 
+    public static function uploadMapData(int $userId, array $data){
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        $username = $data["inputEmail"] ?? null;
+        $password = $data["inputPassword"] ?? null;
+        $foldername = $data["inputName"] ?? null;
+        $initials = $data["inputInitials"] ?? null;
+
+        if ($username == null or $password == null or $foldername == null or $initials == null) {
+            return "Parameters not set";
+        }
+
+        if (isset($_POST["uploadBtn"])){
+            if ($_FILES["geojsons"]["name"] !== ""){
+
+                $fileNameParts = explode(".", $_FILES["geojsons"]["name"]);
+                if ($fileNameParts[1] == "zip"){
+                    if(file_exists("./tmp/data")){
+
+                    } else {
+                        mkdir("tmp/data");
+                    }
+
+                    $path = "tmp/data";
+                    $location = $path.$_FILES["geojsons"]["name"];
+
+                    if(move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
+                        $zip = new ZipArchive();
+                        if ($zip->open($location)){
+                            $zip->extractTo($path);
+                            $zip->close();
+                        }
+
+                        $files = scandir($path.$fileNameParts[0]);
+                        $fileNames = [];
+                        $fileBlockNames = [];
+                        foreach ($files as $key=>$value) {
+                            $fileNames[] = $value;
+                        }
+
+                        $blockLength = 0;
+                        $blockNumberLength = 0;
+                        if(in_array("ESTATE_BOUNDARY.geojson",$fileNames) AND in_array("BLOCKS",$fileNames)){
+
+                            foreach ($fileNames as $key=>$value) {
+                                 if($value == "BLOCKS"){
+                                    $blocks = scandir($path.$fileNames[$key]);
+                                    $blockLength = count($blocks);
+                                 }
+
+                                 if($value == "BLOCK NUMBERS"){
+                                    $blockNumbers = scandir($path.$fileNames[$key]);
+                                    $blockNumberLength = count($blockNumbers);
+                                 }
+
+                                 if($blockLength == $blockNumberLength){
+
+                                    $login =  self::scriptLogin($username, $password);
+                                    $login = $login["contentData"];
+
+                                    $boundary_geojson = file_get_contents(
+                                        "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
+                                    );
+
+                                    $result = self::indexProperty($login, $boundary_geojson, $foldername);
+                                    // @todo retrieve the last inserted Id of the property estate entityId
+                                    // for the next BLOCK stage
+
+                                    sleep(10);
+
+                                    $dir = "tmp/data/$foldername/BLOCKS/";
+                                    $files = scandir($dir);
+                                    $blocks = [];
+                                    $i = 0;
+                                    foreach ($files as $file){
+                                        if (pathinfo($dir.$file, PATHINFO_EXTENSION) == "geojson"){
+                                            $geojson = file_get_contents($dir.$file);
+                                            $geojson = str_replace("\"", "'", $geojson);
+                                            try {
+                                                $file = str_replace(".geojson", " $initials", $file);
+                                                $result = self::indexBlock($login, $geojson, $file, $result['EntityId']);  // edit last insert entityId of Estate
+                                                $blocks[] = $result['Entityname']." => ".$result['EntityId']; // @todo build $blocks array
+                                            }
+                                            catch(Exception $e) {
+                                              return  $file." failed  \n".$e->getMessage();  // @todo  return the Exception error and/or terminate
+                                            }
+
+                                        }
+                                    }
+
+                                    sleep(10);
+
+                                    for ($i = 1; $i <= count($blocks); $i++){
+                                        $block = "BLOCK $i";
+                                        $dir = "tmp/data/$foldername/$block/PLOTS/";
+                                        $files = scandir($dir);
+                                        foreach ($files as $file){
+                                            if (pathinfo($dir.$file, PATHINFO_EXTENSION) == "geojson"){
+                                                $geojson = file_get_contents($dir.$file);
+                                                $geojson = str_replace("\"", "'", $geojson);
+                                                try {
+                                                    $file = str_replace("Name_", "$block (", $file);
+                                                    $file = str_replace(".geojson", "", $file);
+                                                    $result = self::indexProperty($login, $geojson, "$initials ".$file, $blocks[$block]);
+                                                }
+                                                catch(Exception $e) {
+                                                    return  $file." failed  \n".$e->getMessage();   // @todo  return the Exception error and/or terminate
+                                                }
+
+                                               echo "\nDone with ".$file; // @todo  return the success data
+                                               sleep(5);
+                                            }
+                                        }
+
+                                        echo "\nDone with $block";  // @todo  return the success data
+                                    }
+
+
+
+
+                                  }
+
+                            }
+
+
+                        }
+                        else {
+                            return "Estate Boundary File not found !!! \n";
+                        }
+
+                    } else {
+                        return "File not Uploaded ! \n";
+                    }
+                } else {
+                    return "File not Zip ! \n";
+                }
+            } else {
+                return "File Error ! \n";
+            }
+        } else {
+            return "No Data ! \n";
+        }
+    }
+
     protected static function camelToSnakeCase($string, $sc = "_")
     {
         return strtolower(preg_replace(
@@ -1002,6 +1150,85 @@ class UserProperty
         }
 
         return false;
+    }
+
+    protected static function scriptLogin($username, $password)
+    {
+        $host = "https://rest.sytemap.com/v1/login"; //"http://127.0.0.1:5464/v1/login";
+        // $host = "http://localhost:9000/v1/login"; //"http://127.0.0.1:5464/v1/login";
+        $data = [
+            "username" => $username,
+            "password" => $password,
+        ];
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data);
+
+        $accountData = json_decode($response, true);
+
+        return $accountData;
+    }
+
+    protected static function indexProperty($login, $geojson, $title, $parent = 0)
+    {
+        $data = [
+            "user" => $login["userId"],
+            "property_title" => $title,
+            "property_type" => 1,
+            "property_geometry" => $geojson,
+            "property_metadata" => [
+                "property_description" => "",
+            ],
+        ];
+
+        if ($parent != 0) {
+            $data["property_type"] = 3;
+            $data["property_parent"] = $parent;
+        }
+
+        $host = "https://rest.sytemap.com/v1/properties/user-property/new-property"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property";
+        // $host = "http://localhost:9000/v1/properties/user-property/new-property"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property";
+
+        $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header);
+
+        $response = json_decode($response, true);
+
+        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+            return $response;
+        } else {
+            self::indexProperty($login, $geojson, $title, $parent);
+        }
+    }
+
+    protected static function indexBlock($login, $geojson, $title, $parent = 0)
+    {
+        $data = [
+            "user" => $login["userId"],
+            "property_title" => $title,
+            "property_type" => 1,
+            "property_geometry" => $geojson,
+            "property_metadata" => [
+                "property_description" => "",
+            ],
+        ];
+
+        if ($parent != 0) {
+            $data["property_type"] = 2;
+            $data["property_parent"] = $parent;
+        }
+
+        $host = "https://rest.sytemap.com/v1/properties/user-property/new-property"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property";
+        // $host = "http://localhost:9000/v1/properties/user-property/new-property"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property";
+
+        $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header);
+
+        $response = json_decode($response, true);
+        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+            return $response;
+        } else {
+            self::indexBlock($login, $geojson, $title, $parent);
+        }
+
     }
 
 }

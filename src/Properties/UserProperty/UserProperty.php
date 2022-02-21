@@ -980,6 +980,8 @@ class UserProperty
         if (isset($_POST["uploadBtn"])) {
             if ($_FILES["geojsons"]["name"] !== "") {
 
+                return $_FILES["geojsons"]["name"];
+
                 $fileNameParts = explode(".", $_FILES["geojsons"]["name"]);
                 if ($fileNameParts[1] == "zip") {
                     if (file_exists("./tmp/data")) {

@@ -177,8 +177,8 @@ class UserProperty
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($result as $key => $property) {
-           // $result[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
-           // $result[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
+            $result[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
+            $result[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
             $result[$key]["PropertyTotal"] = self::getEstatePropertyTotal((int) $property["PropertyId"]);
             $result[$key]["PropertyAvailable"] = self::getEstatePropertyAvailable((int) $property["PropertyId"]);
 

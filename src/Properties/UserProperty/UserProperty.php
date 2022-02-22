@@ -331,8 +331,8 @@ class UserProperty
             if (count($availableResultArr) > 0) {
                 // Add $rowset to array
                 foreach ($results as $keySetId => $valueSetId) {
-                    foreach ($availableResultArr as $keyItemId => $valueItemId) {
-                        if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+                  //  foreach ($availableResultArr as $keyItemId => $valueItemId) {
+                   //     if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
 
                             $queryAvailableExtra = implode(";", $queryAvailableExtras);
 
@@ -356,8 +356,8 @@ class UserProperty
 
                             } while ($stmtResultAvailableExtra->nextRowset());
 
-                        }
-                    }
+                    //    }
+                   // }
 
                 }
 

@@ -365,6 +365,28 @@ class UserProperty
 
         } while ($stmtResultAvailable->nextRowset());
 
+                            $queryAvailableExtra = implode(";", $queryAvailableExtras);
+
+                            $stmtResultAvailableExtra = DBConnectionFactory::getConnection()->query($queryAvailableExtra);
+
+                            do {
+
+                                $availableExtraResultArr = $stmtResultAvailableExtra->fetchAll(\PDO::FETCH_ASSOC);
+                                if (count($availableExtraResultArr) > 0) {
+                                    // Add $rowset to array
+                                    foreach ($results as $keySetId => $valueSetId) {
+                                      //  foreach ($availableExtraResultArr as $keyItemId => $valueItemId) {
+                                       //     if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+                                                $results[$keySetId]["PropertyAvailable"] = count($availableExtraResultArr);
+                                       //     }
+                                      //  }
+
+                                    }
+
+                                }
+
+                            } while ($stmtResultAvailableExtra->nextRowset());
+
         
 
         

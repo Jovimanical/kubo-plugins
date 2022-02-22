@@ -215,7 +215,7 @@ class UserProperty
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultPropertyId))";
 
-            $queryAvailableExtras[] = "SELECT EntityId FROM SpatialEntities.Entities a
+            $queryAvailableExtras[] = "SELECT b.PropertyId FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
             INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
             WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -309,11 +309,11 @@ class UserProperty
             if (count($totalResultArr) > 0) {
                 // Add $rowset to array
                 foreach ($results as $keySetId => $valueSetId) {
-                    foreach ($totalResultArr as $keyItemId => $valueItemId) {
-                        if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+                   // foreach ($totalResultArr as $keyItemId => $valueItemId) {
+                   //     if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
                             $results[$keySetId]["PropertyTotal"] = count($totalResultArr);
-                        }
-                    }
+                   //     }
+                   // }
 
                 }
 

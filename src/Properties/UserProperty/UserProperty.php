@@ -293,6 +293,7 @@ class UserProperty
 
         $queryTotal = implode(";", $queryTotals);
         $propertyCounter = 0;
+        $totalResultSetArr = [];
         $stmtResultTotal = DBConnectionFactory::getConnection()->query($queryTotal);
 
         do {
@@ -300,22 +301,24 @@ class UserProperty
             $totalResultArr = $stmtResultTotal->fetchAll(\PDO::FETCH_ASSOC);
             if (count($totalResultArr) > 0) {
                 // Add $rowset to array
-                foreach ($results as $keySetId => $valueSetId) {
-                   // foreach ($totalResultArr as $keyItemId => $valueItemId) {
-                   //     if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
-                            $results[$keySetId]["PropertyTotal"] = count($totalResultArr);
-                            $propertyCounter = count($totalResultArr);
-                   //     }
-                   // }
-
-                }
+                array_push($totalResultSetArr, $totalResultArr);
 
             }
 
         } while ($stmtResultTotal->nextRowset());
 
-        $queryAvailable = implode(";", $queryAvailables);
+        foreach ($results as $keySetId => $valueSetId) {
+             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
+                 if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+                     $results[$keySetId]["PropertyTotal"] = count($valueItemId);
+                     
+                 }
+             }
 
+         }
+
+        $queryAvailable = implode(";", $queryAvailables);
+        $availableResultSetArr = [];
         $stmtResultAvailable = DBConnectionFactory::getConnection()->query($queryAvailable);
 
         do {
@@ -323,19 +326,21 @@ class UserProperty
             $availableResultArr = $stmtResultAvailable->fetchAll(\PDO::FETCH_ASSOC);
             if (count($availableResultArr) > 0) {
                 // Add $rowset to array
-                foreach ($results as $keySetId => $valueSetId) {
-                  //  foreach ($availableResultArr as $keyItemId => $valueItemId) {
-                   //     if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
-                            $results[$keySetId]["PropertyAvailable"] = $propertyCounter - count($availableResultArr);
-
-                    //    }
-                  //  }
-
-                }
+                array_push($availableResultSetArr, $availableResultArr);
 
             }
 
         } while ($stmtResultAvailable->nextRowset());
+
+        foreach ($results as $keySetId => $valueSetId) {
+              foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
+                  if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+                      $results[$keySetId]["PropertyAvailable"] = count($valueItemId);
+
+                  }
+              }
+
+          }
 
 
         return $results;

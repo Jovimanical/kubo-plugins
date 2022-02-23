@@ -193,11 +193,10 @@ class UserProperty
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId)) AND c.PropertyFloor = $resultPropertyFloor";
 
-
-           // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
+            // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
 
             //Fetch total estate property units
-           $queryTotals[] = "SELECT * FROM Properties.UserProperty a
+            $queryTotals[] = "SELECT * FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
             WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -205,7 +204,7 @@ class UserProperty
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultPropertyId))";
 
-           // $results[$key]["PropertyTotal"] = self::getEstatePropertyTotal((int) $property["PropertyId"]);
+            // $results[$key]["PropertyTotal"] = self::getEstatePropertyTotal((int) $property["PropertyId"]);
 
             $queryAvailables[] = "SELECT b.PropertyId FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
@@ -215,9 +214,9 @@ class UserProperty
             IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
             WHERE PropertyId = $resultPropertyId))";
 
-           // $results[$key]["PropertyAvailable"] = self::getEstatePropertyAvailable((int) $property["PropertyId"]);
+            // $results[$key]["PropertyAvailable"] = self::getEstatePropertyAvailable((int) $property["PropertyId"]);
 
-           $results[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
+            $results[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
 
         }
 
@@ -290,7 +289,6 @@ class UserProperty
 
         }
 
-
         $queryTotal = implode(";", $queryTotals);
         $propertyCounter = 0;
         $totalResultSetArr = [];
@@ -310,13 +308,15 @@ class UserProperty
         return $totalResultSetArr;
 
         foreach ($results as $keySetId => $valueSetId) {
-             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
-                // return $valueItemId['PropertyId'];
-                 if ($valueItemId[0]["PropertyId"] == $valueSetId[0]["PropertyId"]) {
-                     $results[$keySetId]["PropertyTotal"] = count($valueItemId[0]);
+            foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
+                foreach ($valueItemId as $keyItem => $valueItem) {
+                    $valueItem = json_decode($valueItem, true);
+                    if ($valueItem["PropertyId"] == $valueSetId["PropertyId"]) {
+                        $results[$keySetId]["PropertyTotal"] = count($valueItemId);
 
-                 }
-             }
+                    }
+                }
+            }
 
         }
 
@@ -336,15 +336,14 @@ class UserProperty
         } while ($stmtResultAvailable->nextRowset());
 
         foreach ($results as $keySetId => $valueSetId) {
-              foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
-                  if ($valueItemId[0]["PropertyId"] == $valueSetId[0]["PropertyId"]) {
-                      $results[$keySetId]["PropertyAvailable"] = count($valueItemId[0]);
+            foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
+                if ($valueItemId[0]["PropertyId"] == $valueSetId[0]["PropertyId"]) {
+                    $results[$keySetId]["PropertyAvailable"] = count($valueItemId[0]);
 
-                  }
-              }
+                }
+            }
 
-          }
-
+        }
 
         return $results;
     }
@@ -1230,7 +1229,7 @@ class UserProperty
                                                     } catch (Exception $e) {
                                                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                                     }
-    
+
                                                 }
                                             }
                                         }

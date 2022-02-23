@@ -331,7 +331,9 @@ class UserProperty
         } while ($stmtResultAvailable->nextRowset());
 
         if (count($availableResultSetArr) == 0) {
-            $results[$keySetId]["PropertyAvailable"] = $propertyCounter - $propertyAvailable;
+            foreach ($results as $keySetId => $valueSetId) {
+                $results[$keySetId]["PropertyAvailable"] = $propertyCounter - $propertyAvailable;
+            }
         } else {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {

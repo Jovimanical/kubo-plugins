@@ -306,19 +306,26 @@ class UserProperty
         } while ($stmtResultTotal->nextRowset());
 
         // return $totalResultSetArr;
-
+        $res = [];
+        $ret = [];
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
                 foreach ($valueItemId as $keyItem => $valueItem) {
-                    //$valueItem = json_decode($valueItem, true);
+                    $res[] = $valueItem["PropertyId"];
+                    $ret[] = $valueSetId["PropertyId"];
+                    
                     if ($valueItem["PropertyId"] == $valueSetId["PropertyId"]) {
                         $results[$keySetId]["PropertyTotal"] = count($valueItemId);
 
                     }
                 }
+               
             }
 
         }
+        $resa["sm"] = $res;
+        $resa["bg"] = $ret;
+        return $resa;
 
         $queryAvailable = implode(";", $queryAvailables);
         $availableResultSetArr = [];

@@ -311,7 +311,7 @@ class UserProperty
 
         foreach ($results as $keySetId => $valueSetId) {
              foreach ($totalResultSetArr[0] as $keyItemId => $valueItemId) {
-                 return $valueItemId['PropertyId'];
+                // return $valueItemId['PropertyId'];
                  if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
                      $results[$keySetId]["PropertyTotal"] = count($valueItemId);
 
@@ -336,7 +336,7 @@ class UserProperty
         } while ($stmtResultAvailable->nextRowset());
 
         foreach ($results as $keySetId => $valueSetId) {
-              foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
+              foreach ($availableResultSetArr[0] as $keyItemId => $valueItemId) {
                   if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
                       $results[$keySetId]["PropertyAvailable"] = count($valueItemId);
 

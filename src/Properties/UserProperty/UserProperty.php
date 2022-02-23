@@ -307,13 +307,13 @@ class UserProperty
 
         } while ($stmtResultTotal->nextRowset());
 
-        return $totalResultSetArr;
+        //return $totalResultSetArr;
 
         foreach ($results as $keySetId => $valueSetId) {
-             foreach ($totalResultSetArr[0] as $keyItemId => $valueItemId) {
+             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
                 // return $valueItemId['PropertyId'];
-                 if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
-                     $results[$keySetId]["PropertyTotal"] = count($valueItemId);
+                 if ($valueItemId[0]["PropertyId"] == $valueSetId[0]["PropertyId"]) {
+                     $results[$keySetId]["PropertyTotal"] = count($valueItemId[0]);
 
                  }
              }
@@ -336,9 +336,9 @@ class UserProperty
         } while ($stmtResultAvailable->nextRowset());
 
         foreach ($results as $keySetId => $valueSetId) {
-              foreach ($availableResultSetArr[0] as $keyItemId => $valueItemId) {
-                  if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
-                      $results[$keySetId]["PropertyAvailable"] = count($valueItemId);
+              foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
+                  if ($valueItemId[0]["PropertyId"] == $valueSetId[0]["PropertyId"]) {
+                      $results[$keySetId]["PropertyAvailable"] = count($valueItemId[0]);
 
                   }
               }

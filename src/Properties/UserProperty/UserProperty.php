@@ -305,21 +305,14 @@ class UserProperty
 
         } while ($stmtResultTotal->nextRowset());
 
-        // return $totalResultSetArr;
-        // return $results;
-        
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
-                foreach ($valueItemId as $keyItem => $valueItem) {
-                    if ($keyItemId == $keySetId) {
-                        $results[$keySetId]["PropertyTotal"] = count($valueItemId);
-                    }
+                if ($keyItemId == $keySetId) {
+                    $results[$keySetId]["PropertyTotal"] = count($valueItemId);
                 }
-               
             }
 
         }
-        
 
         $queryAvailable = implode(";", $queryAvailables);
         $availableResultSetArr = [];

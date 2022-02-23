@@ -206,7 +206,7 @@ class UserProperty
 
             // $results[$key]["PropertyTotal"] = self::getEstatePropertyTotal((int) $property["PropertyId"]);
 
-            $queryAvailables[] = "SELECT b.PropertyId FROM SpatialEntities.Entities a
+            $queryAvailables[] = "SELECT EntityId FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
             INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
             WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -329,6 +329,8 @@ class UserProperty
             }
 
         } while ($stmtResultAvailable->nextRowset());
+
+        return $availableResultSetArr;
 
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($availableResultSetArr as $keyItemId => $valueItemId) {

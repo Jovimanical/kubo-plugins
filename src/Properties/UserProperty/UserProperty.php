@@ -181,7 +181,6 @@ class UserProperty
         $metadata = [];
         $queryTotals = [];
         $queryAvailables = [];
-        $queryAvailableExtras = [];
         foreach ($results as $key => $property) {
             $resultPropertyId = $property["PropertyId"];
 
@@ -316,6 +315,7 @@ class UserProperty
         }
 
         $queryAvailable = implode(";", $queryAvailables);
+        $propertyAvailable = 0;
         $availableResultSetArr = [];
         $stmtResultAvailable = DBConnectionFactory::getConnection()->query($queryAvailable);
 
@@ -330,16 +330,18 @@ class UserProperty
 
         } while ($stmtResultAvailable->nextRowset());
 
-        return $availableResultSetArr;
+        if (count($availableResultSetArr) == 0) {
+            $results[$keySetId]["PropertyAvailable"] = $propertyCounter - $propertyAvailable;
+        } else {
+            foreach ($results as $keySetId => $valueSetId) {
+                foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
+                    if ($keyItemId == $keySetId) {
+                        $results[$keySetId]["PropertyAvailable"] = $propertyCounter - count($valueItemId);
 
-        foreach ($results as $keySetId => $valueSetId) {
-            foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
-                if ($keyItemId == $keySetId) {
-                    $results[$keySetId]["PropertyAvailable"] = $propertyCounter - count($valueItemId);
-
+                    }
                 }
-            }
 
+            }
         }
 
         return $results;

@@ -307,7 +307,7 @@ class UserProperty
 
         } while ($stmtResultTotal->nextRowset());
 
-       // return $totalResultSetArr;
+        return $totalResultSetArr;
 
         foreach ($results as $keySetId => $valueSetId) {
              foreach ($totalResultSetArr[0] as $keyItemId => $valueItemId) {

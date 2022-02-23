@@ -307,10 +307,10 @@ class UserProperty
 
         } while ($stmtResultTotal->nextRowset());
 
-        return $totalResultSetArr;
+       // return $totalResultSetArr;
 
         foreach ($results as $keySetId => $valueSetId) {
-             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
+             foreach ($totalResultSetArr[0] as $keyItemId => $valueItemId) {
                  return $valueItemId['PropertyId'];
                  if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
                      $results[$keySetId]["PropertyTotal"] = count($valueItemId);

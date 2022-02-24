@@ -43,7 +43,7 @@ class UserProperty
 
         }
 
-        return $metadata;
+       // return $metadata;
 
         //STEP 1: Index Spatial Entity
         $entity = [

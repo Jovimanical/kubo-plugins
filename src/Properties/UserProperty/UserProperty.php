@@ -1509,10 +1509,15 @@ class UserProperty
 
     protected static function isJSON($stringData)
     {
-        $stringData = str_replace('&#39;', '"', $stringData);
-        $stringData = str_replace('&#34;', '"', $stringData);
-        $stringData = html_entity_decode($stringData);
-        return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
+        if(is_string($stringData)) {
+            $stringData = str_replace('&#39;', '"', $stringData);
+            $stringData = str_replace('&#34;', '"', $stringData);
+            $stringData = html_entity_decode($stringData);
+            return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
+        } else {
+            return false;
+        }
+
     }
 
     protected static function getPropertyChildrenIds(int $propertyId, array $floorData = [])

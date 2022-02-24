@@ -1299,8 +1299,6 @@ class UserProperty
             return "Parameters not set";
         }
 
-        return $_FILES["geojsons"]["name"];
-
         if (isset($_POST["uploadBtn"])) {
 
             if ($_FILES["geojsons"]["name"] !== "") {

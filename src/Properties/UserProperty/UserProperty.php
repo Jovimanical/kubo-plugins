@@ -1156,7 +1156,7 @@ class UserProperty
                     $location = $path . $_FILES["geojsons"]["name"];
 
                     if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
-                        $zip = new ZipArchive();
+                        $zip = new \ZipArchive();
                         if ($zip->open($location)) {
                             $zip->extractTo($path);
                             $zip->close();

@@ -89,6 +89,18 @@ class UserProperty {
         return UserProperty\UserProperty::uploadMapData($userId,$data);
     }
 
+    public static function uploadEstateData(int $userId, array $data){
+        return UserProperty\UserProperty::uploadEstateData($userId,$data);
+    }
+
+    public static function uploadBlockData(int $userId, array $data){
+        return UserProperty\UserProperty::uploadBlockData($userId,$data);
+    }
+
+    public static function uploadUnitData(int $userId, array $data){
+        return UserProperty\UserProperty::uploadUnitData($userId,$data);
+    }
+
     public static function getEstatePropertyTotal(int $propertyId) {
         return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);
     }

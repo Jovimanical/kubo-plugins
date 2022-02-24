@@ -35,6 +35,14 @@ class UserProperty
         $parent = $data["property_parent"] ?? null;
         $type = $data["property_type"];
 
+        if (self::isJSON($metadata)) {
+            $metadata = str_replace('&#39;', '"', $metadata);
+            $metadata = str_replace('&#34;', '"', $metadata);
+            $metadata = html_entity_decode($metadata);
+            $metadata = json_decode($metadata, true);
+
+        }
+
         return $metadata;
 
         //STEP 1: Index Spatial Entity

@@ -69,6 +69,9 @@ class UserProperty
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
+            if(is_array($values)){
+                $value = json_encode($value);
+            }
             $values[] = "($propertyId, '$key', '$value')";
         }
 
@@ -76,9 +79,10 @@ class UserProperty
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        $result['EntityId'] = $entityId;
+        $resultData['EntityId'] = $entityId;
+        $resultData['result'] = $result;
 
-        return $result;
+        return $resultData;
     }
 
     public static function newPropertyOnEntity(array $data)

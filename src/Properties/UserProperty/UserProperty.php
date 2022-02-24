@@ -35,6 +35,8 @@ class UserProperty
         $parent = $data["property_parent"] ?? null;
         $type = $data["property_type"];
 
+        return $metadata;
+
         //STEP 1: Index Spatial Entity
         $entity = [
             "entityName" => $title,

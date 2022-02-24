@@ -69,7 +69,7 @@ class UserProperty
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            $values[] .= "($propertyId, '$key', '$value')";
+            $values[] = "($propertyId, '$key', '$value')";
         }
 
         $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);

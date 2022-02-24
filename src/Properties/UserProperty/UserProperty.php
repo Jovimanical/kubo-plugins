@@ -1152,8 +1152,8 @@ class UserProperty
                         mkdir("tmp/data");
                     }
 
-                    $path = "tmp/data";
-                    $location = $path . $_FILES["geojsons"]["name"];
+                    $path = "tmp/data/";
+                    $location = $path  . $_FILES["geojsons"]["name"];
 
                     if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
                         $zip = new \ZipArchive();

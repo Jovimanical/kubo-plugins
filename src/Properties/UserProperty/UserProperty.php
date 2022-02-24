@@ -169,7 +169,7 @@ class UserProperty
         $fetch = "FIRST";
         $offset = 0;
 
-        if ($data['offset'] != 0) {
+        if (isset($data['offset']) AND $data['offset'] != 0) {
             $fetch = "NEXT";
             $offset = $data['offset'];
         }

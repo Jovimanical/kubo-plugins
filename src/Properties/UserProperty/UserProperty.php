@@ -36,7 +36,7 @@ class UserProperty
         $type = $data["property_type"];
 
         if (self::isJSON($metadata)) {
-            if(is_string($metadata)){
+            if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);
                 $metadata = html_entity_decode($metadata);
@@ -45,7 +45,7 @@ class UserProperty
 
         }
 
-       // return $metadata;
+        // return $metadata;
 
         //STEP 1: Index Spatial Entity
         $entity = [
@@ -71,7 +71,7 @@ class UserProperty
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            if(is_array($values)){
+            if (is_array($values)) {
                 $value = json_encode($value);
             }
             $values[] = "($propertyId, '$key', '$value')";
@@ -1217,31 +1217,35 @@ class UserProperty
                                     $dir = "tmp/data/$foldername/BLOCKS/";
                                     $files = scandir($dir);
                                     $blocks = [];
-                                    foreach ($files as $file) {
-                                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                                            $geojson = file_get_contents($dir . $file);
-                                            $geojson = str_replace("\"", "'", $geojson);
-                                            try {
-                                                $file = str_replace(".geojson", " $initials", $file);
-                                                $result = self::indexBlock($login, $geojson, $file, $result['EntityId']); // edit last insert entityId of Estate
-                                                $blocks[] = $result['Entityname'] . " => " . $result['EntityId']; // @todo build $blocks array
-                                            } catch (Exception $e) {
-                                                return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                                            }
+                                    $result = [];
+                                    if (count($files) > 0) {
 
+                                        foreach ($files as $key => $file) {
+                                            if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                                                $geojson = file_get_contents($dir . $file);
+                                                $geojson = str_replace("\"", "'", $geojson);
+                                                try {
+                                                    $file = str_replace(".geojson", " $initials", $file);
+                                                    $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
+                                                    $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
+                                                } catch (Exception $e) {
+                                                    return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                                                }
+
+                                            }
                                         }
-                                        if ($value == "BLOCK EXTRA") {
-                                            $dir = "tmp/data/$foldername/BLOCK EXTRA/";
-                                            $files = scandir($dir);
-                                            $blocks = [];
+
+                                        $dir = "tmp/data/$foldername/BLOCK EXTRA/";
+                                        $files = scandir($dir);
+                                        if (count($files) > 0) {
                                             foreach ($files as $file) {
                                                 if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
                                                     $geojson = file_get_contents($dir . $file);
                                                     $geojson = str_replace("\"", "'", $geojson);
                                                     try {
                                                         $file = str_replace(".geojson", " $initials", $file);
-                                                        $result = self::indexBlock($login, $geojson, $file, $result['EntityId']); // edit last insert entityId of Estate
-                                                        $blocks[] = $result['Entityname'] . " => " . $result['EntityId']; // @todo build $blocks array
+                                                        $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
+                                                        // @todo no build $blocks array
                                                     } catch (Exception $e) {
                                                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                                     }
@@ -1250,6 +1254,8 @@ class UserProperty
                                             }
                                         }
                                     }
+
+                                    $blocks["location"] = $location;
 
                                     sleep(10);
 
@@ -1269,13 +1275,18 @@ class UserProperty
                                                     return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                                 }
 
-                                                echo "\nDone with " . $file; // @todo  return the success data
+                                              //  echo "\nDone with " . $file; // @todo  return the success data
+                                            if($i > 7){
                                                 sleep(5);
+                                            }
+                                              
                                             }
                                         }
 
-                                        echo "\nDone with $block"; // @todo  return the success data
+                                       // echo "\nDone with $block"; // @todo  return the success data
                                     }
+
+                                    return "Successfully Uploaded";
 
                                 }
 
@@ -1407,6 +1418,16 @@ class UserProperty
         $initials = $data["inputInitials"] ?? null;
         $estateData = $data["estateData"] ?? [];
 
+        if (self::isJSON($estateData)) {
+            if (is_string($estateData)) {
+                $estateData  = str_replace('&#39;', '"', $estateData);
+                $estateData  = str_replace('&#34;', '"', $estateData);
+                $estateData  = html_entity_decode($estateData);
+                $estateData  = json_decode($estateData, true);
+            }
+
+        }
+
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";
         }
@@ -1419,7 +1440,7 @@ class UserProperty
         $blocks = [];
         $result = [];
         if (count($files) > 0) {
-            
+
             foreach ($files as $key => $file) {
                 if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
                     $geojson = file_get_contents($dir . $file);
@@ -1427,7 +1448,7 @@ class UserProperty
                     try {
                         $file = str_replace(".geojson", " $initials", $file);
                         $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
-                        $blocks["BLOCK $key"] = $result['contentData']['EntityId'].","; // @todo build $blocks array
+                        $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
@@ -1457,6 +1478,8 @@ class UserProperty
 
         $blocks["location"] = $location;
 
+        $blocks = json_encode($blocks);
+
         return $blocks;
     }
 
@@ -1472,6 +1495,18 @@ class UserProperty
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
         $blocks = $data["blockData"] ?? [];
+
+        if (self::isJSON($blocks)) {
+            if (is_string($blocks)) {
+                $blocks  = str_replace('&#39;', '"', $blocks);
+                $blocks  = str_replace('&#34;', '"', $blocks);
+                $blocks  = html_entity_decode($blocks);
+                $blocks  = json_decode($blocks, true);
+            }
+
+        }
+
+        
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";
@@ -1493,15 +1528,15 @@ class UserProperty
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
 
-                   // echo "\nDone with " . $file; // @todo  return the success data
-                   if($i > 7){
-                    sleep(5);
-                   }
+                    // echo "\nDone with " . $file; // @todo  return the success data
+                    if ($i > 7) {
+                        sleep(5);
+                    }
 
                 }
             }
 
-           // echo "\nDone with $block"; // @todo  return the success data
+            // echo "\nDone with $block"; // @todo  return the success data
         }
         return "Successfully Uploaded";
     }
@@ -1514,7 +1549,7 @@ class UserProperty
 
     protected static function isJSON($stringData)
     {
-        if(is_string($stringData)) {
+        if (is_string($stringData)) {
             $stringData = str_replace('&#39;', '"', $stringData);
             $stringData = str_replace('&#34;', '"', $stringData);
             $stringData = html_entity_decode($stringData);

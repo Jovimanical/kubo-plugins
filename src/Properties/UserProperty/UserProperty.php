@@ -1544,6 +1544,23 @@ class UserProperty
         return "Successfully Uploaded";
     }
 
+    public static function viewMapDataUploadStatus(int $userId, array $data)
+    {
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        $foldername = $data["inputName"] ?? null;
+        $initials = $data["inputInitials"] ?? null;
+        $userId = $userId ?? null;
+
+        $query = "SELECT * FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
     protected static function camelToSnakeCase($string, $sc = "_")
     {
         return strtolower(preg_replace(

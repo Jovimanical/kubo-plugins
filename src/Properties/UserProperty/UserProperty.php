@@ -1417,16 +1417,17 @@ class UserProperty
         $dir = "tmp/data/$foldername/BLOCKS/";
         $files = scandir($dir);
         $blocks = [];
+        $result = [];
         if (count($files) > 0) {
             
-            foreach ($files as $file) {
+            foreach ($files as $key => $file) {
                 if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
                     $geojson = file_get_contents($dir . $file);
                     $geojson = str_replace("\"", "'", $geojson);
                     try {
                         $file = str_replace(".geojson", " $initials", $file);
                         $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
-                        $blocks[] = $result['Entityname'] . " => " . $result['EntityId']; // @todo build $blocks array
+                        $blocks["BLOCK $key"] = $result['contentData']['EntityId'].","; // @todo build $blocks array
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
@@ -1454,7 +1455,7 @@ class UserProperty
             }
         }
 
-       // $blocks["location"] = $location;
+        $blocks["location"] = $location;
 
         return $blocks;
     }
@@ -1492,13 +1493,17 @@ class UserProperty
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
 
-                    echo "\nDone with " . $file; // @todo  return the success data
-                   // sleep(5);
+                   // echo "\nDone with " . $file; // @todo  return the success data
+                   if($i > 7){
+                    sleep(5);
+                   }
+
                 }
             }
 
-            echo "\nDone with $block"; // @todo  return the success data
+           // echo "\nDone with $block"; // @todo  return the success data
         }
+        return "Successfully Uploaded";
     }
 
     protected static function camelToSnakeCase($string, $sc = "_")

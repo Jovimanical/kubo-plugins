@@ -1275,15 +1275,15 @@ class UserProperty
                                                     return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                                 }
 
-                                              //  echo "\nDone with " . $file; // @todo  return the success data
-                                            if($i > 7){
-                                                sleep(5);
-                                            }
-                                              
+                                                //  echo "\nDone with " . $file; // @todo  return the success data
+                                                if ($i > 7) {
+                                                    sleep(5);
+                                                }
+
                                             }
                                         }
 
-                                       // echo "\nDone with $block"; // @todo  return the success data
+                                        // echo "\nDone with $block"; // @todo  return the success data
                                     }
 
                                     return "Successfully Uploaded";
@@ -1381,6 +1381,8 @@ class UserProperty
 
                                     $result = self::indexProperty($login, $boundary_geojson, $foldername);
 
+                                    $data = json_encode($data);
+                                    $result["data"] = $data;
                                     return $result;
 
                                 }
@@ -1420,10 +1422,10 @@ class UserProperty
 
         if (self::isJSON($estateData)) {
             if (is_string($estateData)) {
-                $estateData  = str_replace('&#39;', '"', $estateData);
-                $estateData  = str_replace('&#34;', '"', $estateData);
-                $estateData  = html_entity_decode($estateData);
-                $estateData  = json_decode($estateData, true);
+                $estateData = str_replace('&#39;', '"', $estateData);
+                $estateData = str_replace('&#34;', '"', $estateData);
+                $estateData = html_entity_decode($estateData);
+                $estateData = json_decode($estateData, true);
             }
 
         }
@@ -1480,6 +1482,9 @@ class UserProperty
 
         $blocks = json_encode($blocks);
 
+        $data = json_encode($data);
+        $blocks["data"] = $data;
+
         return $blocks;
     }
 
@@ -1498,15 +1503,13 @@ class UserProperty
 
         if (self::isJSON($blocks)) {
             if (is_string($blocks)) {
-                $blocks  = str_replace('&#39;', '"', $blocks);
-                $blocks  = str_replace('&#34;', '"', $blocks);
-                $blocks  = html_entity_decode($blocks);
-                $blocks  = json_decode($blocks, true);
+                $blocks = str_replace('&#39;', '"', $blocks);
+                $blocks = str_replace('&#34;', '"', $blocks);
+                $blocks = html_entity_decode($blocks);
+                $blocks = json_decode($blocks, true);
             }
 
         }
-
-        
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";

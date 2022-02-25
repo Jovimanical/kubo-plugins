@@ -1212,6 +1212,16 @@ class UserProperty
                                     // @todo retrieve the last inserted Id of the property estate entityId
                                     // for the next BLOCK stage
 
+                                    $uploadStatus = "processing";
+                                    $dataInputs = [
+                                        "UserId"=>$userId,
+                                        "FolderName"=>QB::wrapString($foldername, "'"),
+                                        "Initials"=>QB::wrapString($initials, "'"),
+                                        "UploadStatus"=>QB::wrapString($uploadStatus, "'"),
+                                    ];
+                            
+                                    DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
+
                                     sleep(10);
 
                                     $dir = "tmp/data/$foldername/BLOCKS/";
@@ -1285,6 +1295,17 @@ class UserProperty
 
                                         // echo "\nDone with $block"; // @todo  return the success data
                                     }
+
+                                    $uploadStatus = "uploaded";
+                                    $dataInputs = [
+                                        "UserId"=>$userId,
+                                        "FolderName"=>QB::wrapString($foldername, "'"),
+                                        "Initials"=>QB::wrapString($initials, "'"),
+                                        "UploadStatus"=>QB::wrapString($uploadStatus, "'"),
+                                    ];
+                            
+                                    DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
+
 
                                     return "Successfully Uploaded";
 

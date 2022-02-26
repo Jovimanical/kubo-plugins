@@ -1177,10 +1177,14 @@ class UserProperty
                             $zip->extractTo($path);
                             $zip->close();
                         }
-
-                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
-                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-                
+                        try {
+                            $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
+                            $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+     
+                        } catch(\Exception $e) {
+                            return $e->getMessage();
+                        }
+               
 
                         shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data | at now &');
 

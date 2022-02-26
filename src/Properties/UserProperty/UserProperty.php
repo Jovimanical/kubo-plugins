@@ -1182,7 +1182,7 @@ class UserProperty
                         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
                 
 
-                        shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data & | at now');
+                        shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data | at now &');
 
                         return "Uploading Map Data";
 

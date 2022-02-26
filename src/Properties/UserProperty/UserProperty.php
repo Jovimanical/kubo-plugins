@@ -1155,6 +1155,7 @@ class UserProperty
             return "Parameters not set";
         }
 
+
         if (isset($_POST["uploadBtn"])) {
 
             if ($_FILES["geojsons"]["name"] !== "") {
@@ -1177,145 +1178,162 @@ class UserProperty
                             $zip->close();
                         }
 
+                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
+                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+                
+
+                        shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data & | at now');
+
+                        return "Uploading Map Data";
+
+                        /**
                         $files = scandir($path . $fileNameParts[0]);
                         $fileNames = [];
                         $fileBlockNames = [];
                         foreach ($files as $key => $value) {
-                            $fileNames[] = $value;
+                        $fileNames[] = $value;
                         }
 
                         $blockLength = 0;
                         $blockNumberLength = 0;
                         if (in_array("ESTATE_BOUNDARY.geojson", $fileNames) and in_array("BLOCKS", $fileNames)) {
 
-                            foreach ($fileNames as $key => $value) {
-                                if ($value == "BLOCKS") {
-                                    $blocks = scandir($path . $fileNames[$key]);
-                                    $blockLength = count($blocks);
-                                }
+                        foreach ($fileNames as $key => $value) {
+                        if ($value == "BLOCKS") {
+                        $blocks = scandir($path . $fileNames[$key]);
+                        $blockLength = count($blocks);
+                        }
 
-                                if ($value == "BLOCK NUMBERS") {
-                                    $blockNumbers = scandir($path . $fileNames[$key]);
-                                    $blockNumberLength = count($blockNumbers);
-                                }
+                        if ($value == "BLOCK NUMBERS") {
+                        $blockNumbers = scandir($path . $fileNames[$key]);
+                        $blockNumberLength = count($blockNumbers);
+                        }
 
-                                if ($blockLength == $blockNumberLength) {
+                        if ($blockLength == $blockNumberLength) {
 
-                                    $login = self::scriptLogin($username, $password);
-                                    $login = $login["contentData"];
+                        $login = self::scriptLogin($username, $password);
+                        $login = $login["contentData"];
 
-                                    $boundary_geojson = file_get_contents(
-                                        "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
-                                    );
+                        $boundary_geojson = file_get_contents(
+                        "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
+                        );
 
-                                    $result = self::indexProperty($login, $boundary_geojson, $foldername);
-                                    // @todo retrieve the last inserted Id of the property estate entityId
-                                    // for the next BLOCK stage
+                        $result = self::indexProperty($login, $boundary_geojson, $foldername);
+                        // @todo retrieve the last inserted Id of the property estate entityId
+                        // for the next BLOCK stage
 
-                                    $uploadStatus = "processing";
-                                    $dataInputs = [
-                                        "UserId"=>$userId,
-                                        "FolderName"=>QB::wrapString($foldername, "'"),
-                                        "Initials"=>QB::wrapString($initials, "'"),
-                                        "UploadStatus"=>QB::wrapString($uploadStatus, "'"),
-                                    ];
-                            
-                                    DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
+                        $uploadStatus = "processing";
+                        $dataInputs = [
+                        "UserId" => $userId,
+                        "FolderName" => QB::wrapString($foldername, "'"),
+                        "Initials" => QB::wrapString($initials, "'"),
+                        "UploadStatus" => QB::wrapString($uploadStatus, "'"),
+                        ];
 
-                                    sleep(10);
+                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
+                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
-                                    $dir = "tmp/data/$foldername/BLOCKS/";
-                                    $files = scandir($dir);
-                                    $blocks = [];
-                                    $result = [];
-                                    if (count($files) > 0) {
+                        // DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
 
-                                        foreach ($files as $key => $file) {
-                                            if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                                                $geojson = file_get_contents($dir . $file);
-                                                $geojson = str_replace("\"", "'", $geojson);
-                                                try {
-                                                    $file = str_replace(".geojson", " $initials", $file);
-                                                    $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
-                                                    $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
-                                                } catch (Exception $e) {
-                                                    return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                                                }
+                        sleep(10);
 
-                                            }
-                                        }
+                        $dir = "tmp/data/$foldername/BLOCKS/";
+                        $files = scandir($dir);
+                        $blocks = [];
+                        $result = [];
+                        if (count($files) > 0) {
 
-                                        $dir = "tmp/data/$foldername/BLOCK EXTRA/";
-                                        $files = scandir($dir);
-                                        if (count($files) > 0) {
-                                            foreach ($files as $file) {
-                                                if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                                                    $geojson = file_get_contents($dir . $file);
-                                                    $geojson = str_replace("\"", "'", $geojson);
-                                                    try {
-                                                        $file = str_replace(".geojson", " $initials", $file);
-                                                        $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
-                                                        // @todo no build $blocks array
-                                                    } catch (Exception $e) {
-                                                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                                                    }
+                        foreach ($files as $key => $file) {
+                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                        $geojson = file_get_contents($dir . $file);
+                        $geojson = str_replace("\"", "'", $geojson);
+                        try {
+                        $file = str_replace(".geojson", " $initials", $file);
+                        $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
+                        $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
+                        } catch (Exception $e) {
+                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                        }
 
-                                                }
-                                            }
-                                        }
-                                    }
+                        }
+                        }
 
-                                    $blocks["location"] = $location;
+                        $dir = "tmp/data/$foldername/BLOCK EXTRA/";
+                        $files = scandir($dir);
+                        if (count($files) > 0) {
+                        foreach ($files as $file) {
+                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                        $geojson = file_get_contents($dir . $file);
+                        $geojson = str_replace("\"", "'", $geojson);
+                        try {
+                        $file = str_replace(".geojson", " $initials", $file);
+                        $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
+                        // @todo no build $blocks array
+                        } catch (Exception $e) {
+                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                        }
 
-                                    sleep(10);
+                        }
+                        }
+                        }
+                        }
 
-                                    for ($i = 1; $i <= count($blocks); $i++) {
-                                        $block = "BLOCK $i";
-                                        $dir = "tmp/data/$foldername/$block/PLOTS/";
-                                        $files = scandir($dir);
-                                        foreach ($files as $file) {
-                                            if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                                                $geojson = file_get_contents($dir . $file);
-                                                $geojson = str_replace("\"", "'", $geojson);
-                                                try {
-                                                    $file = str_replace("Name_", "$block (", $file);
-                                                    $file = str_replace(".geojson", "", $file);
-                                                    $result = self::indexProperty($login, $geojson, "$initials " . $file, $blocks[$block]);
-                                                } catch (Exception $e) {
-                                                    return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                                                }
+                        $blocks["location"] = $location;
 
-                                                //  echo "\nDone with " . $file; // @todo  return the success data
-                                                if ($i > 7) {
-                                                    sleep(5);
-                                                }
+                        sleep(10);
 
-                                            }
-                                        }
+                        for ($i = 1; $i <= count($blocks); $i++) {
+                        $block = "BLOCK $i";
+                        $dir = "tmp/data/$foldername/$block/PLOTS/";
+                        $files = scandir($dir);
+                        foreach ($files as $file) {
+                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                        $geojson = file_get_contents($dir . $file);
+                        $geojson = str_replace("\"", "'", $geojson);
+                        try {
+                        $file = str_replace("Name_", "$block (", $file);
+                        $file = str_replace(".geojson", "", $file);
+                        $result = self::indexProperty($login, $geojson, "$initials " . $file, $blocks[$block]);
+                        } catch (Exception $e) {
+                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                        }
 
-                                        // echo "\nDone with $block"; // @todo  return the success data
-                                    }
+                        //  echo "\nDone with " . $file; // @todo  return the success data
+                        if ($i > 7) {
+                        sleep(5);
+                        }
 
-                                    $uploadStatus = "uploaded";
-                                    $dataInputs = [
-                                        "UserId"=>$userId,
-                                        "FolderName"=>QB::wrapString($foldername, "'"),
-                                        "Initials"=>QB::wrapString($initials, "'"),
-                                        "UploadStatus"=>QB::wrapString($uploadStatus, "'"),
-                                    ];
-                            
-                                    DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
+                        }
+                        }
+
+                        // echo "\nDone with $block"; // @todo  return the success data
+                        }
+
+                        $uploadStatus = "uploaded";
+                        $dataInputs = [
+                        "UserId" => $userId,
+                        "FolderName" => QB::wrapString($foldername, "'"),
+                        "Initials" => QB::wrapString($initials, "'"),
+                        "UploadStatus" => QB::wrapString($uploadStatus, "'"),
+                        ];
+
+                        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
+                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
 
-                                    return "Successfully Uploaded";
+                        // DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
 
-                                }
+                        return "Successfully Uploaded";
 
-                            }
+                        }
+
+                        }
 
                         } else {
-                            return "Estate Boundary File not found !!! \n";
+                        return "Estate Boundary File not found !!! \n";
                         }
+
+                         */
 
                     } else {
                         return "File not Uploaded ! \n";

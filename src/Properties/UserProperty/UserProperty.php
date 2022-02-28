@@ -1555,6 +1555,9 @@ class UserProperty
         $initials = $data["inputInitials"] ?? null;
         $blocks = $data["blockData"] ?? [];
 
+        $login = self::scriptLogin($username, $password);
+        $login = $login["contentData"];
+
         if (self::isJSON($blocks)) {
             if (is_string($blocks)) {
                 $blocks = str_replace('&#39;', '"', $blocks);

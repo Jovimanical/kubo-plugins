@@ -305,7 +305,7 @@ class UserProperty
         }
 
         $queryTotal = implode(";", $queryTotals);
-        $propertyCounter = 0;
+        $propertyCounter = [];
         $totalResultSetArr = [];
         $stmtResultTotal = DBConnectionFactory::getConnection()->query($queryTotal);
 
@@ -324,13 +324,16 @@ class UserProperty
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
                 if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
                     $results[$keySetId]["PropertyTotal"] = count($valueItemId);
-                    $propertyCounter = count($valueItemId);
+                    $propertyCounter[$keySetId] = count($valueItemId);
                 }
             }
 
         }
 
         $queryAvailable = implode(";", $queryAvailables);
+        if(count($propertyCounter) == 0){
+            $propertyCounterData = 0;
+        }
         $propertyAvailable = 0;
         $availableResultSetArr = [];
         $stmtResultAvailable = DBConnectionFactory::getConnection()->query($queryAvailable);
@@ -347,14 +350,19 @@ class UserProperty
         } while ($stmtResultAvailable->nextRowset());
 
         if (count($availableResultSetArr) == 0) {
-            foreach ($results as $keySetId => $valueSetId) {
-                $results[$keySetId]["PropertyAvailable"] = $propertyCounter - $propertyAvailable;
-            }
+          //  foreach ($results as $keySetId => $valueSetId) {
+              //  $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - $propertyAvailable;
+          //  }
         } else {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
                     if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
-                        $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
+                        if (array_key_exists("EntityId",$availableResultSetArr[$keyItemId])) {
+                            $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
+                        } else {
+                            $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - 0;
+                        }
+                       
 
                     }
                 }

@@ -1395,10 +1395,6 @@ class UserProperty
                             $zip->close();
                         }
 
-                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,trim($foldername),trim($initials),'processing')";
-                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-
-
                         $files = scandir($path . $fileNameParts[0]);
                         $fileNames = [];
                         $fileBlockNames = [];
@@ -1431,6 +1427,10 @@ class UserProperty
                                     );
 
                                     $result = self::indexProperty($login, $boundary_geojson, $foldername);
+
+                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,trim($foldername),trim($initials),'processing')";
+                                    $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+            
 
                                     $data = json_encode($data);
                                     $result["data"] = $data;
@@ -1491,7 +1491,6 @@ class UserProperty
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
-
         $dir = "tmp/data/$foldername/BLOCKS/";
         $files = scandir($dir);
         $blocks = [];
@@ -1540,6 +1539,10 @@ class UserProperty
                 }
             }
         }
+
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
+        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
 
         $resultData = [];
         $data = json_encode($data);
@@ -1596,7 +1599,7 @@ class UserProperty
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
                         $result = self::indexProperty($login, $geojson, "$initials " . time() . $file, $blocks[$block]);
-                        
+
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
@@ -1723,7 +1726,6 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header);
 
         $response = json_decode($response, true);
-
 
         if ($response["errorStatus"] == false and $response["contentData"] == true) {
             return $response;

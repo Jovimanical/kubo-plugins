@@ -211,7 +211,7 @@ class UserProperty
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
 
             //Fetch total estate property units
-            $queryTotals[] = "SELECT * FROM Properties.UserProperty a
+            $queryTotals[] = "SELECT *, ($resultPropertyId) as ConnectId FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
             WHERE b.EntityType = 3 AND b.EntityParent
             IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -221,7 +221,7 @@ class UserProperty
 
             // $results[$key]["PropertyTotal"] = self::getEstatePropertyTotal((int) $property["PropertyId"]);
 
-            $queryAvailables[] = "SELECT EntityId FROM SpatialEntities.Entities a
+            $queryAvailables[] = "SELECT EntityId, ($resultPropertyId) as ConnectId FROM SpatialEntities.Entities a
             INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
             INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
             WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
@@ -322,7 +322,7 @@ class UserProperty
 
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
-                if ($keyItemId == $keySetId) {
+                if ($valueItemId["ConnectId"] == $valueSetId["PropertyId"]) {
                     $results[$keySetId]["PropertyTotal"] = count($valueItemId);
                     $propertyCounter[$keySetId] = count($valueItemId);
                 }
@@ -353,7 +353,7 @@ class UserProperty
         } else {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
-                    if ($keyItemId == $keySetId) {
+                    if ($valueItemId["ConnectId"] == $valueSetId["PropertyId"]) {
                         $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
 
                     }

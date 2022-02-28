@@ -1155,7 +1155,6 @@ class UserProperty
             return "Parameters not set";
         }
 
-
         if (isset($_POST["uploadBtn"])) {
 
             if ($_FILES["geojsons"]["name"] !== "") {
@@ -1178,13 +1177,12 @@ class UserProperty
                             $zip->close();
                         }
                         try {
-                            $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
+                            $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,trim($foldername),trim($initials),'processing')";
                             $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-     
-                        } catch(\Exception $e) {
+
+                        } catch (\Exception $e) {
                             return $e->getMessage();
                         }
-               
 
                         shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data | at now &');
 
@@ -1463,6 +1461,7 @@ class UserProperty
         $initials = $data["inputInitials"] ?? null;
         $estateData = $data["estateData"] ?? [];
 
+
         if (self::isJSON($estateData)) {
             if (is_string($estateData)) {
                 $estateData = str_replace('&#39;', '"', $estateData);
@@ -1521,14 +1520,14 @@ class UserProperty
             }
         }
 
-        $blocks["location"] = $location;
 
-        $blocks = json_encode($blocks);
-
+        $resultData = [];
         $data = json_encode($data);
-        $blocks["data"] = $data;
+        $resultData["data"] = $data;
+        $blocks = json_encode($blocks);
+        $resultData["blocks"] = $blocks;
 
-        return $blocks;
+        return $resultData;
     }
 
     public static function uploadUnitData(int $userId, array $data)
@@ -1558,7 +1557,7 @@ class UserProperty
             return "Parameters not set";
         }
 
-        for ($i = 1; $i <= count($blocks); $i++) {
+        for ($i = 2; $i <= count($blocks); $i++) {
             $block = "BLOCK $i";
             $dir = "tmp/data/$foldername/$block/PLOTS/";
             $files = scandir($dir);

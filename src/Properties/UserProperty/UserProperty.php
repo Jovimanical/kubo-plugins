@@ -305,7 +305,7 @@ class UserProperty
         }
 
         $queryTotal = implode(";", $queryTotals);
-        $propertyCounter = [];
+        $propertyCounter = 0;
         $totalResultSetArr = [];
         $stmtResultTotal = DBConnectionFactory::getConnection()->query($queryTotal);
 
@@ -324,7 +324,7 @@ class UserProperty
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
                 if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
                     $results[$keySetId]["PropertyTotal"] = count($valueItemId);
-                    $propertyCounter[$keySetId] = count($valueItemId);
+                    $propertyCounter = count($valueItemId);
                 }
             }
 
@@ -348,7 +348,7 @@ class UserProperty
 
         if (count($availableResultSetArr) == 0) {
             foreach ($results as $keySetId => $valueSetId) {
-                $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - $propertyAvailable;
+                $results[$keySetId]["PropertyAvailable"] = $propertyCounter - $propertyAvailable;
             }
         } else {
             foreach ($results as $keySetId => $valueSetId) {

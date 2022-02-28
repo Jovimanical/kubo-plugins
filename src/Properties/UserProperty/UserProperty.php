@@ -357,12 +357,11 @@ class UserProperty
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
                     if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
-                        if (array_key_exists("EntityId",$availableResultSetArr[$keyItemId])) {
+                        if (array_key_exists("EntityId",$valueItemId[$keyItemId])) {
                             $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
                         } else {
                             $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - 0;
                         }
-                       
 
                     }
                 }

@@ -1563,7 +1563,7 @@ class UserProperty
 
         for ($i = 2; $i <= count($blocks); $i++) {
             $block = "BLOCK $i";
-            $dir = "tmp/data/$foldername/BLOCK NUMBERS/$block/PLOTS/";
+            $dir = "tmp/data/$foldername/BLOCK NUMBERS/$block/";
             $files = scandir($dir);
             foreach ($files as $file) {
                 if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {

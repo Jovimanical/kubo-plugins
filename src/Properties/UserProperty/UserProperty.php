@@ -1618,6 +1618,9 @@ class UserProperty
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
+        \KuboPlugin\Utils\Util::recurseRmdir("tmp/data/$foldername");
+        unlink("tmp/data/$foldername" . ".zip");
+
         return "Successfully Uploaded";
     }
 

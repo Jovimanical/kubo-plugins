@@ -12,8 +12,6 @@
 
 namespace KuboPlugin\Utils;
 
-use EmmetBlue\Core\Constant;
-
 /**
  * class KuboPlugin\Utils
  *
@@ -36,6 +34,11 @@ class Util
 
     public static function clientRequest(String $url, String $method = 'GET', array $data = [], String $header = "")
     {
-        return Utils\Util::clientRequest($url,$method,$data,$header);
+        return Utils\Util::clientRequest($url, $method, $data, $header);
+    }
+
+    public static function recurseRmdir($dir)
+    {
+        return Utils\Util::recurseRmdir($dir);
     }
 }

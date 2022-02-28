@@ -42,7 +42,7 @@ class Util
 
         curl_setopt($ch, CURLOPT_URL, $url);
 
-        if($header != ""){
+        if ($header != "") {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array($header));
         }
 
@@ -61,5 +61,14 @@ class Util
 
         return $result;
 
+    }
+
+    public static function recurseRmdir($dir)
+    {
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? self::recurseRmdir("$dir/$file") : unlink("$dir/$file");
+        }
+        return rmdir($dir);
     }
 }

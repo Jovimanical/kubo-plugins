@@ -1395,6 +1395,10 @@ class UserProperty
                             $zip->close();
                         }
 
+                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,trim($foldername),trim($initials),'processing')";
+                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
+
                         $files = scandir($path . $fileNameParts[0]);
                         $fileNames = [];
                         $fileBlockNames = [];
@@ -1483,6 +1487,10 @@ class UserProperty
 
         $login = self::scriptLogin($username, $password);
         $login = $login["contentData"];
+
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
+        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
 
         $dir = "tmp/data/$foldername/BLOCKS/";
         $files = scandir($dir);
@@ -1603,6 +1611,10 @@ class UserProperty
 
             // echo "\nDone with $block"; // @todo  return the success data
         }
+
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
+        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
         return "Successfully Uploaded";
     }
 

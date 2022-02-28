@@ -1712,7 +1712,6 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        
 
         if ($response["errorStatus"] == false and $response["contentData"] == true) {
             return $response;

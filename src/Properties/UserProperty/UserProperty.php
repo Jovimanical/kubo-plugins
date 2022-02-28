@@ -1495,17 +1495,22 @@ class UserProperty
                     $geojson = file_get_contents($dir . $file);
                     $geojson = str_replace("\"", "'", $geojson);
                     try {
-                        $file = str_replace(".geojson", " $initials ".time(), $file);
+                        $file = str_replace(".geojson", " $initials " . time(), $file);
                         $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
                         // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
-                        $queryBlocks = "SELECT EntityId,EntityName FROM SpatialEntities.Entities WHERE EntityParent = ".$estateData['EntityId'];
-                        $blocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
 
                 }
+            }
+
+            $queryBlocks = "SELECT EntityName,EntityId FROM SpatialEntities.Entities WHERE EntityParent = " . $estateData['EntityId'];
+            $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($resultBlocks as $keyBlock => $blockValue) {
+                $blocks[$blockValue["EntityName"]] = $blockValue["EntityId"];
             }
 
             $dir = "tmp/data/$foldername/BLOCK EXTRA/";
@@ -1560,7 +1565,7 @@ class UserProperty
 
         }
 
-        foreach($blocks as $keyBlock => $blockValue) {
+        foreach ($blocks as $keyBlock => $blockValue) {
             $blocks[explode(" $initials", $key)[0]] = $blockValue;
         }
 
@@ -1579,7 +1584,7 @@ class UserProperty
                     try {
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
-                        $result = self::indexProperty($login, $geojson, "$initials ".time() . $file, $blocks[$block]);
+                        $result = self::indexProperty($login, $geojson, "$initials " . time() . $file, $blocks[$block]);
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }

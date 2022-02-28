@@ -324,7 +324,7 @@ class UserProperty
 
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
-                if ($valueItemId["ConnectId"] == $valueSetId["PropertyId"]) {
+                if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
                     $results[$keySetId]["PropertyTotal"] = count($valueItemId);
                     $propertyCounter[$keySetId] = count($valueItemId);
                 }
@@ -355,7 +355,7 @@ class UserProperty
         } else {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
-                    if ($valueItemId["ConnectId"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
                         $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
 
                     }

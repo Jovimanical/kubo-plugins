@@ -331,9 +331,6 @@ class UserProperty
         }
 
         $queryAvailable = implode(";", $queryAvailables);
-        if(count($propertyCounter) == 0){
-            $propertyCounterData = 0;
-        }
         $propertyAvailable = 0;
         $availableResultSetArr = [];
         $stmtResultAvailable = DBConnectionFactory::getConnection()->query($queryAvailable);
@@ -350,18 +347,20 @@ class UserProperty
         } while ($stmtResultAvailable->nextRowset());
 
         if (count($availableResultSetArr) == 0) {
-          //  foreach ($results as $keySetId => $valueSetId) {
-              //  $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - $propertyAvailable;
-          //  }
+            foreach ($results as $keySetId => $valueSetId) {
+                foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
+                    if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
+                        $results[$keySetId]["PropertyTotal"] = count($valueItemId);
+                        $propertyCounter[$keySetId] = count($valueItemId);
+                        $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - 0;
+                    }
+                }
+            }
         } else {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
                     if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
-                        if (array_key_exists("EntityId",$valueItemId[$keyItemId])) {
-                            $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
-                        } else {
-                            $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - 0;
-                        }
+                        $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
 
                     }
                 }
@@ -1468,7 +1467,6 @@ class UserProperty
         $initials = $data["inputInitials"] ?? null;
         $estateData = $data["estateData"] ?? [];
 
-
         if (self::isJSON($estateData)) {
             if (is_string($estateData)) {
                 $estateData = str_replace('&#39;', '"', $estateData);
@@ -1526,7 +1524,6 @@ class UserProperty
                 }
             }
         }
-
 
         $resultData = [];
         $data = json_encode($data);

@@ -1588,7 +1588,7 @@ class UserProperty
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
                         $result = self::indexProperty($login, $geojson, "$initials " . time() . $file, $blocks[$block]);
-                        return $result;
+                        
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                     }
@@ -1712,7 +1712,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        return $response;
+        
 
         if ($response["errorStatus"] == false and $response["contentData"] == true) {
             return $response;

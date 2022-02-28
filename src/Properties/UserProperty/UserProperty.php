@@ -1428,7 +1428,7 @@ class UserProperty
 
                                     $result = self::indexProperty($login, $boundary_geojson, $foldername);
 
-                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,trim($foldername),trim($initials),'processing')";
+                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,$foldername,$initials,'processing')";
                                     $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
             
 

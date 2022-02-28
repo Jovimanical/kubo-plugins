@@ -1566,7 +1566,7 @@ class UserProperty
         }
 
         foreach ($blocks as $keyBlock => $blockValue) {
-            $blocks[explode(" $initials", $key)[0]] = $blockValue;
+            $blocks[explode(" $initials", $keyBlock)[0]] = $blockValue;
         }
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {

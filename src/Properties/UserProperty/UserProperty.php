@@ -320,8 +320,6 @@ class UserProperty
 
         } while ($stmtResultTotal->nextRowset());
 
-        return $totalResultSetArr;
-
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
                 if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {

@@ -1428,7 +1428,7 @@ class UserProperty
 
                                     $result = self::indexProperty($login, $boundary_geojson, $foldername);
 
-                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,$foldername,$initials,'processing')";
+                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
                                     $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
             
 
@@ -1488,9 +1488,6 @@ class UserProperty
         $login = self::scriptLogin($username, $password);
         $login = $login["contentData"];
 
-        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
-        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-
         $dir = "tmp/data/$foldername/BLOCKS/";
         $files = scandir($dir);
         $blocks = [];
@@ -1540,7 +1537,7 @@ class UserProperty
             }
         }
 
-        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
 
@@ -1615,7 +1612,7 @@ class UserProperty
             // echo "\nDone with $block"; // @todo  return the success data
         }
 
-        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = trim($foldername) AND Initials =  trim($initials)";
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
         \KuboPlugin\Utils\Util::recurseRmdir("tmp/data/$foldername");

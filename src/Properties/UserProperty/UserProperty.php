@@ -599,6 +599,9 @@ class UserProperty
 
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        if(count($results) == 0){
+            return "No Children Data";
+        }
         if (isset($results[0])) {
             $propertyId = $results[0]["EntityParent"];
         }
@@ -1430,7 +1433,6 @@ class UserProperty
 
                                     $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
                                     $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-            
 
                                     $data = json_encode($data);
                                     $result["data"] = $data;
@@ -1539,7 +1541,6 @@ class UserProperty
 
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-
 
         $resultData = [];
         $data = json_encode($data);

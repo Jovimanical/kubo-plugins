@@ -28,6 +28,7 @@ class UserProperty
 {
     public static function newProperty(array $data)
     {
+        // collecting parameters
         $user = $data["user"];
         $metadata = $data["property_metadata"] ?? [];
         $title = $data["property_title"];
@@ -35,7 +36,7 @@ class UserProperty
         $parent = $data["property_parent"] ?? null;
         $type = $data["property_type"];
 
-        if (self::isJSON($metadata)) {
+        if (self::isJSON($metadata)) {  // checking for json data and converting to array
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);
@@ -55,6 +56,7 @@ class UserProperty
             "entityGeometry" => $geometry,
         ];
 
+        // Getting entity data
         $indexEntityResult = \KuboPlugin\SpatialEntity\Entity\Entity::newEntity($entity);
         $entityId = $indexEntityResult["lastInsertId"];
 
@@ -89,6 +91,7 @@ class UserProperty
 
     public static function newPropertyOnEntity(array $data)
     {
+        // Getting parameters
         $user = $data["user"] ?? 0;
         $metadata = $data["property_metadata"] ?? [];
         $title = $data["property_title"];
@@ -197,20 +200,22 @@ class UserProperty
         $metadata = [];
         $queryTotals = [];
         $queryAvailables = [];
+        // looping through estates to get particular data
         foreach ($results as $key => $property) {
             $resultPropertyId = $property["PropertyId"];
 
             $resultPropertyFloor = $property["PropertyFloor"] ?? 0;
 
+            // chaining queries for optimized operation
             $unitQueries[] = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId";
-
+            // chaining queries for optimized operation
             $blockQueries[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId, ($resultPropertyId) as ConnectId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
             WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
             SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId)) AND c.PropertyFloor = $resultPropertyFloor";
 
             // $results[$key]["Metadata"] = self::viewPropertyMetadata((int) $property["PropertyId"]);
 
-            //Fetch total estate property units
+            // Fetch total estate property units
             $queryTotals[] = "SELECT *, ($resultPropertyId) as ConnectId FROM Properties.UserProperty a
             INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
             WHERE b.EntityType = 3 AND b.EntityParent
@@ -243,6 +248,7 @@ class UserProperty
 
         $resultSetArr = [];
 
+        // looping and building result set through complex chain returned results
         $stmtResult = DBConnectionFactory::getConnection()->query($unitQuery);
 
         do {
@@ -256,6 +262,7 @@ class UserProperty
 
         } while ($stmtResult->nextRowset());
 
+        // looping and building result set through complex chain returned results
         $stmtBlock = DBConnectionFactory::getConnection()->query($blockQuery);
 
         do {
@@ -268,6 +275,7 @@ class UserProperty
             }
         } while ($stmtBlock->nextRowset());
 
+        // connecting and building the results
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
@@ -285,7 +293,7 @@ class UserProperty
             }
 
         }
-
+        // connecting and building the results
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
@@ -309,6 +317,7 @@ class UserProperty
         $totalResultSetArr = [];
         $stmtResultTotal = DBConnectionFactory::getConnection()->query($queryTotal);
 
+         // looping and building result set through complex chain returned results
         do {
 
             $totalResultArr = $stmtResultTotal->fetchAll(\PDO::FETCH_ASSOC);
@@ -319,7 +328,7 @@ class UserProperty
             }
 
         } while ($stmtResultTotal->nextRowset());
-
+        // connecting and building the results
         foreach ($results as $keySetId => $valueSetId) {
             foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
                 if ($valueItemId[$keyItemId]["ConnectId"] == $valueSetId["PropertyId"]) {
@@ -346,6 +355,7 @@ class UserProperty
 
         } while ($stmtResultAvailable->nextRowset());
 
+        // connecting and building the results
         if (count($availableResultSetArr) == 0) {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
@@ -387,6 +397,7 @@ class UserProperty
         $resultFloorCount = count(array_unique($resultFloorData));
 
         $result = $result[0] ?? [];
+        // getting particular data
         if (count($result) > 0) {
             $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
@@ -424,6 +435,7 @@ class UserProperty
         $unitQueries = [];
         $blockQueries = [];
         $metadata = [];
+        // looping through estates to get particular data
         foreach ($results as $key => $result) {
 
             $resultPropertyId = $result["PropertyId"];
@@ -449,6 +461,7 @@ class UserProperty
 
         $resultSetArr = [];
 
+        // looping and building result set through complex chain returned results
         $stmtResult = DBConnectionFactory::getConnection()->query($unitQuery);
 
         do {
@@ -492,6 +505,7 @@ class UserProperty
 
         }
 
+        // connecting and builing result sets
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($blockResultSetArr as $keyItem => $valueItem) {
@@ -523,6 +537,7 @@ class UserProperty
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        // compensating unit with block data
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId)) AND c.PropertyFloor = $resultFloorPoint";
@@ -533,6 +548,7 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
+        // matching empty unit data with block data
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
@@ -549,6 +565,7 @@ class UserProperty
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $result = $result[0] ?? [];
+        // getting property data if exist
         if (count($result) > 0) {
             $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
@@ -590,6 +607,7 @@ class UserProperty
     {
         $floorLevel = 0;
 
+        // get property children 
         $query = "SELECT a.*, b.EntityParent FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $propertyId)";
 
         if (isset($floorData["floorLevel"])) {
@@ -613,6 +631,7 @@ class UserProperty
         $unitQueries = [];
         $blockQueries = [];
         $metadata = [];
+        // looping and building result set through complex chain queries
         foreach ($results as $key => $result) {
             $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
 
@@ -637,6 +656,7 @@ class UserProperty
 
         $resultSetArr = [];
 
+        // looping and building result set through complex chain returned results
         $stmtResult = DBConnectionFactory::getConnection()->query($unitQuery);
 
         do {
@@ -662,6 +682,7 @@ class UserProperty
             }
         } while ($stmtBlock->nextRowset());
 
+        // connecting and building result sets
         foreach ($results as $keySetId => $valueSetId) {
 
             foreach ($unitResultSetArr as $keySet => $valueSet) {
@@ -711,7 +732,8 @@ class UserProperty
 
         $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
+        
+        // getting block data
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
         SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId)) AND c.PropertyFloor = $resultFloorPoint";
@@ -721,7 +743,7 @@ class UserProperty
         foreach ($result as $key => $value) {
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
-
+        // compensating empty unit data with block data
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
@@ -733,6 +755,7 @@ class UserProperty
 
     public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0)
     {
+        // Get children data
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
@@ -740,6 +763,7 @@ class UserProperty
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
+        // getting parent data
         $propertyParentQuery = "SELECT a.* FROM Properties.UserPropertyMetadata a
         INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId
         INNER JOIN SpatialEntities.Entities c ON b.LinkedEntity = c.EntityId
@@ -747,6 +771,7 @@ class UserProperty
         $propertyParentResult = DBConnectionFactory::getConnection()->query($propertyParentQuery)->fetchAll(\PDO::FETCH_ASSOC);
         $metadata = [];
 
+        // building result set
         foreach ($result as $key => $value) {
             if (!isset($metadata[$value["PropertyId"]])) {
                 $propertyId = $value["PropertyId"];
@@ -755,6 +780,7 @@ class UserProperty
 
             $metadata[$value["PropertyId"]][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
 
+            // compensating for empty unit data
             foreach ($propertyParentResult as $key => $value) {
                 if (!isset($metadata[$propertyId][$value["FieldName"]])) {
                     $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
@@ -769,6 +795,7 @@ class UserProperty
     {
         $queries = [];
 
+        // create counters
         $counter = 0;
         $counterExtra = 0;
         $initialCheck = false;
@@ -786,7 +813,7 @@ class UserProperty
              * that we have a base64
              * **/
 
-            if (self::isJSON($value)) {
+            if (self::isJSON($value)) { // check for json and array conversion
                 $value = str_replace('&#39;', '"', $value);
                 $value = str_replace('&#34;', '"', $value);
                 $value = html_entity_decode($value);
@@ -796,6 +823,7 @@ class UserProperty
 
             if (is_array($value)) {
 
+                // check for images and their handling ...
                 foreach ($value as $keyItem => $valueItem) {
                     if (is_string($valueItem)) {
                         $base64DataResult = self::checkForAndStoreBase64String($valueItem);
@@ -821,6 +849,7 @@ class UserProperty
 
             $keyId = self::camelToSnakeCase($key);
 
+            // check for images and their handling ...
             if ($keyId == "property_title_photos_data") {
                 foreach ($value as $keyItem => $valueItem) {
                     $queries[] = "BEGIN TRANSACTION;" .
@@ -834,6 +863,7 @@ class UserProperty
 
             $counter++;
 
+            // chaining queries for optimized operation
             $queries[] = "BEGIN TRANSACTION;" .
                 "DECLARE @rowcount" . $counter . " INT;" .
                 "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
@@ -1054,6 +1084,7 @@ class UserProperty
         $queries = [];
         $metadata = [];
 
+        // getting params
         $clientName = $data["clientFullName"] ?? null;
         $phone = $data["phoneNumber"] ?? null;
         $email = $data["email"] ?? null;
@@ -1142,6 +1173,7 @@ class UserProperty
         }
         $userId = $userId ?? null;
 
+        // return data
         $query = "SELECT * FROM Users.UserInfoFieldValues WHERE UserId = $userId AND FieldId = 2";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1155,6 +1187,7 @@ class UserProperty
             return "Parameters not set";
         }
 
+        // collect params
         $username = $data["inputEmail"] ?? null;
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
@@ -1179,13 +1212,14 @@ class UserProperty
                     $path = "tmp/data/";
                     $location = $path . $_FILES["geojsons"]["name"];
 
+                    // save uploaded file
                     if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
                         $zip = new \ZipArchive();
                         if ($zip->open($location)) {
                             $zip->extractTo($path);
                             $zip->close();
                         }
-                        try {
+                        try { //  progress check
                             $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,trim($foldername),trim($initials),'processing')";
                             $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
@@ -1193,6 +1227,7 @@ class UserProperty
                             return $e->getMessage();
                         }
 
+                        // execute standalaone php script
                         shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data | at now &');
 
                         return "Uploading Map Data";
@@ -1367,6 +1402,7 @@ class UserProperty
             return "Parameters not set";
         }
 
+        // Collect inputs
         $username = $data["inputEmail"] ?? null;
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
@@ -1391,6 +1427,7 @@ class UserProperty
                     $path = "tmp/data/";
                     $location = $path . $_FILES["geojsons"]["name"];
 
+                    // moved uploaded file
                     if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
                         $zip = new \ZipArchive();
                         if ($zip->open($location)) {
@@ -1407,6 +1444,7 @@ class UserProperty
 
                         $blockLength = 0;
                         $blockNumberLength = 0;
+                        // validation check
                         if (in_array("ESTATE_BOUNDARY.geojson", $fileNames) and in_array("BLOCKS", $fileNames)) {
 
                             foreach ($fileNames as $key => $value) {
@@ -1429,8 +1467,10 @@ class UserProperty
                                         "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
                                     );
 
+                                    // inserting ESTATE_BOUNDARY.geojson
                                     $result = self::indexProperty($login, $boundary_geojson, $foldername);
 
+                                    // progress check
                                     $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
                                     $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
@@ -1467,13 +1507,14 @@ class UserProperty
             return "Parameters not set";
         }
 
+        // Collecting inputs
         $username = $data["inputEmail"] ?? null;
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
         $estateData = $data["estateData"] ?? [];
 
-        if (self::isJSON($estateData)) {
+        if (self::isJSON($estateData)) {  // json check and array conversion
             if (is_string($estateData)) {
                 $estateData = str_replace('&#39;', '"', $estateData);
                 $estateData = str_replace('&#34;', '"', $estateData);
@@ -1496,6 +1537,7 @@ class UserProperty
         $result = [];
         if (count($files) > 0) {
 
+            // looping and inserting values
             foreach ($files as $key => $file) {
                 if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
                     $geojson = file_get_contents($dir . $file);
@@ -1512,6 +1554,7 @@ class UserProperty
                 }
             }
 
+            // returning block data array
             $queryBlocks = "SELECT EntityName,EntityId FROM SpatialEntities.Entities WHERE EntityParent = " . $estateData['EntityId'];
             $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1519,6 +1562,7 @@ class UserProperty
                 $blocks[$blockValue["EntityName"]] = $blockValue["EntityId"];
             }
 
+            // checking for extra empty blocks
             $dir = "tmp/data/$foldername/BLOCK EXTRA/";
             $files = scandir($dir);
             if (count($files) > 0) {
@@ -1539,6 +1583,7 @@ class UserProperty
             }
         }
 
+        // progress check
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
@@ -1558,6 +1603,7 @@ class UserProperty
             return "Parameters not set";
         }
 
+        // collecting inputs
         $username = $data["inputEmail"] ?? null;
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
@@ -1567,7 +1613,7 @@ class UserProperty
         $login = self::scriptLogin($username, $password);
         $login = $login["contentData"];
 
-        if (self::isJSON($blocks)) {
+        if (self::isJSON($blocks)) {  // json check and array conversion
             if (is_string($blocks)) {
                 $blocks = str_replace('&#39;', '"', $blocks);
                 $blocks = str_replace('&#34;', '"', $blocks);
@@ -1577,7 +1623,7 @@ class UserProperty
 
         }
 
-        foreach ($blocks as $keyBlock => $blockValue) {
+        foreach ($blocks as $keyBlock => $blockValue) {  // rebuilding block array
             $blocks[explode(" $initials", $keyBlock)[0]] = $blockValue;
         }
 
@@ -1596,6 +1642,7 @@ class UserProperty
                     try {
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
+                        // inserting values
                         $result = self::indexProperty($login, $geojson, "$initials " . time() . $file, $blocks[$block]);
 
                     } catch (Exception $e) {
@@ -1613,6 +1660,7 @@ class UserProperty
             // echo "\nDone with $block"; // @todo  return the success data
         }
 
+        // progress check
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
@@ -1629,10 +1677,12 @@ class UserProperty
             return "Parameters not set";
         }
 
+        // get inputs
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
         $userId = $userId ?? null;
 
+        // return progress data
         $query = "SELECT * FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1662,6 +1712,7 @@ class UserProperty
     {
         $floorLevel = 0;
 
+        // build query
         $query = "SELECT a.PropertyId FROM Properties.UserProperty a
         INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
          WHERE b.EntityParent = (SELECT LinkedEntity FROM Properties.UserProperty
@@ -1679,7 +1730,7 @@ class UserProperty
 
     protected static function inArrayRec($needle, $haystack, $strict = false)
     {
-        foreach ($haystack as $item) {
+        foreach ($haystack as $item) {  // recursively checking of in_array
             if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && self::inArrayRec($needle, $item, $strict))) {
                 return true;
             }
@@ -1696,7 +1747,7 @@ class UserProperty
             "username" => $username,
             "password" => $password,
         ];
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data);
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data); // http call
 
         $accountData = json_decode($response, true);
 
@@ -1724,7 +1775,7 @@ class UserProperty
         // $host = "http://localhost:9000/v1/properties/user-property/new-property"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property";
 
         $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header);
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
 
@@ -1756,7 +1807,7 @@ class UserProperty
         // $host = "http://localhost:9000/v1/properties/user-property/new-property"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property";
 
         $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header);
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header);  // http call
 
         $response = json_decode($response, true);
         if ($response["errorStatus"] == false and $response["contentData"] == true) {

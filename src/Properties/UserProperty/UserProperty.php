@@ -749,6 +749,8 @@ class UserProperty
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+            }else if (isset($metadata[$valueItem["FieldName"]]) and $metadata[$valueItem["FieldName"]] == '""') {
+                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
 
@@ -1764,7 +1766,7 @@ class UserProperty
             "property_type" => 1,
             "property_geometry" => $geojson,
             "property_metadata" => [
-                "property_description" => "",
+                "property_description" => "description",
             ],
         ];
 
@@ -1796,7 +1798,7 @@ class UserProperty
             "property_type" => 1,
             "property_geometry" => $geojson,
             "property_metadata" => [
-                "property_description" => "",
+                "property_description" => "description",
             ],
         ];
 

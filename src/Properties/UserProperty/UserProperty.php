@@ -552,7 +552,11 @@ class UserProperty
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+            } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
+                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
+
+            
         }
 
         return $metadata;
@@ -710,7 +714,7 @@ class UserProperty
                     if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
                         if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                             $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
-                        } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] == '""') {
+                        } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and empty($results[$keySetId]["Metadata"][$valueItemIdSet["FieldValue"]])) {
                             $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
                         }
                     }
@@ -749,7 +753,7 @@ class UserProperty
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
-            } else if (isset($metadata[$valueItem["FieldName"]]) and $metadata[$valueItem["FieldValue"]] == "") {
+            } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
@@ -787,6 +791,8 @@ class UserProperty
             // compensating for empty unit data
             foreach ($propertyParentResult as $key => $value) {
                 if (!isset($metadata[$propertyId][$value["FieldName"]])) {
+                    $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+                } else if (isset($metadata[$propertyId][$value["FieldName"]]) and empty($metadata[$propertyId][$value["FieldValue"]])) {
                     $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                 }
             }
@@ -1766,7 +1772,7 @@ class UserProperty
             "property_type" => 1,
             "property_geometry" => $geojson,
             "property_metadata" => [
-                "property_description" => "description",
+                "property_description" => "",
             ],
         ];
 
@@ -1798,7 +1804,7 @@ class UserProperty
             "property_type" => 1,
             "property_geometry" => $geojson,
             "property_metadata" => [
-                "property_description" => "description",
+                "property_description" => "",
             ],
         ];
 

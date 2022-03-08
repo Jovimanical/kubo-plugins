@@ -746,13 +746,25 @@ class UserProperty
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];
+        $plotOfLand = false;
         foreach ($result as $key => $value) {
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
+
+        foreach ($blockResult as $keyItem => $valueItem) {
+            if ($valueItem["FieldValue"] == "Plot of land") {
+                $plotOfLand = true;
+            }
+        }
+
         // compensating empty unit data with block data
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
-                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                if ($valueItem["FieldName"] == "property_bedroom_count" and $plotOfLand or $valueItem["FieldName"] == "property_sittingroom_count" and $plotOfLand or $valueItem["FieldName"] == "property_kitchen_count" and $plotOfLand or $valueItem["FieldName"] == "property_bathroom_count" and $plotOfLand) {
+
+                } else {
+                    $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                }
             } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }

@@ -63,6 +63,54 @@ class Util
 
     }
 
+    public static function sendNota($token, $apikey, $title, $message, $channelId = 100, $data = [] )
+    {
+        // API access key from Google API's Console
+        // replace API
+        define('API_ACCESS_KEY', $apikey);
+        $tokenData = $token;
+        $msg = array
+            (
+            'body' => $message,
+            'title' => $title,
+            'vibrate' => 1,
+            'sound' => 'default',
+
+            // you can also add images, additionalData
+        );
+
+        $fields = array
+            (
+            'to' => $tokenData,
+            'notification' => $msg,
+            'channel_id' => $channelId,
+
+        );
+        $headers = array
+            (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json',
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+        //$resultData = json_encode($result);
+        $resultData = (string) $result;
+
+        if ($resultData == null) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
     public static function recurseRmdir($dir)
     {
         $files = array_diff(scandir($dir), array('.', '..'));

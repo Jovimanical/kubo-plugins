@@ -41,4 +41,9 @@ class Util
     {
         return Utils\Util::recurseRmdir($dir);
     }
+
+    public static function sendNota($token, $apikey, $title, $message, $channelId = 100, $data = [] )
+    {
+        return Utils\Util::sendNota($token,$apikey,$title,$message,$channelId,$data);
+    }
 }

@@ -710,6 +710,8 @@ class UserProperty
                     if ($valueItemIdSet["ConnectId"] == $valueSetId['PropertyId']) {
                         if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                             $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
+                        } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] == "") {
+                            $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
                         }
                     }
 

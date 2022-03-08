@@ -749,7 +749,7 @@ class UserProperty
         foreach ($blockResult as $keyItem => $valueItem) {
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
-            }else if (isset($metadata[$valueItem["FieldName"]]) and $metadata[$valueItem["FieldValue"]] == '""') {
+            }else if (isset($metadata[$valueItem["FieldName"]]) and $metadata[$valueItem["FieldValue"]] == "\"\"") {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }

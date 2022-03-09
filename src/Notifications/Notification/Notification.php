@@ -94,8 +94,8 @@ class Notification
 
         $inputData = [
             "NotificationKey"=>QB::wrapString($notificationKey, "'"),
-            "Sender"=>QB::wrapString($sender, "'"),
-            "Receiver"=>QB::wrapString($receiver, "'"),
+            "Sender"=>QB::wrapString(json_encode($sender), "'"),
+            "Receiver"=>QB::wrapString(json_encode($receiver), "'"),
             "Title"=>QB::wrapString($title, "'"),
             "Notifications"=>QB::wrapString($notifications, "'"),
             "ReadStatus"=>QB::wrapString($readStatus, "'"),

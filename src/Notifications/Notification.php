@@ -10,10 +10,10 @@
  *
  */
 
-namespace KuboPlugin\Utils;
+namespace KuboPlugin\Notifications;
 
 /**
- * class KuboPlugin\Utils\Notification
+ * class KuboPlugin\Notifications
  *
  * Notification Visitor
  *
@@ -24,27 +24,24 @@ class Notification
 {
     public static function sendMail(array $data)
     {
-        return Notifications\Notification::sendMail($data);
+        return Notification\Notification::sendMail($data);
     }
     public static function sendSupport(int $userId, array $data)
     {
-        return Notifications\Notification::sendSupport($userId, $data);
+        return Notification\Notification::sendSupport($userId, $data);
     }
     public static function sendNotifications(array $data)
     {
-        return Notifications\Notification::sendNotifications($data);
-
+        return Notification\Notification::sendNotifications($data);
     }
 
     public static function readNotifications(array $data)
     {
-
-        return Notifications\Notification::readNotifications($data);
+        return Notification\Notification::readNotifications($data);
     }
 
     public static function saveNotificationTokens(array $data)
     {
-
-        return Notifications\Notification::saveNotificationTokens($data);
+        return Notification\Notification::saveNotificationTokens($data);
     }
 }

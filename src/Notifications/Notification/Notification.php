@@ -66,10 +66,10 @@ class Notification
         }
 
         $notificationKey = \uniqid();
-        $sender = $data["sender"] ?? "";
-        $receiver =  $data["receiver"] ?? "";
+        $sender = $data["sender"] ?? [];
+        $receiver =  $data["receiver"] ?? [];
         $title =  $data["title"] ?? "";
-        $notifications = $data["notifications"] ?? "";
+        $notifications = $data["notifications"] ?? [];
         $readStatus = "unread";
 
         if (\KuboPlugin\Utils\Util::isJSON($sender)) { // check for json and array conversion
@@ -88,6 +88,14 @@ class Notification
 
         }
 
+        if (\KuboPlugin\Utils\Util::isJSON($notifications)) { // check for json and array conversion
+            $notifications = str_replace('&#39;', '"', $notifications);
+            $notifications = str_replace('&#34;', '"', $notifications);
+            $notifications = html_entity_decode($notifications);
+            $notifications = json_decode($notifications, true);
+
+        }
+
         // return progress data
         $query = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiver'";
         $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -97,20 +105,22 @@ class Notification
             "Sender"=>QB::wrapString(json_encode($sender), "'"),
             "Receiver"=>QB::wrapString(json_encode($receiver), "'"),
             "Title"=>QB::wrapString($title, "'"),
-            "Notifications"=>QB::wrapString($notifications, "'"),
+            "Notifications"=>QB::wrapString(json_encode($notifications), "'"),
             "ReadStatus"=>QB::wrapString($readStatus, "'"),
         ];
+
+       // $notificationArr = json_decode($notifications, true);
 
         $result = DBQueryFactory::insert("[Utils].[Notifications]", $inputData, false);
 
         if($result){
             $mail = new Mailer($sender, $receiver, $notifications);
             if(isset($token) and !is_array($token)){
-                $push = \KuboPlugin\Utils\Util::sendNota($token,self::apikey,$title,$notifications);
+                $push = \KuboPlugin\Utils\Util::sendNota($token,self::apikey,$title,$notifications['body']);
 
             } else if (isset($token) and is_array($token)) {
                 foreach ($token as $key => $value) {
-                    $push = \KuboPlugin\Utils\Util::sendNota($value,self::apikey,$title,$notifications);
+                    $push = \KuboPlugin\Utils\Util::sendNota($value,self::apikey,$title,$notifications['body']);
                 }
 
             }

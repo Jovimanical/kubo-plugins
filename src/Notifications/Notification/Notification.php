@@ -72,7 +72,9 @@ class Notification
         $notifications = $data["notifications"] ?? "";
         $readStatus = "unread";
 
-        $token = $data["token"] ?? "";
+        // return progress data
+        $query = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiver'";
+        $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $inputData = [
             "NotificationKey"=>QB::wrapString($notificationKey, "'"),
@@ -87,9 +89,17 @@ class Notification
 
         if($result){
             $mail = new Mailer($sender, $receiver, $notifications);
-            $push = \KuboPlugin\Utils\Util::sendNota($token,self::apikey,$title,$notifications);
+            if(isset($token) and !is_array($token)){
+                $push = \KuboPlugin\Utils\Util::sendNota($token,self::apikey,$title,$notifications);
 
-            if ($push and $mail->send()) {
+            } else if (isset($token) and is_array($token)) {
+                foreach ($token as $key => $value) {
+                    $push = \KuboPlugin\Utils\Util::sendNota($value,self::apikey,$title,$notifications);
+                }
+
+            }
+
+            if ($mail->send()) {
     
                 return true;
             } else {

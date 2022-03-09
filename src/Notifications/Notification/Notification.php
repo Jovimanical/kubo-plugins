@@ -106,6 +106,7 @@ class Notification
         $query = implode(";", $queries);
 
         $resultSetArr = [];
+        $token = [];
 
         // looping and building result set through complex chain returned results
         $stmtResult = DBConnectionFactory::getConnection()->query($query);
@@ -116,12 +117,14 @@ class Notification
             if (count($queryResultArr) > 0) {
                 // Add $rowset to array
                 array_push($resultSetArr, $queryResultArr);
+                $token[] = $queryResultArr[0]["Token"];
 
             }
 
         } while ($stmtResult->nextRowset());
 
-        return $resultSetArr;
+       // return $resultSetArr;
+        return $token;
      //   $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $inputData = [

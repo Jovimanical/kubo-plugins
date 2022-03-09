@@ -141,11 +141,11 @@ class Notification
         if($result){
             $mail = new Mailer($sender, $receiver, $notifications);
             if(isset($token) and !is_array($token)){
-                $push = \KuboPlugin\Utils\Util::sendNota($token,self::apikey,$title,$notifications['body']);
+                $push = \KuboPlugin\Utils\Util::sendNota($token,self::$apikey,$title,$notifications['body']);
 
             } else if (isset($token) and is_array($token)) {
                 foreach ($token as $key => $value) {
-                    $push = \KuboPlugin\Utils\Util::sendNota($value,self::apikey,$title,$notifications['body']);
+                    $push = \KuboPlugin\Utils\Util::sendNota($value,self::$apikey,$title,$notifications['body']);
                 }
 
             }

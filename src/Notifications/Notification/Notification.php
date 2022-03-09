@@ -72,6 +72,8 @@ class Notification
         $notifications = $data["notifications"] ?? "";
         $readStatus = "unread";
 
+        return $data;
+
         // return progress data
         $query = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiver'";
         $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

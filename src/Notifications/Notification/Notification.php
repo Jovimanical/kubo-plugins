@@ -96,9 +96,33 @@ class Notification
 
         }
 
+        $queries = [];
+        foreach($receiver as $receiverOne){
+            $receiverOneAddress = $receiverOne["address"];
+            $queries[] = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiverOneAddress'";
+        }
+
         // return progress data
-        $query = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiver'";
-        $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $query = implode(";", $queries);
+
+        $resultSetArr = [];
+
+        // looping and building result set through complex chain returned results
+        $stmtResult = DBConnectionFactory::getConnection()->query($query);
+
+        do {
+
+            $queryResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
+            if (count($queryResultArr) > 0) {
+                // Add $rowset to array
+                array_push(resultSetArr, $queryResultArr);
+
+            }
+
+        } while ($stmtResult->nextRowset());
+
+        return $resultSetArr;
+     //   $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $inputData = [
             "NotificationKey"=>QB::wrapString($notificationKey, "'"),
@@ -108,8 +132,6 @@ class Notification
             "Notifications"=>QB::wrapString(json_encode($notifications), "'"),
             "ReadStatus"=>QB::wrapString($readStatus, "'"),
         ];
-
-       // $notificationArr = json_decode($notifications, true);
 
         $result = DBQueryFactory::insert("[Utils].[Notifications]", $inputData, false);
 

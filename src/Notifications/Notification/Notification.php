@@ -115,7 +115,7 @@ class Notification
             $queryResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
             if (count($queryResultArr) > 0) {
                 // Add $rowset to array
-                array_push(resultSetArr, $queryResultArr);
+                array_push($resultSetArr, $queryResultArr);
 
             }
 

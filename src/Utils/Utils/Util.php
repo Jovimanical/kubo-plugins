@@ -72,7 +72,7 @@ class Util
     {
         // API access key from Google API's Console
         // replace API
-        define('API_ACCESS_KEY', $apikey);
+       // define('API_ACCESS_KEY', $apikey);
         $tokenData = $token;
         $msg = array
             (
@@ -93,7 +93,7 @@ class Util
         );
         $headers = array
             (
-            'Authorization: key=' . API_ACCESS_KEY,
+            'Authorization: key=' . $apikey,
             'Content-Type: application/json',
         );
         $ch = curl_init();

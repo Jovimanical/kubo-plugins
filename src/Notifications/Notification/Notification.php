@@ -124,8 +124,8 @@ class Notification
         } while ($stmtResult->nextRowset());
 
        // return $resultSetArr;
-        return $token;
-     //   $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+       // return $token;
+       // $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $inputData = [
             "NotificationKey"=>QB::wrapString($notificationKey, "'"),

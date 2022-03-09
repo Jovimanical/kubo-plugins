@@ -72,7 +72,21 @@ class Notification
         $notifications = $data["notifications"] ?? "";
         $readStatus = "unread";
 
-        return $data;
+        if (self::isJSON($sender)) { // check for json and array conversion
+            $sender = str_replace('&#39;', '"', $sender);
+            $sender = str_replace('&#34;', '"', $sender);
+            $sender = html_entity_decode($sender);
+            $sender = json_decode($sender, true);
+
+        }
+
+        if (self::isJSON($receiver)) { // check for json and array conversion
+            $receiver = str_replace('&#39;', '"', $receiver);
+            $receiver = str_replace('&#34;', '"', $receiver);
+            $receiver = html_entity_decode($receiver);
+            $receiver = json_decode($receiver, true);
+
+        }
 
         // return progress data
         $query = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiver'";

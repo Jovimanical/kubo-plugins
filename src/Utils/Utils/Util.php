@@ -30,9 +30,14 @@ class Util
 
     public static function isJSON(String $stringData)
     {
-        $string = str_replace('&#39;', '"', $stringData);
-        $string = str_replace('&#34;', '"', $stringData);
-        return is_string($string) && is_array(json_decode($string, true)) ? true : false;
+        if (is_string($stringData)) {
+            $stringData = str_replace('&#39;', '"', $stringData);
+            $stringData = str_replace('&#34;', '"', $stringData);
+            $stringData = html_entity_decode($stringData);
+            return is_string($stringData) && is_array(json_decode($stringData, true)) ? true : false;
+        } else {
+            return false;
+        }
     }
 
     public static function clientRequest(String $url, String $method = 'GET', array $data = [], String $header = "")

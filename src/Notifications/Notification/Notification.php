@@ -207,8 +207,6 @@ class Notification
         $userEmail =  $data["userEmail"] ?? "";
         $deviceId = $data["deviceId"] ?? "";
 
-        return $data;
-
         $inputData = [
             "Token"=>QB::wrapString($tokenData, "'"),
             "UserId"=>$userId,

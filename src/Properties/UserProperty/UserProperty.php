@@ -1630,22 +1630,24 @@ class UserProperty
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
-        $blocks = $data["blockData"] ?? [];
+        $blockers = $data["blockData"] ?? [];
+
+        $blocks = [];
 
         $login = self::scriptLogin($username, $password);
         $login = $login["contentData"];
 
-        if (self::isJSON($blocks)) {  // json check and array conversion
-            if (is_string($blocks)) {
-                $blocks = str_replace('&#39;', '"', $blocks);
-                $blocks = str_replace('&#34;', '"', $blocks);
-                $blocks = html_entity_decode($blocks);
-                $blocks = json_decode($blocks, true);
+        if (self::isJSON($blockers)) {  // json check and array conversion
+            if (is_string($blockers)) {
+                $blockers = str_replace('&#39;', '"', $blockers);
+                $blockers = str_replace('&#34;', '"', $blockers);
+                $blockers = html_entity_decode($blockers);
+                $blockers = json_decode($blockers, true);
             }
 
         }
 
-        foreach ($blocks as $keyBlock => $blockValue) {  // rebuilding block array
+        foreach ($blockers as $keyBlock => $blockValue) {  // rebuilding block array
             $blocks[explode(" $initials", $keyBlock)[0]] = $blockValue;
         }
 

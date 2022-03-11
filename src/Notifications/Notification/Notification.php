@@ -12,10 +12,10 @@
 
 namespace KuboPlugin\Notifications\Notification;
 
-use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
+use EmmetBlue\Core\Factory\MailerFactory as Mailer;
 
 /**
  * class KuboPlugin\Notifications\Notification
@@ -37,9 +37,9 @@ class Notification
 
         if ($mail->send()) {
 
-            return true;
+            return "Mail Sent!";
         } else {
-            return false;
+            return "Mail Not Sent!";
         }
 
     }
@@ -61,14 +61,14 @@ class Notification
 
     public static function sendNotifications(array $data)
     {
-        if(empty($data)){
+        if (empty($data)) {
             return false;
         }
 
         $notificationKey = \uniqid();
         $sender = $data["sender"] ?? [];
-        $receiver =  $data["receiver"] ?? [];
-        $title =  $data["title"] ?? "";
+        $receiver = $data["receiver"] ?? [];
+        $title = $data["title"] ?? "";
         $notifications = $data["notifications"] ?? [];
         $readStatus = "unread";
 
@@ -97,7 +97,7 @@ class Notification
         }
 
         $queries = [];
-        foreach($receiver as $receiverOne){
+        foreach ($receiver as $receiverOne) {
             $receiverOneAddress = $receiverOne["address"];
             $queries[] = "SELECT Token FROM Utils.NotificationTokens WHERE UserEmail = '$receiverOneAddress'";
         }
@@ -116,59 +116,54 @@ class Notification
             $queryResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
             if (count($queryResultArr) > 0) {
                 // Add $rowset to array
-                array_push($resultSetArr, $queryResultArr);
-                $token[] = $queryResultArr[0]["Token"];
+                // array_push($resultSetArr, $queryResultArr);
+                foreach ($queryResultArr as $queryResultItem) {
+                    $token[] = $queryResultItem["Token"];
+                }
 
             }
 
         } while ($stmtResult->nextRowset());
 
-       // return $resultSetArr;
-       // return $token;
-       // $token = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-
         $inputData = [
-            "NotificationKey"=>QB::wrapString($notificationKey, "'"),
-            "Sender"=>QB::wrapString(json_encode($sender), "'"),
-            "Receiver"=>QB::wrapString(json_encode($receiver), "'"),
-            "Title"=>QB::wrapString($title, "'"),
-            "Notifications"=>QB::wrapString(json_encode($notifications), "'"),
-            "ReadStatus"=>QB::wrapString($readStatus, "'"),
+            "NotificationKey" => QB::wrapString($notificationKey, "'"),
+            "Sender" => QB::wrapString(json_encode($sender), "'"),
+            "Receiver" => QB::wrapString(json_encode($receiver), "'"),
+            "Title" => QB::wrapString($title, "'"),
+            "Notifications" => QB::wrapString(json_encode($notifications), "'"),
+            "ReadStatus" => QB::wrapString($readStatus, "'"),
         ];
 
         $result = DBQueryFactory::insert("[Utils].[Notifications]", $inputData, false);
 
-        if($result){
+        if ($result) {
             $mail = new Mailer($sender, $receiver, $notifications);
-            if(isset($token) and !is_array($token)){
-                $push = \KuboPlugin\Utils\Util::sendNota($token,self::$apiKey,$title,$notifications['body']);
+            if (isset($token) and !is_array($token)) {
+                $push = \KuboPlugin\Utils\Util::sendNota($token, self::$apiKey, $title, $notifications['body']);
 
             } else if (isset($token) and is_array($token)) {
                 foreach ($token as $key => $value) {
-                    $push = \KuboPlugin\Utils\Util::sendNota($value,self::$apiKey,$title,$notifications['body']);
+                    $push = \KuboPlugin\Utils\Util::sendNota($value, self::$apiKey, $title, $notifications['body']);
                 }
 
             }
 
             if ($mail->send()) {
-    
-                return true;
+
+                return "Sent Successfully";
             } else {
-                return false;
+                return "Not Sent!";
             }
         } else {
-            return false;
+            return "Not Sent!";
         }
-
-
-        
 
     }
 
     public static function readNotifications(array $data)
     {
 
-        if(empty($data)){
+        if (empty($data)) {
             return false;
         }
 
@@ -177,20 +172,19 @@ class Notification
         $readDate = \date("Y-m-d H:i:s");
 
         $inputData = [
-            "NotificationKey"=>QB::wrapString($notificationKey, "'"),
-            "ReadStatus"=>QB::wrapString($readStatus, "'"),
-            "ReadDate"=>QB::wrapString($readDate, "'")
+            "NotificationKey" => QB::wrapString($notificationKey, "'"),
+            "ReadStatus" => QB::wrapString($readStatus, "'"),
+            "ReadDate" => QB::wrapString($readDate, "'"),
         ];
 
         // update status
         $updateQuery = "UPDATE Utils.Notifications SET ReadStatus = '$readStatus',ReadDate = '$readDate' WHERE NotificationKey = '$notificationKey'";
         $resultExec = DBConnectionFactory::getConnection()->exec($updateQuery);
 
-
-        if($resultExec){
-            return true;
+        if ($resultExec) {
+            return "Read Success!";
         } else {
-            return false;
+            return "Not Read!";
         }
 
     }
@@ -198,28 +192,41 @@ class Notification
     public static function saveNotificationTokens(array $data)
     {
 
-        if(empty($data)){
+        if (empty($data)) {
             return false;
         }
 
         $tokenData = $data["token"] ?? "";
-        $userId =  $data["userId"] ?? 0;
-        $userEmail =  $data["userEmail"] ?? "";
+        $userId = $data["userId"] ?? 0;
+        $userEmail = $data["userEmail"] ?? "";
         $deviceId = $data["deviceId"] ?? "";
 
+        $result = [];
+
         $inputData = [
-            "Token"=>QB::wrapString($tokenData, "'"),
-            "UserId"=>$userId,
-            "UserEmail"=>QB::wrapString($userEmail, "'"),
-            "DeviceId"=>QB::wrapString($deviceId, "'")
+            "Token" => QB::wrapString($tokenData, "'"),
+            "UserId" => $userId,
+            "UserEmail" => QB::wrapString($userEmail, "'"),
+            "DeviceId" => QB::wrapString($deviceId, "'"),
         ];
 
-        $result = DBQueryFactory::insert("[Utils].[NotificationTokens]", $inputData, false);
+        // update status
+        $selectQuery = "SELECT Token FROM Utils.NotificationTokens WHERE UserId = $userId";
+        $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
-        if($result){
-            return true;
+        if (count($resultSelect) > 0) {
+            // update token
+            $updateQuery = "UPDATE Utils.NotificationTokens SET Token = '$tokenData' WHERE UserId = $userId";
+            $resultExec = DBConnectionFactory::getConnection()->exec($updateQuery);
+
         } else {
-            return false;
+            $result = DBQueryFactory::insert("[Utils].[NotificationTokens]", $inputData, false);
+        }
+
+        if ($result) {
+            return "Saved Successfully!";
+        } else {
+            return "Not Saved!";
         }
 
     }

@@ -1655,8 +1655,6 @@ class UserProperty
             return "Parameters not set";
         }
 
-        return $blocks;
-
         for ($i = 1; $i <= count($blocks); $i++) {
             $block = "BLOCK $i";
             $dir = "tmp/data/$foldername/BLOCK NUMBERS/$block/";

@@ -148,12 +148,12 @@ class Notification
 
             }
 
-            if ($mail->send()) {
+           // if ($mail->send()) {
 
                 return "Sent Successfully";
-            } else {
-                return "Not Sent!";
-            }
+          //  } else {
+          //      return "Not Sent!";
+         //   }
         } else {
             return "Not Sent!";
         }
@@ -228,6 +228,32 @@ class Notification
         } else {
             return "Not Saved!";
         }
+
+    }
+
+    public static function viewNotifications(array $data)
+    {
+
+        if (empty($data)) {
+            return false;
+        }
+
+        $fetch = "FIRST";
+        $offset = 0;
+        $limit = $data['limit'] ?? 1000;
+
+        if($data['offset'] != 0){
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $userId = $data["userId"] ?? 0;
+
+        // Select Notifications
+        $selectQuery = "SELECT * FROM Utils.Notifications WHERE UserId = $userId ORDER BY NotificationId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
+        $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $resultSelect;
 
     }
 

@@ -44,4 +44,9 @@ class Notification
     {
         return Notification\Notification::saveNotificationTokens($data);
     }
+
+    public static function viewNotifications(array $data)
+    {
+        return Notification\Notification::viewNotifications($data);
+    }
 }

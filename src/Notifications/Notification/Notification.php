@@ -247,10 +247,10 @@ class Notification
             $offset = $data['offset'];
         }
 
-        $userId = $data["userId"] ?? 0;
+        $receiver = $data["receiver"] ?? 0;
 
         // Select Notifications
-        $selectQuery = "SELECT * FROM Utils.Notifications WHERE UserId = $userId ORDER BY NotificationId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
+        $selectQuery = "SELECT * FROM Utils.Notifications WHERE Receiver = '$receiver' ORDER BY NotificationId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $resultSelect;

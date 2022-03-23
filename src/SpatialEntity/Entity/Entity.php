@@ -81,9 +81,7 @@ class Entity {
         return $result;
     }
 
- 
 
-    
     public static function viewEntityChildren(array $data){
         $entity = $data["entityId"];
         $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity";
@@ -98,7 +96,7 @@ class Entity {
 
         return $children;
     }
-    
+
 
     public static function viewEntityParent(array $data){
         $entity = $data["entityId"];
@@ -126,4 +124,6 @@ class Entity {
 
         return $result;
     }
+
+
 }

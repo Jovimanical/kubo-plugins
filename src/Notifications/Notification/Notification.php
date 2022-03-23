@@ -32,6 +32,9 @@ class Notification
 
     public static function sendMail(array $data)
     {
+        if (empty($data)) {
+            return false;
+        }
 
         $mail = new Mailer($data['sender'], $data['recipients'], $data['message']);
 
@@ -46,6 +49,9 @@ class Notification
 
     public static function sendSupport(int $userId, array $data)
     {
+        if (empty($data)) {
+            return false;
+        }
         $headers = "From: " . $data['email'] . "" . "\r\n" .
             "Name:  " . $data['name'] . "";
 

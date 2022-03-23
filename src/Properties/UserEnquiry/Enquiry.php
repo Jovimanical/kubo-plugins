@@ -187,6 +187,12 @@ class Enquiry {
 
         $metadata = [];
 
+        $resd = [];
+        $resd["first"] = $resultKey;
+        $resd["last"] = $propResultArr;
+
+        return $resd;
+
         $metadata['PropertyUnit'] = array_combine($resultKey,$propResultArr);
         $metadata['PropertyUnitBlock'] = array_combine($resultKey,$blockResultArr);
         $metadata['PropertyTotal'] = array_combine($resultKey,$totalResultArr);

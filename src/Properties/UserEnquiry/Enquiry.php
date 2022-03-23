@@ -188,8 +188,8 @@ class Enquiry {
         $metadata = [];
 
         $resd = [];
-        $resd["first"] = $resultKey;
-        $resd["last"] = $propResultArr;
+        $resd["first"] = count($resultKey);
+        $resd["last"] = count($propResultArr);
 
         return $resd;
 

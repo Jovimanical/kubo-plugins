@@ -27,9 +27,29 @@ class UserProperty
         return UserProperty\UserProperty::newProperty($data);
     }
 
+    public static function newPropertyEstate(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyEstate($data);
+    }
+
+    public static function newPropertyBlock(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyBlock($data);
+    }
+
+    public static function newPropertyUnit(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyUnit($data);
+    }
+
     public static function newPropertyOnEntity(array $data)
     {
         return UserProperty\UserProperty::newPropertyOnEntity($data);
+    }
+
+    public static function newPropertyOnEntityBlock(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyOnEntityBlock($data);
     }
 
     public static function viewProperties(int $userId)
@@ -37,9 +57,19 @@ class UserProperty
         return UserProperty\UserProperty::viewProperties($userId);
     }
 
+    public static function viewPropertiesData(int $userId)
+    {
+        return UserProperty\UserProperty::viewPropertiesData($userId);
+    }
+
     public static function viewProperty(int $propertyId)
     {
         return UserProperty\UserProperty::viewProperty($propertyId);
+    }
+
+    public static function viewPropertyData(int $propertyId)
+    {
+        return UserProperty\UserProperty::viewPropertyData($propertyId);
     }
 
     public static function listAllProperties(int $userId = 1, array $data)
@@ -47,14 +77,28 @@ class UserProperty
         return UserProperty\UserProperty::listAllProperties($userId, $data);
     }
 
+    public static function listAllPropertiesData(int $userId = 1, array $data)
+    {
+        return UserProperty\UserProperty::listAllPropertiesData($userId, $data);
+    }
+
     public static function viewPropertyByName(array $data)
     {
         return UserProperty\UserProperty::viewPropertyByName($data);
     }
 
+    public static function viewPropertyByNameData(array $data)
+    {
+        return UserProperty\UserProperty::viewPropertyByNameData($data);
+    }
     public static function viewPropertyChildren(int $propertyId, array $floorLevel = [])
     {
         return UserProperty\UserProperty::viewPropertyChildren($propertyId, $floorLevel);
+    }
+
+    public static function viewPropertyChildrenData(int $propertyId, array $floorLevel = [])
+    {
+        return UserProperty\UserProperty::viewPropertyChildrenData($propertyId, $floorLevel);
     }
 
     public static function getPropertyChildren(int $propertyId, array $floorLevel = [])
@@ -70,6 +114,11 @@ class UserProperty
     public static function viewPropertyMetadata(int $propertyId)
     {
         return UserProperty\UserProperty::viewPropertyMetadata($propertyId);
+    }
+
+    public static function viewPropertyMetadataSet(int $propertyId)
+    {
+        return UserProperty\UserProperty::viewPropertyMetadataSet($propertyId);
     }
 
     public static function editPropertyMetadata(int $propertyId, array $data = [])

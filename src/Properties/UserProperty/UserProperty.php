@@ -1750,8 +1750,6 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
-        return $metadata;
-
         foreach ($blockResult as $keyItem => $valueItem) {
             if ($valueItem["FieldValue"] == "Plot of land") {
                 $plotOfLand = true;
@@ -1767,7 +1765,7 @@ class UserProperty
                     $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
                 }
             } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
-                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+              //  $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
 

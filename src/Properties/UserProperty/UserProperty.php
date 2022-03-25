@@ -1750,6 +1750,8 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
+        return $metadata;
+
         foreach ($blockResult as $keyItem => $valueItem) {
             if ($valueItem["FieldValue"] == "Plot of land") {
                 $plotOfLand = true;
@@ -2016,6 +2018,98 @@ class UserProperty
     }
 
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
+    {
+        $queries = [];
+
+        // create counters
+        $counter = 0;
+        $counterExtra = 0;
+        $initialCheck = false;
+
+        if ($propertyId == 0 or empty($metadata)) {
+            return "Parameters not set";
+        }
+
+        foreach ($metadata as $key => $value) {
+            /**@algo: Storing images and other base64 objects in the DB is inefficient.
+             *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+             *
+             * Base64 String Format: <data_type>;base64,<md or a SHA component>
+             * Split string using ;base64, and expect two components in an array to conclude
+             * that we have a base64
+             * **/
+
+            if (self::isJSON($value)) { // check for json and array conversion
+                $value = str_replace('&#39;', '"', $value);
+                $value = str_replace('&#34;', '"', $value);
+                $value = html_entity_decode($value);
+                $value = json_decode($value, true);
+
+            }
+
+            if (is_array($value)) {
+
+                // check for images and their handling ...
+                foreach ($value as $keyItem => $valueItem) {
+                    if (is_string($valueItem)) {
+                        $base64DataResult = self::checkForAndStoreBase64String($valueItem);
+                        if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                            $value[$keyItem] = $base64DataResult["ref"];
+                        } else {
+                            $value[$keyItem] = $valueItem;
+                        }
+                    } else {
+                        $value[$keyItem] = json_encode($valueItem);
+                    }
+
+                }
+
+                $value = json_encode($value);
+
+            } else {
+                $base64DataResult = self::checkForAndStoreBase64String($value);
+                if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                    $value = $base64DataResult["ref"];
+                }
+            }
+
+            $keyId = self::camelToSnakeCase($key);
+
+            // check for images and their handling ...
+            if ($keyId == "property_title_photos_data") {
+                foreach ($value as $keyItem => $valueItem) {
+                    $queries[] = "BEGIN TRANSACTION;" .
+                        "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
+                        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                        "COMMIT TRANSACTION;";
+                    unlink("files/$valueItem");
+                }
+
+            }
+
+            $counter++;
+
+            // chaining queries for optimized operation
+            $queries[] = "BEGIN TRANSACTION;" .
+                "DECLARE @rowcount" . $counter . " INT;" .
+                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                "BEGIN TRY " .
+                "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                "COMMIT TRANSACTION;";
+
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
+
+    // Redesigned editPropertyMetadata
+    public static function editPropertyMetadataSet(int $propertyId, array $metadata = [])
     {
         $queries = [];
 

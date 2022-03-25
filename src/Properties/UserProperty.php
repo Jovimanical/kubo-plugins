@@ -176,6 +176,21 @@ class UserProperty
         return UserProperty\UserProperty::uploadUnitData($userId, $data);
     }
 
+    public static function uploadEstateDataSet(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::uploadEstateDataSet($userId, $data);
+    }
+
+    public static function uploadBlockDataSet(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::uploadBlockDataSet($userId, $data);
+    }
+
+    public static function uploadUnitDataSet(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::uploadUnitDataSet($userId, $data);
+    }
+
     public static function viewMapDataUploadStatus(int $userId, array $data)
     {
         return UserProperty\UserProperty::viewMapDataUploadStatus($userId, $data);

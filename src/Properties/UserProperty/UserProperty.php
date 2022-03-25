@@ -1246,7 +1246,7 @@ class UserProperty
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
-                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                //   $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
 
         }
@@ -1281,7 +1281,7 @@ class UserProperty
             if (!isset($metadata[$valueItem["FieldName"]])) {
                 $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
-                $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                //  $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
 
         }
@@ -1460,7 +1460,7 @@ class UserProperty
                         if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                             $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
                         } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and empty($results[$keySetId]["Metadata"][$valueItemIdSet["FieldValue"]])) {
-                            $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
+                            //  $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
                         }
                     }
 
@@ -1588,7 +1588,7 @@ class UserProperty
                             if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                                 $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                             } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and empty($results[$keySetId]["Metadata"][$valueItemIdSet["FieldValue"]])) {
-                                $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
+                                //    $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                             }
                         }
 
@@ -1706,7 +1706,7 @@ class UserProperty
                             if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                                 $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                             } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and empty($results[$keySetId]["Metadata"][$valueItemIdSet["FieldValue"]])) {
-                                $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
+                                //   $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                             }
                         }
 
@@ -1765,7 +1765,7 @@ class UserProperty
                     $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
                 }
             } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
-              //  $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                //  $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
             }
         }
 
@@ -1834,7 +1834,7 @@ class UserProperty
                         $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
                     }
                 } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
-                    $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                    // $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
                 }
             }
 
@@ -1876,7 +1876,7 @@ class UserProperty
                         $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
                     }
                 } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
-                    $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                    // $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
                 }
             }
 
@@ -1918,7 +1918,7 @@ class UserProperty
                 if (!isset($metadata[$propertyId][$value["FieldName"]])) {
                     $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                 } else if (isset($metadata[$propertyId][$value["FieldName"]]) and empty($metadata[$propertyId][$value["FieldValue"]])) {
-                    $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+                    //   $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                 }
             }
         }
@@ -1963,7 +1963,7 @@ class UserProperty
                     if (!isset($metadata[$propertyId][$value["FieldName"]])) {
                         $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                     } else if (isset($metadata[$propertyId][$value["FieldName"]]) and empty($metadata[$propertyId][$value["FieldValue"]])) {
-                        $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+                        // $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                     }
                 }
             }
@@ -1999,7 +1999,7 @@ class UserProperty
                     if (!isset($metadata[$propertyId][$value["FieldName"]])) {
                         $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                     } else if (isset($metadata[$propertyId][$value["FieldName"]]) and empty($metadata[$propertyId][$value["FieldValue"]])) {
-                        $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+                        //  $metadata[$propertyId][$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
                     }
                 }
             }
@@ -2109,16 +2109,23 @@ class UserProperty
     // Redesigned editPropertyMetadata
     public static function editPropertyMetadataSet(int $propertyId, array $metadata = [])
     {
+
+        if ($propertyId == 0 or empty($metadata)) {
+            return "Parameters not set";
+        }
+
+        if (!isset($propertyId)) {
+            return "Parameter not set";
+        }
+
+        $propertyType = self::propertyChecker($propertyId);
+
         $queries = [];
 
         // create counters
         $counter = 0;
         $counterExtra = 0;
         $initialCheck = false;
-
-        if ($propertyId == 0 or empty($metadata)) {
-            return "Parameters not set";
-        }
 
         foreach ($metadata as $key => $value) {
             /**@algo: Storing images and other base64 objects in the DB is inefficient.
@@ -2142,12 +2149,7 @@ class UserProperty
                 // check for images and their handling ...
                 foreach ($value as $keyItem => $valueItem) {
                     if (is_string($valueItem)) {
-                        $base64DataResult = self::checkForAndStoreBase64String($valueItem);
-                        if ($base64DataResult["status"]) { // @todo: check properly to ensure
-                            $value[$keyItem] = $base64DataResult["ref"];
-                        } else {
-                            $value[$keyItem] = $valueItem;
-                        }
+                        $value[$keyItem] = $valueItem;
                     } else {
                         $value[$keyItem] = json_encode($valueItem);
                     }
@@ -2157,37 +2159,124 @@ class UserProperty
                 $value = json_encode($value);
 
             } else {
-                $base64DataResult = self::checkForAndStoreBase64String($value);
-                if ($base64DataResult["status"]) { // @todo: check properly to ensure
-                    $value = $base64DataResult["ref"];
-                }
-            }
+                if ($key == "propertyFeaturePhoto") {
 
-            $keyId = self::camelToSnakeCase($key);
+                    if (isset($_FILES["propertyFeaturePhotoImg"]["name"])) {
 
-            // check for images and their handling ...
-            if ($keyId == "property_title_photos_data") {
-                foreach ($value as $keyItem => $valueItem) {
-                    $queries[] = "BEGIN TRANSACTION;" .
-                        "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
-                        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                        "COMMIT TRANSACTION;";
-                    unlink("files/$valueItem");
+                        $dataImg = [
+                            "singleFile" => $_FILES["propertyFeaturePhotoImg"]["name"],
+                        ];
+
+                        $imageDataResult = self::uploadSingleImage($dataImg);
+                        $value = $imageDataResult;
+                    }
+
                 }
 
+                if ($key == "propertyTitlePhotos") {
+
+                    if (isset($_FILES["propertyTitlePhotosImgs"]["name"])) {
+                        $files = array_filter($_FILES["propertyTitlePhotosImgs"]["name"]);
+
+                        $dataImg = [
+                            "multipleFiles" => $files,
+                        ];
+
+                        $imageDataResult = self::uploadMultipleImages($dataImg);
+                        if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                            $value = "failed";
+                        } else {
+                            $value = json_encode($imageDataResult);
+                        }
+                    }
+                }
+
             }
 
-            $counter++;
+            if ($propertyType == "estate") {
 
-            // chaining queries for optimized operation
-            $queries[] = "BEGIN TRANSACTION;" .
-                "DECLARE @rowcount" . $counter . " INT;" .
-                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
-                "SET @rowcount" . $counter . " = @@ROWCOUNT " .
-                "BEGIN TRY " .
-                "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
-                "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                "COMMIT TRANSACTION;";
+                $keyId = self::camelToSnakeCase($key);
+
+                // check for images and their handling ...
+                if ($keyId == "property_title_photos_data") {
+                    foreach ($value as $keyItem => $valueItem) {
+                        $queries[] = "BEGIN TRANSACTION;" .
+                            "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
+                            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                            "COMMIT TRANSACTION;";
+                        //  unlink("files/$valueItem");
+                    }
+
+                }
+
+                $counter++;
+
+                // chaining queries for optimized operation
+                $queries[] = "BEGIN TRANSACTION;" .
+                    "DECLARE @rowcount" . $counter . " INT;" .
+                    "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                    "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                    "BEGIN TRY " .
+                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                    "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                    "COMMIT TRANSACTION;";
+            }
+
+            if ($propertyType == "block") {
+                $keyId = self::camelToSnakeCase($key);
+
+                // check for images and their handling ...
+                if ($keyId == "property_title_photos_data") {
+                    foreach ($value as $keyItem => $valueItem) {
+                        $queries[] = "BEGIN TRANSACTION;" .
+                            "DELETE FROM Properties.UserPropertyMetadataBlocks WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
+                            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                            "COMMIT TRANSACTION;";
+                        //  unlink("files/$valueItem");
+                    }
+
+                }
+
+                $counter++;
+
+                // chaining queries for optimized operation
+                $queries[] = "BEGIN TRANSACTION;" .
+                    "DECLARE @rowcount" . $counter . " INT;" .
+                    "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                    "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                    "BEGIN TRY " .
+                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                    "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                    "COMMIT TRANSACTION;";
+            }
+
+            if ($propertyType == "unit") {
+                $keyId = self::camelToSnakeCase($key);
+
+                // check for images and their handling ...
+                if ($keyId == "property_title_photos_data") {
+                    foreach ($value as $keyItem => $valueItem) {
+                        $queries[] = "BEGIN TRANSACTION;" .
+                            "DELETE FROM Properties.UserPropertyMetadataUnits WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
+                            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                            "COMMIT TRANSACTION;";
+                        //  unlink("files/$valueItem");
+                    }
+
+                }
+
+                $counter++;
+
+                // chaining queries for optimized operation
+                $queries[] = "BEGIN TRANSACTION;" .
+                    "DECLARE @rowcount" . $counter . " INT;" .
+                    "UPDATE Properties.UserPropertyMetadataUnits SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                    "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                    "BEGIN TRY " .
+                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                    "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                    "COMMIT TRANSACTION;";
+            }
 
         }
 
@@ -2196,6 +2285,7 @@ class UserProperty
         $result = DBConnectionFactory::getConnection()->exec($query);
 
         return $result;
+
     }
 
     protected static function checkForAndStoreBase64String($string)
@@ -3548,6 +3638,95 @@ class UserProperty
         } else {
             self::indexPropertyUnit($login, $geojson, $title, $estateId, $blockId, $parent);
         }
+    }
+
+    protected static function getUploadServerToken()
+    {
+
+        $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
+
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "GET"); // http request
+
+        $response = json_decode($response, true);
+
+        if ($response["status"] == "success") {
+            return $response['token'];
+        } else {
+            return "failed";
+        }
+
+    }
+
+    protected static function uploadSingleImage(array $data)
+    {
+
+        $token = self::getUploadServerToken();
+
+        if ($token == "failed") {
+            return "token error";
+        }
+
+        $file = $data["singleFile"] ?? "";
+        $action = "single";
+        $requestType = $data["imageInfo"] ?? "";
+        $endpoint = $data["endpoint"] ?? "";
+
+        $data = [
+            "fileUpload" => $file,
+            "action" => $action,
+            "token" => $token,
+            "requestType" => $requestType,
+            "endpoint" => $endpoint,
+        ];
+
+        $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
+
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data); // http request
+
+        $response = json_decode($response, true);
+
+        if ($response["status"] == "success") {
+            return $response['filename'];
+        } else {
+            return "failed";
+        }
+
+    }
+
+    protected static function uploadMultipleImages(array $data)
+    {
+
+        $token = self::getUploadServerToken();
+
+        if ($token == "failed") {
+            return "token error";
+        }
+
+        $file = $data["multipleFiles"] ?? "";
+        $action = "multiple";
+        $requestType = $data["imageInfo"] ?? "";
+        $endpoint = $data["endpoint"] ?? "";
+
+        $data = [
+            "fileUpload[]" => $file,
+            "action" => $action,
+            "token" => $token,
+            "requestType" => $requestType,
+            "endpoint" => $endpoint,
+        ];
+
+        $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
+
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data); // http request
+
+        $response = json_decode($response, true);
+
+        if ($response["status"] == "success") {
+            return $response['data'];
+        } else {
+            return "failed";
+        }
+
     }
 
 }

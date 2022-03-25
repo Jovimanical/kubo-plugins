@@ -1750,6 +1750,8 @@ class UserProperty
             $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
         }
 
+        return $metadata;
+
         foreach ($blockResult as $keyItem => $valueItem) {
             if ($valueItem["FieldValue"] == "Plot of land") {
                 $plotOfLand = true;
@@ -2016,6 +2018,98 @@ class UserProperty
     }
 
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
+    {
+        $queries = [];
+
+        // create counters
+        $counter = 0;
+        $counterExtra = 0;
+        $initialCheck = false;
+
+        if ($propertyId == 0 or empty($metadata)) {
+            return "Parameters not set";
+        }
+
+        foreach ($metadata as $key => $value) {
+            /**@algo: Storing images and other base64 objects in the DB is inefficient.
+             *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+             *
+             * Base64 String Format: <data_type>;base64,<md or a SHA component>
+             * Split string using ;base64, and expect two components in an array to conclude
+             * that we have a base64
+             * **/
+
+            if (self::isJSON($value)) { // check for json and array conversion
+                $value = str_replace('&#39;', '"', $value);
+                $value = str_replace('&#34;', '"', $value);
+                $value = html_entity_decode($value);
+                $value = json_decode($value, true);
+
+            }
+
+            if (is_array($value)) {
+
+                // check for images and their handling ...
+                foreach ($value as $keyItem => $valueItem) {
+                    if (is_string($valueItem)) {
+                        $base64DataResult = self::checkForAndStoreBase64String($valueItem);
+                        if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                            $value[$keyItem] = $base64DataResult["ref"];
+                        } else {
+                            $value[$keyItem] = $valueItem;
+                        }
+                    } else {
+                        $value[$keyItem] = json_encode($valueItem);
+                    }
+
+                }
+
+                $value = json_encode($value);
+
+            } else {
+                $base64DataResult = self::checkForAndStoreBase64String($value);
+                if ($base64DataResult["status"]) { // @todo: check properly to ensure
+                    $value = $base64DataResult["ref"];
+                }
+            }
+
+            $keyId = self::camelToSnakeCase($key);
+
+            // check for images and their handling ...
+            if ($keyId == "property_title_photos_data") {
+                foreach ($value as $keyItem => $valueItem) {
+                    $queries[] = "BEGIN TRANSACTION;" .
+                        "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
+                        "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                        "COMMIT TRANSACTION;";
+                    unlink("files/$valueItem");
+                }
+
+            }
+
+            $counter++;
+
+            // chaining queries for optimized operation
+            $queries[] = "BEGIN TRANSACTION;" .
+                "DECLARE @rowcount" . $counter . " INT;" .
+                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                "BEGIN TRY " .
+                "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                "COMMIT TRANSACTION;";
+
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
+
+    // Redesigned editPropertyMetadata
+    public static function editPropertyMetadataSet(int $propertyId, array $metadata = [])
     {
         $queries = [];
 
@@ -2754,6 +2848,113 @@ class UserProperty
         }
     }
 
+    // Redesigned uploadEstateData
+
+    public static function uploadEstateDataSet(int $userId, array $data)
+    {
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        // Collect inputs
+        $username = $data["inputEmail"] ?? null;
+        $password = $data["inputPassword"] ?? null;
+        $foldername = $data["inputName"] ?? null;
+        $initials = $data["inputInitials"] ?? null;
+
+        if ($username == null or $password == null or $foldername == null or $initials == null) {
+            return "Parameters not set";
+        }
+
+        if (isset($_POST["uploadBtn"])) {
+
+            if ($_FILES["geojsons"]["name"] !== "") {
+
+                $fileNameParts = explode(".", $_FILES["geojsons"]["name"]);
+                if ($fileNameParts[1] == "zip") {
+                    if (file_exists("./tmp/data")) {
+
+                    } else {
+                        mkdir("tmp/data");
+                    }
+
+                    $path = "tmp/data/";
+                    $location = $path . $_FILES["geojsons"]["name"];
+
+                    // moved uploaded file
+                    if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
+                        $zip = new \ZipArchive();
+                        if ($zip->open($location)) {
+                            $zip->extractTo($path);
+                            $zip->close();
+                        }
+
+                        $files = scandir($path . $fileNameParts[0]);
+                        $fileNames = [];
+                        $fileBlockNames = [];
+                        foreach ($files as $key => $value) {
+                            $fileNames[] = $value;
+                        }
+
+                        $blockLength = 0;
+                        $blockNumberLength = 0;
+                        // validation check
+                        if (in_array("ESTATE_BOUNDARY.geojson", $fileNames) and in_array("BLOCKS", $fileNames)) {
+
+                            foreach ($fileNames as $key => $value) {
+                                if ($value == "BLOCKS") {
+                                    $blocks = scandir($path . $fileNames[$key]);
+                                    $blockLength = count($blocks);
+                                }
+
+                                if ($value == "BLOCK NUMBERS") {
+                                    $blockNumbers = scandir($path . $fileNames[$key]);
+                                    $blockNumberLength = count($blockNumbers);
+                                }
+
+                                if ($blockLength == $blockNumberLength) {
+
+                                    $login = self::scriptLogin($username, $password);
+                                    $login = $login["contentData"];
+
+                                    $boundary_geojson = file_get_contents(
+                                        "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
+                                    );
+
+                                    // inserting ESTATE_BOUNDARY.geojson
+                                    $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername);
+
+                                    // progress check
+                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
+                                    $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
+                                    $data = json_encode($data);
+                                    $result["data"] = $data;
+                                    return $result;
+
+                                }
+
+                            }
+
+                        } else {
+                            return "Estate Boundary File not found !!! \n";
+                        }
+
+                    } else {
+                        return "File not Uploaded ! \n";
+                    }
+                } else {
+                    return "File not Zip ! \n";
+                }
+            } else {
+                return "File Error ! \n";
+            }
+        } else {
+            return "No Data ! \n";
+        }
+    }
+
     public static function uploadBlockData(int $userId, array $data)
     {
 
@@ -2850,6 +3051,104 @@ class UserProperty
         return $resultData;
     }
 
+    // Redesigned uploadBlockData
+
+    public static function uploadBlockDataSet(int $userId, array $data)
+    {
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        // Collecting inputs
+        $username = $data["inputEmail"] ?? null;
+        $password = $data["inputPassword"] ?? null;
+        $foldername = $data["inputName"] ?? null;
+        $initials = $data["inputInitials"] ?? null;
+        $estateData = $data["estateData"] ?? [];
+
+        if (self::isJSON($estateData)) { // json check and array conversion
+            if (is_string($estateData)) {
+                $estateData = str_replace('&#39;', '"', $estateData);
+                $estateData = str_replace('&#34;', '"', $estateData);
+                $estateData = html_entity_decode($estateData);
+                $estateData = json_decode($estateData, true);
+            }
+
+        }
+
+        if ($username == null or $password == null or $foldername == null or $initials == null) {
+            return "Parameters not set";
+        }
+
+        $login = self::scriptLogin($username, $password);
+        $login = $login["contentData"];
+
+        $dir = "tmp/data/$foldername/BLOCKS/";
+        $files = scandir($dir);
+        $blocks = [];
+        $result = [];
+        if (count($files) > 0) {
+
+            // looping and inserting values
+            foreach ($files as $key => $file) {
+                if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                    $geojson = file_get_contents($dir . $file);
+                    $geojson = str_replace("\"", "'", $geojson);
+                    try {
+                        $file = str_replace(".geojson", " $initials " . time(), $file);
+                        $result = self::indexPropertyBlock($login, $geojson, $file, $estateData['EstateId'], $estateData['EntityId']); // edit last insert entityId of Estate
+                        // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
+
+                    } catch (Exception $e) {
+                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                    }
+
+                }
+            }
+
+            // returning block data array
+            $queryBlocks = "SELECT EntityName,EntityId FROM SpatialEntities.Entities WHERE EntityParent = " . $estateData['EntityId'];
+            $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($resultBlocks as $keyBlock => $blockValue) {
+                $blocks[$blockValue["EntityName"]] = $blockValue["EntityId"];
+            }
+
+            // checking for extra empty blocks
+            $dir = "tmp/data/$foldername/BLOCK EXTRA/";
+            $files = scandir($dir);
+            if (count($files) > 0) {
+                foreach ($files as $file) {
+                    if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                        $geojson = file_get_contents($dir . $file);
+                        $geojson = str_replace("\"", "'", $geojson);
+                        try {
+                            $file = str_replace(".geojson", " $initials", $file);
+                            $result = self::indexPropertyBlock($login, $geojson, $file, $estateData['PropertyId'], $estateData['EntityId']); // edit last insert entityId of Estate
+                            // @todo no build $blocks array
+                        } catch (Exception $e) {
+                            return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                        }
+
+                    }
+                }
+            }
+        }
+
+        // progress check
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
+        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
+        $resultData = [];
+        $data = json_encode($data);
+        $resultData["data"] = $data;
+        $blocks = json_encode($blocks);
+        $resultData["blocks"] = $blocks;
+
+        return $resultData;
+    }
+
     public static function uploadUnitData(int $userId, array $data)
     {
 
@@ -2900,6 +3199,83 @@ class UserProperty
                         $file = str_replace(".geojson", "", $file);
                         // inserting values
                         $result = self::indexProperty($login, $geojson, "$initials " . time() . $file, $blocks[$block]);
+
+                    } catch (Exception $e) {
+                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                    }
+
+                    // echo "\nDone with " . $file; // @todo  return the success data
+                    if ($i > 7) {
+                        sleep(5);
+                    }
+
+                }
+            }
+
+            // echo "\nDone with $block"; // @todo  return the success data
+        }
+
+        // progress check
+        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
+        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
+        \KuboPlugin\Utils\Util::recurseRmdir("tmp/data/$foldername");
+        unlink("tmp/data/$foldername" . ".zip");
+
+        return "Successfully Uploaded";
+    }
+
+    // Redesigned uploadUnitData
+    public static function uploadUnitDataSet(int $userId, array $data)
+    {
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        // collecting inputs
+        $username = $data["inputEmail"] ?? null;
+        $password = $data["inputPassword"] ?? null;
+        $foldername = $data["inputName"] ?? null;
+        $initials = $data["inputInitials"] ?? null;
+        $blockers = $data["blockData"] ?? [];
+
+        $blocks = [];
+
+        $login = self::scriptLogin($username, $password);
+        $login = $login["contentData"];
+
+        if (self::isJSON($blockers)) { // json check and array conversion
+            if (is_string($blockers)) {
+                $blockers = str_replace('&#39;', '"', $blockers);
+                $blockers = str_replace('&#34;', '"', $blockers);
+                $blockers = html_entity_decode($blockers);
+                $blockers = json_decode($blockers, true);
+            }
+
+        }
+
+        foreach ($blockers as $keyBlock => $blockValue) { // rebuilding block array
+            $blocks[explode(" $initials", $keyBlock)[0]] = $blockValue;
+        }
+
+        if ($username == null or $password == null or $foldername == null or $initials == null) {
+            return "Parameters not set";
+        }
+
+        for ($i = 1; $i <= count($blocks); $i++) {
+            $block = "BLOCK $i";
+            $dir = "tmp/data/$foldername/BLOCK NUMBERS/$block/";
+            $files = scandir($dir);
+            foreach ($files as $file) {
+                if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                    $geojson = file_get_contents($dir . $file);
+                    $geojson = str_replace("\"", "'", $geojson);
+                    try {
+                        $file = str_replace("Name_", "$block (", $file);
+                        $file = str_replace(".geojson", "", $file);
+                        // inserting values
+                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $blockers['EstateId'], $blockers['BlockId'], $blocks[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -3074,6 +3450,7 @@ class UserProperty
 
     }
 
+    // Redesigned indexProperty
     protected static function indexPropertyEstate($login, $geojson, $title, $parent = 0)
     {
         $data = [
@@ -3106,6 +3483,7 @@ class UserProperty
         }
     }
 
+    // Redesigned indexBlock
     protected static function indexPropertyBlock($login, $geojson, $title, $estateId, $parent = 0)
     {
         $data = [
@@ -3139,6 +3517,7 @@ class UserProperty
 
     }
 
+    // Redesigned indexProperty for units
     protected static function indexPropertyUnit($login, $geojson, $title, $estateId, $blockId, $parent = 0)
     {
         $data = [

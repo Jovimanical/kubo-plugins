@@ -126,6 +126,11 @@ class UserProperty
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
 
+    public static function editPropertyMetadataSet(int $propertyId, array $data = [])
+    {
+        return UserProperty\UserProperty::editPropertyMetadataSet($propertyId, $data);
+    }
+
     public static function getDashBoardTotal(int $userId)
     {
         return UserProperty\UserProperty::getDashBoardTotal($userId);

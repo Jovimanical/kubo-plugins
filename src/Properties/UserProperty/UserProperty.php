@@ -3017,7 +3017,7 @@ class UserProperty
                                     $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername);
 
                                     $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'processing'";
-                                    $selectExec = DBConnectionFactory::getConnection()->exec($selectQuery);
+                                    $selectExec = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
                                     if (count($selectExec) > 1) {
                                         // verify multiple progress check

@@ -134,6 +134,8 @@ class UserProperty
         ];
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
 
+        return $result;
+        
         $propertyId = $result["lastInsertId"];
 
         //STEP 3: Index Metadata

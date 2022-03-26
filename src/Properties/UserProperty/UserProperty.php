@@ -3344,9 +3344,10 @@ class UserProperty
         $initials = $data["inputInitials"] ?? null;
         $blockers = $data["blockData"] ?? [];
         $blockersIds = $data["blockDataIds"] ?? [];
-        $estateData = $data["estateData"] ?? [];
+        $estateId = $data["estateId"] ?? 0;
 
         $blocks = [];
+        $blockIds = [];
 
         $login = self::scriptLogin($username, $password);
         $login = $login["contentData"];
@@ -3361,8 +3362,22 @@ class UserProperty
 
         }
 
+        if (self::isJSON($blockersIds)) { // json check and array conversion
+            if (is_string($blockersIds)) {
+                $blockersIds = str_replace('&#39;', '"', $blockersIds);
+                $blockersIds = str_replace('&#34;', '"', $blockersIds);
+                $blockersIds = html_entity_decode($blockersIds);
+                $blockersIds = json_decode($blockersIds, true);
+            }
+
+        }
+
         foreach ($blockers as $keyBlock => $blockValue) { // rebuilding block array
             $blocks[explode(" $initials", $keyBlock)[0]] = $blockValue;
+        }
+
+        foreach ($blockersIds as $keyItemBlock => $blockItemValue) { // rebuilding block array
+            $blockIds[explode(" $initials", $keyItemBlock)[0]] = $blockItemValue;
         }
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
@@ -3381,7 +3396,7 @@ class UserProperty
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
                         // inserting values
-                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $estateData['EstateId'], $blockersIds[$block], $blocks[$block]);
+                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $estateId, $blockIds[$block], $blocks[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate

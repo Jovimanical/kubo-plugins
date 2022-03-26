@@ -206,7 +206,7 @@ class UserProperty
 
         $propertyId = $result["lastInsertId"];
 
-        $updateQuery = "UPDATE SpatialEntities.Entities SET PropertyBlock = $propertyId WHERE EntityId = $entityId";
+        $updateQuery = "UPDATE SpatialEntities.Entities SET EntityBlock = $propertyId WHERE EntityId = $entityId";
         $resultUpdate = DBConnectionFactory::getConnection()->exec($updateQuery);
 
         //STEP 3: Index Metadata

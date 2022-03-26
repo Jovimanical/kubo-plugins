@@ -199,7 +199,7 @@ class UserProperty
             "UserId" => $user,
             "LinkedEntity" => $entityId,
             "PropertyTitle" => QB::wrapString($title, "'"),
-            "PropertyUUID" => QB::wrapString($propertyUuid, "'"),
+            "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
             "PropertyEstate" => QB::wrapString($estateId, "'"),
         ];
         $result = DBQueryFactory::insert("[Properties].[UserPropertyBlocks]", $inputData, false);
@@ -3563,8 +3563,6 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
-
-        return $response;
 
         if ($response["errorStatus"] == false and $response["contentData"] == true) {
             return $response;

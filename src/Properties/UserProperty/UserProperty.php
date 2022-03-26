@@ -130,12 +130,10 @@ class UserProperty
             "UserId" => $user,
             "LinkedEntity" => $entityId,
             "PropertyTitle" => QB::wrapString($title, "'"),
-            "PropertyUUID" => QB::wrapString($propertyUuid, "'"),
+            "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
         ];
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
 
-        return $result;
-        
         $propertyId = $result["lastInsertId"];
 
         //STEP 3: Index Metadata

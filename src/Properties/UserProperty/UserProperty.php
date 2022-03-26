@@ -736,10 +736,10 @@ class UserProperty
             WHERE d.FieldName = 'property_estate' AND d.FieldValue = '$resultPropertyId' AND c.PropertyFloor = $resultPropertyFloor";
 
             // Fetch total estate property units
-            $queryTotals[] = "SELECT PropertyId, PropertyEstate FROM Properties.UserPropertyUnits WHERE PropertyEstate = '$resultPropertyId'";
+            $queryTotals[] = "SELECT PropertyId, PropertyEstate FROM Properties.UserPropertyUnits WHERE PropertyEstate = $resultPropertyId";
 
             $queryAvailables[] = "SELECT a.PropertyId, b.FieldName, b.FieldValue, b.PropertyId  FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
-            WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 WHERE a.PropertyEstate = '$resultPropertyId'";
+            WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 WHERE a.PropertyEstate = $resultPropertyId";
 
             $results[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
 

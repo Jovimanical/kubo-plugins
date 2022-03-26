@@ -3013,9 +3013,19 @@ class UserProperty
                                     // inserting ESTATE_BOUNDARY.geojson
                                     $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername);
 
-                                    // progress check
-                                    $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
-                                    $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+                                    $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'processing'";
+                                    $selectExec = DBConnectionFactory::getConnection()->exec($selectQuery);
+
+                                    if (count($selectExec) > 1) {
+                                        // verify multiple progress check
+                                        $updateQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'processing' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
+                                        $updateExec = DBConnectionFactory::getConnection()->exec($updateQuery);
+                                    } else {
+                                        // progress check
+                                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
+                                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
+
+                                    }
 
                                     $data = json_encode($data);
                                     $result["data"] = $data;
@@ -3213,7 +3223,7 @@ class UserProperty
                         $geojson = str_replace("\"", "'", $geojson);
                         try {
                             $file = str_replace(".geojson", " $initials", $file);
-                            $result = self::indexPropertyBlock($login, $geojson, $file, $estateData['PropertyId'], $estateData['EntityId']); // edit last insert entityId of Estate
+                            $result = self::indexPropertyBlock($login, $geojson, $file, $estateData['EstateId'], $estateData['EntityId']); // edit last insert entityId of Estate
                             // @todo no build $blocks array
                         } catch (Exception $e) {
                             return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate

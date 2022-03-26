@@ -3248,6 +3248,7 @@ class UserProperty
         $resultData["data"] = $data;
         $blocks = json_encode($blocks);
         $resultData["blocks"] = $blocks;
+        $resultData["blockIds"] = $blockIds;
 
         return $resultData;
     }

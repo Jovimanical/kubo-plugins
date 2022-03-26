@@ -200,11 +200,14 @@ class UserProperty
             "LinkedEntity" => $entityId,
             "PropertyTitle" => QB::wrapString($title, "'"),
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
-            "PropertyEstate" => QB::wrapString($estateId, "'"),
+            "PropertyEstate" => $estateId,
         ];
         $result = DBQueryFactory::insert("[Properties].[UserPropertyBlocks]", $inputData, false);
 
         $propertyId = $result["lastInsertId"];
+
+        $updateQuery = "UPDATE SpatialEntities.Entities SET PropertyBlock = $propertyId WHERE EntityId = $entityId";
+        $resultUpdate = DBConnectionFactory::getConnection()->exec($updateQuery);
 
         //STEP 3: Index Metadata
         $values = [];
@@ -212,10 +215,10 @@ class UserProperty
             if (is_array($values)) {
                 $value = json_encode($value);
             }
-            $values[] = "($propertyId, '$key', '$value')";
+            $values[] = "($propertyId, $estateId, '$key', '$value')";
         }
 
-        $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
+        $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES " . implode(",", $values);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
@@ -273,8 +276,8 @@ class UserProperty
             "UserId" => $user,
             "LinkedEntity" => $entityId,
             "PropertyTitle" => QB::wrapString($title, "'"),
-            "PropertyEstate" => QB::wrapString($estateId, "'"),
-            "PropertyBlock" => QB::wrapString($blockId, "'"),
+            "PropertyEstate" => $estateId,
+            "PropertyBlock" => $blockId,
             "BlockChainAddress" => QB::wrapString($blockChainAddress, "'"),
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
         ];
@@ -289,10 +292,10 @@ class UserProperty
             if (is_array($values)) {
                 $value = json_encode($value);
             }
-            $values[] = "($propertyId, '$key', '$value')";
+            $values[] = "($propertyId, $estateId, $blockId, '$key', '$value')";
         }
 
-        $query = "INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
+        $query = "INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES " . implode(",", $values);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
@@ -3185,6 +3188,7 @@ class UserProperty
         $dir = "tmp/data/$foldername/BLOCKS/";
         $files = scandir($dir);
         $blocks = [];
+        $blockIds = [];
         $result = [];
         if (count($files) > 0) {
 
@@ -3206,11 +3210,12 @@ class UserProperty
             }
 
             // returning block data array
-            $queryBlocks = "SELECT EntityName,EntityId FROM SpatialEntities.Entities WHERE EntityParent = " . $estateData['EntityId'];
+            $queryBlocks = "SELECT EntityName,EntityId,EntityBlock FROM SpatialEntities.Entities WHERE EntityParent = " . $estateData['EntityId'];
             $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($resultBlocks as $keyBlock => $blockValue) {
                 $blocks[$blockValue["EntityName"]] = $blockValue["EntityId"];
+                $blockIds[$blockValue["EntityName"]] = $blockValue["EntityBlock"];
             }
 
             // checking for extra empty blocks
@@ -3337,6 +3342,8 @@ class UserProperty
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
         $blockers = $data["blockData"] ?? [];
+        $blockersIds = $data["blockDataIds"] ?? [];
+        $estateData = $data["estateData"] ?? [];
 
         $blocks = [];
 
@@ -3373,7 +3380,7 @@ class UserProperty
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
                         // inserting values
-                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $blockers['EstateId'], $blockers['BlockId'], $blocks[$block]);
+                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $estateData['EstateId'], $blockersIds[$block], $blocks[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate

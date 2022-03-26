@@ -45,15 +45,15 @@ class Entity {
         $parentId = $data["entityParentId"] ?? null;
         $geometry = $data["entityGeometry"] ?? null;
         $description = $data["description"] ?? "";
-        $estate = $data["entityEstate"] ?? "";
-        $block = $data["entityBlock"] ?? "";
+        $estate = $data["entityEstate"] ?? 0;
+        $block = $data["entityBlock"] ?? 0;
 
         $inputData = [
             "EntityName"=>QB::wrapString($name, "'"),
             "EntityType"=>QB::wrapString($type, "'"),
             "EntityDescription"=>QB::wrapString($description, "'"),
-            "EntityEstate"=>QB::wrapString($estate, "'"),
-            "EntityBlock"=>QB::wrapString($block, "'")
+            "EntityEstate"=>$estate,
+            "EntityBlock"=>$block,
         ];
 
         if (!is_null($parentId)){

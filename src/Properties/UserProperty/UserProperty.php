@@ -730,15 +730,12 @@ class UserProperty
             $resultPropertyFloor = $property["PropertyFloor"] ?? 0;
 
             // chaining queries for optimized operation
-            $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadataUnits a INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId WHERE a.FieldName = 'property_estate' AND a.FieldValue = '$resultPropertyId' AND b.PropertyFloor = $resultPropertyFloor";
-            // chaining queries for optimized operation
-            $blockQueries[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, d.PropertyId FROM Properties.UserPropertyMetadataBlocks d INNER JOIN Properties.UserPropertyBlocks c ON d.PropertyId = c.PropertyId
-            WHERE d.FieldName = 'property_estate' AND d.FieldValue = '$resultPropertyId' AND c.PropertyFloor = $resultPropertyFloor";
+            $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
             // Fetch total estate property units
-            $queryTotals[] = "SELECT PropertyId, PropertyEstate FROM Properties.UserPropertyUnits WHERE PropertyEstate = $resultPropertyId";
+            $queryTotals[] = "SELECT PropertyEstate FROM Properties.UserPropertyUnits WHERE PropertyEstate = $resultPropertyId";
 
-            $queryAvailables[] = "SELECT a.PropertyId, b.FieldName, b.FieldValue, b.PropertyId  FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
+            $queryAvailables[] = "SELECT a.PropertyId, b.FieldName, b.FieldValue, b.PropertyEstate  FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
             WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 AND a.PropertyEstate = $resultPropertyId";
 
             $results[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $property["LinkedEntity"]]);
@@ -767,19 +764,6 @@ class UserProperty
 
         } while ($stmtResult->nextRowset());
 
-        // looping and building result set through complex chain returned results
-        $stmtBlock = DBConnectionFactory::getConnection()->query($blockQuery);
-
-        do {
-
-            $blockResultArr = $stmtBlock->fetchAll(\PDO::FETCH_ASSOC);
-            if (count($blockResultArr) > 0) {
-                // Add $rowset to array
-                array_push($blockResultSetArr, $blockResultArr);
-
-            }
-        } while ($stmtBlock->nextRowset());
-
         // connecting and building the results
         foreach ($results as $keySetId => $valueSetId) {
 
@@ -787,28 +771,10 @@ class UserProperty
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                    if ($valueItemId["FieldValue"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId["PropertyEstate"] == $valueSetId["PropertyId"]) {
 
                         $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 
-                    }
-
-                }
-
-            }
-
-        }
-        // connecting and building the results
-        foreach ($results as $keySetId => $valueSetId) {
-
-            foreach ($blockResultSetArr as $keyItem => $valueItem) {
-
-                foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
-
-                    if ($valueItemIdSet["FieldValue"] == $valueSetId['PropertyId']) {
-                        if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
-                            $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["ConnectId"]];
-                        }
                     }
 
                 }
@@ -864,7 +830,7 @@ class UserProperty
         if (count($availableResultSetArr) == 0) {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
-                    if ($valueItemId[$keyItemId]["FieldValue"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId[$keyItemId]["PropertyEstate"] == $valueSetId["PropertyId"]) {
                         $results[$keySetId]["PropertyTotal"] = count($valueItemId);
                         $propertyCounter[$keySetId] = count($valueItemId);
                         $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - 0;
@@ -874,7 +840,7 @@ class UserProperty
         } else {
             foreach ($results as $keySetId => $valueSetId) {
                 foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
-                    if ($valueItemId[$keyItemId]["FieldValue"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId[$keyItemId]["PropertyEstate"] == $valueSetId["PropertyId"]) {
                         $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
 
                     }
@@ -949,7 +915,7 @@ class UserProperty
             $queryFloor = "SELECT FieldValue FROM Properties.UserPropertyMetadataBlocks WHERE FieldName = 'property_floor_count' AND  PropertyId = $propertyId";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorCount = $resultFloor['FieldValue'];
+            $resultFloorCount = $resultFloor['FieldValue'] ?? 1;
 
             $result = $result[0] ?? [];
             // getting particular data
@@ -969,7 +935,7 @@ class UserProperty
             $queryFloor = "SELECT FieldValue FROM Properties.UserPropertyMetadataUnits WHERE FieldName = 'property_floor_count' AND  PropertyId = $propertyId";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorCount = $resultFloor['FieldValue'];
+            $resultFloorCount = $resultFloor['FieldValue'] ?? 1;
 
             $result = $result[0] ?? [];
             // getting particular data
@@ -1141,7 +1107,7 @@ class UserProperty
 
             $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
-            $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
+            $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
             $results[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
         }
@@ -1175,7 +1141,7 @@ class UserProperty
 
                     if ($valueItemId["PropertyEstate"] == $valueSetId["PropertyId"]) {
 
-                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyEstate"]];
 
                     }
 

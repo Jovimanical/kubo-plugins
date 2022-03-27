@@ -1141,10 +1141,11 @@ class UserProperty
 
             $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
-            $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserPropertyBlocks b ON a.PropertyId = b.PropertyId  WHERE a.FieldName = 'property_estate' AND a.FieldValue = '$resultPropertyId' AND b.PropertyFloor = $resultPropertyFloor";
+            $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserPropertyBlocks b ON a.PropertyId = b.PropertyId  WHERE a.FieldName = 'property_estate' AND a.FieldValue = '$resultPropertyId' AND b.PropertyFloor = $resultPropertyFloor";
 
             $parentQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.FieldName = 'property_estate' AND a.FieldValue = '$resultPropertyId' AND b.PropertyFloor = $resultPropertyFloor";
 
+            $results[$key]["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
         }
 
         $blockQuery = implode(";", $blockQueries);
@@ -1188,7 +1189,7 @@ class UserProperty
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                    if ($valueItemId["FieldValue"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId["PropertyEstate"] == $valueSetId["PropertyId"]) {
 
                         $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 
@@ -1206,11 +1207,11 @@ class UserProperty
 
                 foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
 
-                    if ($valueItemIdSet["FieldValue"] == $valueSetId['PropertyId']) {
+                    if ($valueItemIdSet["PropertyId"] == $valueSetId['PropertyId']) {
                         if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                             $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                         } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and empty($results[$keySetId]["Metadata"][$valueItemIdSet["FieldValue"]])) {
-                            $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
+                          //  $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                         }
                     }
 

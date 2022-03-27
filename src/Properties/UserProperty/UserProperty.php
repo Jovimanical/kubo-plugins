@@ -929,9 +929,7 @@ class UserProperty
             $queryFloor = "SELECT FieldValue FROM Properties.UserPropertyMetadata WHERE FieldName = 'property_floor_count' AND  PropertyId = $propertyId";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
-            return $resultFloor;
-
-            $resultFloorCount = $resultFloor['FieldValue'];
+            $resultFloorCount = $resultFloor['FieldValue'] ?? 0;
 
             $result = $result[0] ?? [];
             // getting particular data

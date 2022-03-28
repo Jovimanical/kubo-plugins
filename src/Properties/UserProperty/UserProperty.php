@@ -3645,8 +3645,6 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
-        return $data;
-
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
         $header = "Content-Type: multipart/form-data";
@@ -3680,14 +3678,12 @@ class UserProperty
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload[]" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+            "fileUpload[]" => $_FILES["propertyTitlePhotosImgs"],
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,
             "endpoint" => $endpoint,
         ];
-
-        return $data;
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 

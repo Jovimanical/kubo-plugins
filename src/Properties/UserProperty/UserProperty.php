@@ -2119,6 +2119,8 @@ class UserProperty
                             "multipleFiles" => $_FILES,
                         ];
 
+                        return $_FILES;
+
                         $imageDataResult = self::uploadMultipleImages($dataImg);
                         return $imageDataResult;
                         if ($imageDataResult == "failed") { // @todo: check properly to ensure

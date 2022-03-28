@@ -771,7 +771,7 @@ class UserProperty
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                    if ($valueItemId["PropertyEstate"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
 
                         $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 

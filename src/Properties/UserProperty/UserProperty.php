@@ -2095,10 +2095,10 @@ class UserProperty
             } else {
                 if ($key == "propertyFeaturePhoto") {
 
-                    if (isset($_FILES["propertyFeaturePhotoImg"]["name"])) {
+                    if (isset($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
 
                         $dataImg = [
-                            "singleFile" => $_FILES["propertyFeaturePhotoImg"]["name"],
+                            "singleFile" => $_FILES,
                         ];
 
                         $imageDataResult = self::uploadSingleImage($dataImg);
@@ -2109,11 +2109,11 @@ class UserProperty
 
                 if ($key == "propertyTitlePhotos") {
 
-                    if (isset($_FILES["propertyTitlePhotosImgs"]["name"])) {
-                        $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+                    if (isset($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                      //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
 
                         $dataImg = [
-                            "multipleFiles" => $files,
+                            "multipleFiles" => $_FILES,
                         ];
 
                         $imageDataResult = self::uploadMultipleImages($dataImg);
@@ -3630,13 +3630,13 @@ class UserProperty
             return "token error";
         }
 
-        $file = $data["singleFile"] ?? "";
+        $file = $_FILES["propertyFeaturePhotoImg"]["tmp_name"] ?? "";
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload" => $file,
+            "fileUpload" => $_FILES["propertyFeaturePhotoImg"]["tmp_name"],
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,
@@ -3645,7 +3645,9 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data); // http request
+        $header = "Content-type: multipart/form-data";
+
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
 
@@ -3666,13 +3668,13 @@ class UserProperty
             return "token error";
         }
 
-        $file = $data["multipleFiles"] ?? "";
+        $file = $_FILES["propertyTitlePhotosImgs"]["tmp_name"] ?? "";
         $action = "multiple";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload[]" => $file,
+            "fileUpload[]" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,
@@ -3681,7 +3683,9 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data); // http request
+        $header = "Content-type: multipart/form-data";
+
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
 

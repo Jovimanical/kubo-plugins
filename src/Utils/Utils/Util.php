@@ -68,6 +68,7 @@ class Util
 
                 foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $photo) {
                     $cfile = new \CURLFile($photo);
+                    return $cfile;
                     $data[$key] = $cfile;
                 }
                 curl_setopt($ch, CURLOPT_POST, true);

@@ -3690,7 +3690,7 @@ class UserProperty
         $header = "Content-Type: multipart/form-data";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-
+        return $response;
         $response = json_decode($response, true);
 
         return $response;

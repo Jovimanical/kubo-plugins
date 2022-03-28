@@ -2101,8 +2101,6 @@ class UserProperty
                             "singleFile" => $_FILES,
                         ];
 
-                        return $_FILES;
-
                         $imageDataResult = self::uploadSingleImage($dataImg);
                         return $imageDataResult;
                         $value = $imageDataResult;
@@ -2118,8 +2116,6 @@ class UserProperty
                         $dataImg = [
                             "multipleFiles" => $_FILES,
                         ];
-
-                        return $_FILES;
 
                         $imageDataResult = self::uploadMultipleImages($dataImg);
                         return $imageDataResult;
@@ -3649,9 +3645,11 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
+        return $data;
+
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-type: multipart/form-data";
+        $header = "Content-Type: multipart/form-data";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
@@ -3689,9 +3687,11 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
+        return $data;
+
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-type: multipart/form-data";
+        $header = "Content-Type: multipart/form-data";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 

@@ -2101,6 +2101,8 @@ class UserProperty
                             "singleFile" => $_FILES,
                         ];
 
+                        return $_FILES;
+
                         $imageDataResult = self::uploadSingleImage($dataImg);
                         return $imageDataResult;
                         $value = $imageDataResult;

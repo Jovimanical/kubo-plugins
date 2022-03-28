@@ -60,7 +60,7 @@ class Util
                 $cfile = \curl_file_create($photoFile);
                 
                 $data["propertyFeaturePhotoImg"] = $cfile;
-                
+                return $cfile;
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 

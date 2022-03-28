@@ -2102,6 +2102,7 @@ class UserProperty
                         ];
 
                         $imageDataResult = self::uploadSingleImage($dataImg);
+                        return $imageDataResult;
                         $value = $imageDataResult;
                     }
 
@@ -2117,6 +2118,7 @@ class UserProperty
                         ];
 
                         $imageDataResult = self::uploadMultipleImages($dataImg);
+                        return $imageDataResult;
                         if ($imageDataResult == "failed") { // @todo: check properly to ensure
                             $value = "failed";
                         } else {
@@ -3651,6 +3653,8 @@ class UserProperty
 
         $response = json_decode($response, true);
 
+        return $response;
+
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
         } else {
@@ -3688,6 +3692,8 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
+
+        return $response;
 
         if ($response[0]["status"] == "success") {
             return $response[0]['data'];

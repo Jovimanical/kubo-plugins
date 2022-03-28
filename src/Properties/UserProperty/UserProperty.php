@@ -3613,7 +3613,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        if ($response["status"] == "success") {
+        if ($response[0]["status"] == "success") {
             return $response['token'];
         } else {
             return "failed";
@@ -3649,7 +3649,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        if ($response["status"] == "success") {
+        if ($response[0]["status"] == "success") {
             return $response['filename'];
         } else {
             return "failed";
@@ -3685,7 +3685,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        if ($response["status"] == "success") {
+        if ($response[0]["status"] == "success") {
             return $response['data'];
         } else {
             return "failed";

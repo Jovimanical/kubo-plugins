@@ -2110,7 +2110,7 @@ class UserProperty
                 if ($key == "propertyTitlePhotos") {
 
                     if (isset($_FILES["propertyTitlePhotosImgs"]["name"])) {
-                        $files = array_filter($_FILES["propertyTitlePhotosImgs"]["name"]);
+                        $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
 
                         $dataImg = [
                             "multipleFiles" => $files,

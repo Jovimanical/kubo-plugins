@@ -57,7 +57,7 @@ class Util
 
                 $photoFile = $_FILES["propertyFeaturePhotoImg"]["tmp_name"];
 
-                $cfile = new CURLFile($photoFile, 'image/jpeg', "propertyFeaturePhotoImg");
+                $cfile = new \CURLFile($photoFile, 'image/jpeg', "propertyFeaturePhotoImg");
                 $files["propertyFeaturePhotoImg"] = $cfile;
 
                 $data["propertyFeaturePhotoImg"] = $files;
@@ -72,7 +72,7 @@ class Util
                 $files = [];
 
                 foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $photo) {
-                    $cfile = new CURLFile($photo, 'image/jpeg', $key);
+                    $cfile = new \CURLFile($photo, 'image/jpeg', $key);
                     $files[$key] = $cfile;
                 }
 

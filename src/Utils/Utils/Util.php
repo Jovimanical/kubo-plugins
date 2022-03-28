@@ -61,7 +61,7 @@ class Util
 
                 $data["propertyFeaturePhotoImg"] = $cfile;
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS,$data);
+                curl_setopt($ch, CURLOPT_POSTFIELDS,array($data));
 
             } else if(isset($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
 

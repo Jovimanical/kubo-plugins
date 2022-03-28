@@ -58,25 +58,23 @@ class Util
                 $photoFile = $_FILES["propertyFeaturePhotoImg"]["tmp_name"];
 
                 $cfile = \curl_file_create($photoFile);
-                
+
                 $data["propertyFeaturePhotoImg"] = $cfile;
-                return $cfile;
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_POSTFIELDS,$data);
 
             } else if(isset($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
 
                 foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $photo) {
                     $cfile = new \CURLFile($photo);
-                    return $cfile;
                     $data[$key] = $cfile;
                 }
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_POSTFIELDS,$data);
 
             } else {
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             }
 
 

@@ -57,10 +57,9 @@ class Util
 
                 $photoFile = $_FILES["propertyFeaturePhotoImg"]["tmp_name"];
 
-                $cfile = new \CURLFile($photoFile, 'image/jpeg', "propertyFeaturePhotoImg");
-                $files["propertyFeaturePhotoImg"] = $cfile;
-
-                $data["propertyFeaturePhotoImg"] = $files;
+                $cfile = new \CURLFile($photoFile);
+                
+                $data["propertyFeaturePhotoImg"] = $cfile;
 
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
@@ -69,14 +68,11 @@ class Util
 
                 curl_setopt($ch, CURLOPT_POST, 1);
 
-                $files = [];
-
                 foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $photo) {
-                    $cfile = new \CURLFile($photo, 'image/jpeg', $key);
-                    $files[$key] = $cfile;
+                    $cfile = new \CURLFile($photo);
+                    $data[$key] = $cfile;
                 }
 
-                $data["propertyTitlePhotosImgs"] = $files;
                 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
             } else {

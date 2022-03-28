@@ -54,32 +54,30 @@ class Util
         if ($method == 'POST') {
 
             if(isset($_FILES["propertyFeaturePhotoImg"]["tmp_name"])){
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
                 $photoFile = $_FILES["propertyFeaturePhotoImg"]["tmp_name"];
 
-                $filer = fopen($photoFile, 'r');
+                $cfile = new CURLFile($photoFile, 'image/jpeg', "propertyFeaturePhotoImg");
+                $files["propertyFeaturePhotoImg"] = $cfile;
 
-                curl_setopt($ch, CURLOPT_UPLOAD, 1);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 86400);  // Timeout
-                curl_setopt($ch, CURLOPT_INFILE, $filer);
-                curl_setopt($ch, CURLOPT_NOPROGRESS, false);
-                curl_setopt($ch, CURLOPT_BUFFERSIZE, 128);
-                curl_setopt($ch, CURLOPT_INFILESIZE, filesize($photoFile));
+                $data["propertyFeaturePhotoImg"] = $files;
+
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
             } else if(isset($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
 
                 curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-                
+
                 $files = [];
-                
+
                 foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $photo) {
                     $cfile = new CURLFile($photo, 'image/jpeg', $key);
                     $files[$key] = $cfile;
                 }
-                
+
+                $data["propertyTitlePhotosImgs"] = $files;
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
             } else {
                 curl_setopt($ch, CURLOPT_POST, 1);

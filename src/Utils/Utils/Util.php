@@ -58,7 +58,6 @@ class Util
                 $photoFile = $_FILES["propertyFeaturePhotoImg"]["tmp_name"];
 
                 $cfile = \curl_file_create($photoFile);
-
                 $data["propertyFeaturePhotoImg"] = $cfile;
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS,array($data));

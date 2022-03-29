@@ -233,6 +233,7 @@ class UserProperty
     // Redesigned newProperty 3
     public static function newPropertyUnit(array $data)
     {
+        try {
         // collecting parameters
         $user = $data["user"];
         $metadata = $data["property_metadata"] ?? [];
@@ -306,6 +307,10 @@ class UserProperty
         $resultData['result'] = $result;
 
         return $resultData;
+    }
+    catch (\Exception $e){
+        return $e->getMessage();
+    }
     }
 
     public static function newPropertyOnEntity(array $data)
@@ -3601,6 +3606,8 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
+
+        return $response;
 
         if ($response["errorStatus"] == false and $response["contentData"] == true) {
             return $response;

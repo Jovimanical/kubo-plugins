@@ -2111,7 +2111,7 @@ class UserProperty
                 if ($key == "propertyTitlePhotos") {
 
                     if (isset($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
-                      //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+                        //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
 
                         $dataImg = [
                             "multipleFiles" => $_FILES,
@@ -2946,9 +2946,12 @@ class UserProperty
                                         "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
                                     );
 
-                                    // inserting ESTATE_BOUNDARY.geojson
-                                    $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername);
-
+                                    try {
+                                        // inserting ESTATE_BOUNDARY.geojson
+                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername);
+                                    } catch (Exception $e) {
+                                        return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                                    }
                                     $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'processing'";
                                     $selectExec = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 

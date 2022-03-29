@@ -136,6 +136,11 @@ class UserProperty
         return UserProperty\UserProperty::getDashBoardTotal($userId);
     }
 
+    public static function getDashBoardTotalData(int $userId)
+    {
+        return UserProperty\UserProperty::getDashBoardTotalData($userId);
+    }
+
     public static function searchEstateClient(int $userId, array $data)
     {
         return UserProperty\UserProperty::searchEstateClient($userId, $data);
@@ -201,9 +206,19 @@ class UserProperty
         return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);
     }
 
+    public static function getEstatePropertyTotalData(int $propertyId)
+    {
+        return UserProperty\UserProperty::getEstatePropertyTotalData($propertyId);
+    }
+
     public static function getEstatePropertyAvailable(int $propertyId)
     {
         return UserProperty\UserProperty::getEstatePropertyAvailable($propertyId);
+    }
+
+    public static function getEstatePropertyAvailableData(int $propertyId)
+    {
+        return UserProperty\UserProperty::getEstatePropertyAvailableData($propertyId);
     }
 
 }

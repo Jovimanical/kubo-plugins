@@ -234,83 +234,82 @@ class UserProperty
     public static function newPropertyUnit(array $data)
     {
         try {
-        // collecting parameters
-        $user = $data["user"];
-        $metadata = $data["property_metadata"] ?? [];
-        $title = $data["property_title"];
-        $estateId = $data["property_estate_id"];
-        $blockId = $data["property_block_id"];
-        $blockChainAddress = ""; // $data["block_chain_address"];
-        $geometry = $data["property_geometry"] ?? null;
-        $parent = $data["property_parent"] ?? null;
-        $type = $data["property_type"];
-        $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+            // collecting parameters
+            $user = $data["user"];
+            $metadata = $data["property_metadata"] ?? [];
+            $title = $data["property_title"];
+            $estateId = $data["property_estate_id"];
+            $blockId = $data["property_block_id"];
+            $blockChainAddress = ""; // $data["block_chain_address"];
+            $geometry = $data["property_geometry"] ?? null;
+            $parent = $data["property_parent"] ?? null;
+            $type = $data["property_type"];
+            $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
-        if (self::isJSON($metadata)) { // checking for json data and converting to array
-            if (is_string($metadata)) {
-                $metadata = str_replace('&#39;', '"', $metadata);
-                $metadata = str_replace('&#34;', '"', $metadata);
-                $metadata = html_entity_decode($metadata);
-                $metadata = json_decode($metadata, true);
+            if (self::isJSON($metadata)) { // checking for json data and converting to array
+                if (is_string($metadata)) {
+                    $metadata = str_replace('&#39;', '"', $metadata);
+                    $metadata = str_replace('&#34;', '"', $metadata);
+                    $metadata = html_entity_decode($metadata);
+                    $metadata = json_decode($metadata, true);
+                }
+
             }
 
-        }
+            // return $metadata;
 
-        // return $metadata;
+            //STEP 1: Index Spatial Entity
+            $entity = [
+                "entityName" => $title,
+                "entityType" => $type,
+                "entityParentId" => $parent,
+                "entityGeometry" => $geometry,
+                "entityEstate" => $estateId,
+                "entityBlock" => $blockId,
+            ];
 
-        //STEP 1: Index Spatial Entity
-        $entity = [
-            "entityName" => $title,
-            "entityType" => $type,
-            "entityParentId" => $parent,
-            "entityGeometry" => $geometry,
-            "entityEstate" => $estateId,
-            "entityBlock" => $blockId,
-        ];
+            // Getting entity data
+            $indexEntityResult = \KuboPlugin\SpatialEntity\Entity\Entity::newEntity($entity);
+            $entityId = $indexEntityResult["lastInsertId"];
 
-        // Getting entity data
-        $indexEntityResult = \KuboPlugin\SpatialEntity\Entity\Entity::newEntity($entity);
-        $entityId = $indexEntityResult["lastInsertId"];
+            //STEP 2: Index User Property
+            $inputData = [
+                "UserId" => $user,
+                "LinkedEntity" => $entityId,
+                "PropertyTitle" => QB::wrapString($title, "'"),
+                "PropertyEstate" => $estateId,
+                "PropertyBlock" => $blockId,
+                "BlockChainAddress" => QB::wrapString($blockChainAddress, "'"),
+                "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
+            ];
 
-        //STEP 2: Index User Property
-        $inputData = [
-            "UserId" => $user,
-            "LinkedEntity" => $entityId,
-            "PropertyTitle" => QB::wrapString($title, "'"),
-            "PropertyEstate" => $estateId,
-            "PropertyBlock" => $blockId,
-            "BlockChainAddress" => QB::wrapString($blockChainAddress, "'"),
-            "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
-        ];
+            $result = DBQueryFactory::insert("[Properties].[UserPropertyUnits]", $inputData, false);
 
-        $result = DBQueryFactory::insert("[Properties].[UserPropertyUnits]", $inputData, false);
+            $propertyId = $result["lastInsertId"];
 
-        $propertyId = $result["lastInsertId"];
-
-        //STEP 3: Index Metadata
-        $values = [];
-        foreach ($metadata as $key => $value) {
-            if (is_array($values)) {
-                $value = json_encode($value);
+            //STEP 3: Index Metadata
+            $values = [];
+            foreach ($metadata as $key => $value) {
+                if (is_array($values)) {
+                    $value = json_encode($value);
+                }
+                $values[] = "($propertyId, $estateId, $blockId, '$key', '$value')";
             }
-            $values[] = "($propertyId, $estateId, $blockId, '$key', '$value')";
+
+            $query = "INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES " . implode(",", $values);
+
+            $result = DBConnectionFactory::getConnection()->exec($query);
+
+            $resultData['EstateId'] = $estateId;
+            $resultData['BlockId'] = $blockId;
+            $resultData['UnitId'] = $propertyId;
+            $resultData['EntityId'] = $entityId;
+            $resultData['result'] = $result;
+
+            return $resultData;
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
-
-        $query = "INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES " . implode(",", $values);
-
-        $result = DBConnectionFactory::getConnection()->exec($query);
-
-        $resultData['EstateId'] = $estateId;
-        $resultData['BlockId'] = $blockId;
-        $resultData['UnitId'] = $propertyId;
-        $resultData['EntityId'] = $entityId;
-        $resultData['result'] = $result;
-
-        return $resultData;
-    }
-    catch (\Exception $e){
-        return $e->getMessage();
-    }
     }
 
     public static function newPropertyOnEntity(array $data)
@@ -2891,6 +2890,7 @@ class UserProperty
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
+        $metadataType = $data["propertyMetaDataType"] ?? null;
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";
@@ -2953,7 +2953,7 @@ class UserProperty
 
                                     try {
                                         // inserting ESTATE_BOUNDARY.geojson
-                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername);
+                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername, $metadataType);
                                     } catch (Exception $e) {
                                         return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                     }
@@ -3473,7 +3473,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+        if ($response["errorStatus"] == false) {
             return $response;
         } else {
             self::indexProperty($login, $geojson, $title, $parent);
@@ -3504,7 +3504,7 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http call
 
         $response = json_decode($response, true);
-        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+        if ($response["errorStatus"] == false) {
             return $response;
         } else {
             self::indexBlock($login, $geojson, $title, $parent);
@@ -3513,7 +3513,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstate($login, $geojson, $title, $parent = 0)
+    protected static function indexPropertyEstate($login, $geojson, $title, $metadataType, $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -3522,6 +3522,7 @@ class UserProperty
             "property_geometry" => $geojson,
             "property_metadata" => [
                 "property_description" => "",
+                "property_type" => ucfirst($metadataType),
             ],
         ];
 
@@ -3538,7 +3539,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+        if ($response["errorStatus"] == false) {
             return $response;
         } else {
             self::indexPropertyEstate($login, $geojson, $title, $parent);
@@ -3571,7 +3572,7 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http call
 
         $response = json_decode($response, true);
-        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+        if ($response["errorStatus"] == false) {
             return $response;
         } else {
             self::indexPropertyBlock($login, $geojson, $title, $estateId, $parent);
@@ -3607,9 +3608,7 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        return $response;
-
-        if ($response["errorStatus"] == false and $response["contentData"] == true) {
+        if ($response["errorStatus"] == false) {
             return $response;
         } else {
             self::indexPropertyUnit($login, $geojson, $title, $estateId, $blockId, $parent);

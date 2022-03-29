@@ -2455,7 +2455,7 @@ class UserProperty
     protected static function getMortgageCount(int $userId)
     {
         // Fetching property count
-        $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
+        $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $mortCount = count($result);
@@ -2466,7 +2466,7 @@ class UserProperty
     protected static function getMortgageCountData(int $userId)
     {
         // Fetching property count
-        $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId OR SELECT PropertyEstate FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
+        $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $mortCount = count($result);
@@ -2516,7 +2516,7 @@ class UserProperty
     protected static function getReservationCountData(int $userId)
     {
         // Fetching reservation count
-        $query = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId OR SELECT PropertyEstate FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
+        $query = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $reserveCount = count($result);

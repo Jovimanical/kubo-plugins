@@ -2276,6 +2276,32 @@ class UserProperty
 
     }
 
+    public static function getDashBoardTotalData(int $userId)
+    {
+        $resultArr = [];
+        $estateType = 1;
+        $unitType = 3;
+
+        if ($userId == 0) {
+            return "Parameter not set";
+        }
+
+        //fetching estate count
+        $resultArr['estate'] = self::getPropertyCountData($userId, $estateType);
+
+        //fetching property count
+        $resultArr['property'] = self::getPropertyCountData($userId, $unitType);
+
+        //fetching mortgage count
+        $resultArr['mortgages'] = self::getMortgageCountData($userId);
+
+        //fetching reservations count
+        $resultArr['reservations'] = self::getReservationCountData($userId);
+
+        return $resultArr;
+
+    }
+
     public static function getEstatePropertyTotal(int $propertyId)
     {
         // @todo refactor later
@@ -2293,6 +2319,25 @@ class UserProperty
         WHERE SpatialEntities.Entities.EntityParent
         IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
         WHERE PropertyId = $propertyId))";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+
+    }
+
+    public static function getEstatePropertyTotalData(int $propertyId)
+    {
+        // @todo refactor later
+
+        if ($propertyId == 0) {
+            return "Parameter not set";
+        }
+
+        //Fetch total estate property units
+
+        $query = "SELECT PropertyId FROM Properties.UserPropertyUnits WHERE PropertyEstate = $propertyId";
 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
 
@@ -2338,6 +2383,32 @@ class UserProperty
 
     }
 
+    public static function getEstatePropertyAvailableData(int $propertyId)
+    {
+        // @todo refactor later
+        $result = [];
+
+        if ($propertyId == 0) {
+            return "Parameter not set";
+        }
+
+        //Fetch total estate property units
+        $query = "SELECT PropertyId FROM Properties.UserPropertyUnits WHERE PropertyEstate = $propertyId";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+
+        $propertyCount = count($result);
+
+        $query = "SELECT a.PropertyId, b.FieldName, b.FieldValue, b.PropertyEstate  FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
+        WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 AND a.PropertyEstate = $propertyId";
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_NUM);
+        $propertyTotal = count($result);
+
+        return $propertyCount - $propertyTotal;
+
+    }
+
     protected static function getPropertyCount(int $userId, int $entityType)
     {
         if ($entityType == 1) {
@@ -2362,10 +2433,40 @@ class UserProperty
         return $propertyCount;
     }
 
+    protected static function getPropertyCountData(int $userId, int $entityType)
+    {
+        if ($entityType == 1) {
+            // Fetching property count by type
+            $query = "SELECT LinkedEntity FROM Properties.UserProperty
+             WHERE UserId = $userId";
+        } else if($entityType == 3){
+            // Fetching property count by type
+            $query = "SELECT LinkedEntity FROM Properties.UserPropertyUnits WHERE UserId = $userId";
+        } else {
+            return "N/A";
+        }
+
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propertyCount = count($result);
+        return $propertyCount;
+    }
+
     protected static function getMortgageCount(int $userId)
     {
         // Fetching property count
         $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $mortCount = count($result);
+        return $mortCount;
+    }
+
+
+    protected static function getMortgageCountData(int $userId)
+    {
+        // Fetching property count
+        $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId OR SELECT PropertyEstate FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $mortCount = count($result);
@@ -2406,6 +2507,16 @@ class UserProperty
     {
         // Fetching reservation count
         $query = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $reserveCount = count($result);
+        return $reserveCount;
+    }
+
+    protected static function getReservationCountData(int $userId)
+    {
+        // Fetching reservation count
+        $query = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId OR SELECT PropertyEstate FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $reserveCount = count($result);

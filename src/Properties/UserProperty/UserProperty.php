@@ -1544,7 +1544,7 @@ class UserProperty
             $floorLevel = 0;
 
             // get property children
-            $query = "SELECT a.*, b.EntityParent FROM Properties.UserPropertyUnits a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyBlock = $propertyId AND b.EntityEstate = $propertyId";
+            $query = "SELECT a.*, b.EntityParent FROM Properties.UserPropertyUnits a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyBlock = $propertyId AND b.EntityBlock = $propertyId";
 
             if (isset($floorData["floorLevel"])) {
                 $floorLevel = $floorData["floorLevel"];

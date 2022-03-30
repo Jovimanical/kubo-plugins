@@ -2438,7 +2438,7 @@ class UserProperty
         if ($entityType == 1) {
             // Fetching property count by type
             $query = "SELECT LinkedEntity FROM Properties.UserProperty
-             WHERE UserId = $userId";
+             WHERE UserId = $userId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 1)";
         } else if($entityType == 3){
             // Fetching property count by type
             $query = "SELECT LinkedEntity FROM Properties.UserPropertyUnits WHERE UserId = $userId";

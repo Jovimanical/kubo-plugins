@@ -505,7 +505,7 @@ class UserProperty
         }
 
         // getting previous unit data
-        $propertyChildren = self::viewPropertyChildrenDataSet((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);
+        $propertyChildren = self::viewPropertyChildrenData((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);
 
         foreach ($propertyChildren as $property) {
             $title = $property["PropertyTitle"] . " - F" . $floorLevel;

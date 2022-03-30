@@ -490,7 +490,7 @@ class UserProperty
                
             } else {
                 // Inserting a new field
-                $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, FieldName, FieldValue) VALUES ($propId, '$key', '$value')"; // " . implode(",", $values);
+                $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES ($propId, $estateId, '$key', '$value')"; // " . implode(",", $values);
                 $result = DBConnectionFactory::getConnection()->exec($query);
                 if($key == "property_floor_count"){
                     //  Updating the existing field

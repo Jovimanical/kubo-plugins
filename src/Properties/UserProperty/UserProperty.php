@@ -444,7 +444,7 @@ class UserProperty
         $propId = 0;
         if (count($resultCheck) > 0) {
             // updating old property data
-            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $propertyUUID . ", PropertyEstate = " . $inputData['PropertyEstate'] . " WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $inputData['propertyUUID'] . ", PropertyEstate = " . $inputData['PropertyEstate'] . " WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
             $queryCheck = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
@@ -482,9 +482,9 @@ class UserProperty
                    
 
                 } else {
- //  Updating the existing field
- $query = "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
- $result = DBConnectionFactory::getConnection()->exec($query);
+                    //  Updating the existing field
+                    $query = "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
+                    $result = DBConnectionFactory::getConnection()->exec($query);
 
                 }
                
@@ -494,8 +494,8 @@ class UserProperty
                 $result = DBConnectionFactory::getConnection()->exec($query);
                 if($key == "property_floor_count"){
                     //  Updating the existing field
-                 $queryEstate = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $estateId AND FieldName = '$key'";
-                 $resultEstate = DBConnectionFactory::getConnection()->exec($queryEstate);
+                    $queryEstate = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $estateId AND FieldName = '$key'";
+                    $resultEstate = DBConnectionFactory::getConnection()->exec($queryEstate);
 
                 }
                 
@@ -512,7 +512,7 @@ class UserProperty
             $entityId = $property["LinkedEntity"];
             $propertyUnitUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
-            $inputData = [
+            $inputDataExtra = [
                 "UserId" => $user,
                 "LinkedEntity" => $entityId,
                 "PropertyFloor" => $floorLevel,
@@ -523,7 +523,7 @@ class UserProperty
             ];
 
             // inserting new properties data
-            DBQueryFactory::insert("[Properties].[UserPropertyUnits]", $inputData, false);
+            DBQueryFactory::insert("[Properties].[UserPropertyUnits]", $inputDataExtra, false);
         }
 
         return $result;

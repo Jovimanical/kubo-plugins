@@ -3644,10 +3644,8 @@ class UserProperty
         $header = "Content-Type: multipart/form-data";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-        return $response;
-        $response = json_decode($response, true);
 
-        return $response;
+        $response = json_decode($response, true);
 
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
@@ -3666,13 +3664,13 @@ class UserProperty
             return "token error";
         }
 
-        $file = $_FILES["propertyTitlePhotosImgs"]["tmp_name"] ?? "";
+        $file = $_FILES["propertyTitlePhotosImgs"]["tmp_name"] ?? [];
         $action = "multiple";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload[]" => $_FILES["propertyTitlePhotosImgs"],
+            "fileUpload[]" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,
@@ -3684,10 +3682,8 @@ class UserProperty
         $header = "Content-Type: multipart/form-data";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-        return $response;
-        $response = json_decode($response, true);
 
-        return $response;
+        $response = json_decode($response, true);
 
         if ($response[0]["status"] == "success") {
             return $response[0]['data'];

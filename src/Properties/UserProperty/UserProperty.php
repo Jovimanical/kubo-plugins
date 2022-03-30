@@ -1562,7 +1562,7 @@ class UserProperty
             $floorLevel = 0;
 
             // get property children
-            $query = "SELECT a.*, b.EntityParent FROM Properties.UserPropertyUnits a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyBlock = $propertyId AND b.EntityBlock = $propertyId";
+            $query = "SELECT a.*, b.EntityParent FROM Properties.UserPropertyUnits a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyBlock = $propertyId";
 
             if (isset($floorData["floorLevel"])) {
                 $floorLevel = $floorData["floorLevel"];
@@ -3646,6 +3646,8 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
+
+        return $response;
 
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];

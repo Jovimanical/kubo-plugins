@@ -2117,7 +2117,7 @@ class UserProperty
             } else {
                 if ($key == "propertyFeaturePhoto") {
 
-                    if (isset($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
+                    if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
 
                         $dataImg = [
                             "singleFile" => $_FILES,
@@ -2132,7 +2132,7 @@ class UserProperty
 
                 if ($key == "propertyTitlePhotos") {
 
-                    if (isset($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                    if (file_exists($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
                         //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
 
                         $dataImg = [
@@ -3686,6 +3686,8 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
+
+        return $response;
 
         if ($response[0]["status"] == "success") {
             return $response[0]['data'];

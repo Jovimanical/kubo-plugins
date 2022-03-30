@@ -444,7 +444,7 @@ class UserProperty
         $propId = 0;
         if (count($resultCheck) > 0) {
             // updating old property data
-            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $inputData['propertyUUID'] . ", PropertyEstate = " . $inputData['PropertyEstate'] . " WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $inputData['PropertyUUID'] . ", PropertyEstate = " . $inputData['PropertyEstate'] . " WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
             $queryCheck = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);

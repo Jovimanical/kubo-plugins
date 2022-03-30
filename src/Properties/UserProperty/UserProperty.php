@@ -136,6 +136,8 @@ class UserProperty
 
         $propertyId = $result["lastInsertId"];
 
+        $metadata["property_floor_count"] = 1;
+
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
@@ -208,6 +210,8 @@ class UserProperty
 
         $updateQuery = "UPDATE SpatialEntities.Entities SET EntityBlock = $propertyId WHERE EntityId = $entityId";
         $resultUpdate = DBConnectionFactory::getConnection()->exec($updateQuery);
+
+        $metadata["property_floor_count"] = 1;
 
         //STEP 3: Index Metadata
         $values = [];
@@ -429,7 +433,7 @@ class UserProperty
             "LinkedEntity" => $entityId,
             "PropertyFloor" => $floorLevel,
             "PropertyTitle" => QB::wrapString($title, "'"),
-            "PropertyEstate" => QB::wrapString($estateId, "'"),
+            "PropertyEstate" => $estateId,
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
         ];
 
@@ -461,7 +465,7 @@ class UserProperty
             $metadata = json_decode($metadata, true);
         }
 
-        $metadata["property_floor_count"] .= 1;
+        $metadata["property_floor_count"] = $floorLevel + 1;
 
         // STEP 3: Index Metadata
         foreach ($metadata as $key => $value) {
@@ -474,14 +478,28 @@ class UserProperty
             $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
 
             if (count($resultChecker) > 0) {
-                //  Updating the existing field
-                $query = "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
-                $result = DBConnectionFactory::getConnection()->exec($query);
+                if($key == "property_floor_count"){
+                   
 
+                } else {
+ //  Updating the existing field
+ $query = "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
+ $result = DBConnectionFactory::getConnection()->exec($query);
+
+                }
+               
             } else {
                 // Inserting a new field
                 $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, FieldName, FieldValue) VALUES ($propId, '$key', '$value')"; // " . implode(",", $values);
                 $result = DBConnectionFactory::getConnection()->exec($query);
+                if($key == "property_floor_count"){
+                    //  Updating the existing field
+                 $queryEstate = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $estateId AND FieldName = '$key'";
+                 $resultEstate = DBConnectionFactory::getConnection()->exec($queryEstate);
+
+                }
+                
+ 
             }
 
         }
@@ -499,8 +517,8 @@ class UserProperty
                 "LinkedEntity" => $entityId,
                 "PropertyFloor" => $floorLevel,
                 "PropertyTitle" => QB::wrapString($title, "'"),
-                "PropertyEstate" => QB::wrapString($estateId, "'"),
-                "PropertyBlock" => QB::wrapString($propId, "'"),
+                "PropertyEstate" => $estateId,
+                "PropertyBlock" => $propId,
                 "PropertyUUID" => QB::wrapString($propertyUnitUUID, "'"),
             ];
 
@@ -2276,6 +2294,7 @@ class UserProperty
 
     }
 
+    // Redesigned getDashBoardTotal
     public static function getDashBoardTotalData(int $userId)
     {
         $resultArr = [];
@@ -2327,6 +2346,7 @@ class UserProperty
 
     }
 
+    // Redesigned getEstatePropertyTotalData
     public static function getEstatePropertyTotalData(int $propertyId)
     {
         // @todo refactor later
@@ -2383,6 +2403,7 @@ class UserProperty
 
     }
 
+    // Redesigned getEstatePropertyAvailableData
     public static function getEstatePropertyAvailableData(int $propertyId)
     {
         // @todo refactor later
@@ -2433,6 +2454,7 @@ class UserProperty
         return $propertyCount;
     }
 
+    // Redesigned getPropertyCount
     protected static function getPropertyCountData(int $userId, int $entityType)
     {
         if ($entityType == 1) {
@@ -2463,6 +2485,7 @@ class UserProperty
     }
 
 
+    // Redesigned getMortgageCount
     protected static function getMortgageCountData(int $userId)
     {
         // Fetching property count
@@ -2513,6 +2536,7 @@ class UserProperty
         return $reserveCount;
     }
 
+    // Redesigned getReservationCount
     protected static function getReservationCountData(int $userId)
     {
         // Fetching reservation count
@@ -2588,8 +2612,6 @@ class UserProperty
             "Phone" => QB::wrapString($phone, "'"),
             "PropertyId" => $propertyId,
         ];
-
-        // die(print_r($inputData));
 
         // Inserting Allocations Data
         $queries[] = "BEGIN TRANSACTION;" .
@@ -2718,155 +2740,6 @@ class UserProperty
                         shell_exec('echo /usr/bin/php -q /var/www/html/kubo-core/uploader.php $userId $data | at now &');
 
                         return "Uploading Map Data";
-
-                        /**
-                        $files = scandir($path . $fileNameParts[0]);
-                        $fileNames = [];
-                        $fileBlockNames = [];
-                        foreach ($files as $key => $value) {
-                        $fileNames[] = $value;
-                        }
-
-                        $blockLength = 0;
-                        $blockNumberLength = 0;
-                        if (in_array("ESTATE_BOUNDARY.geojson", $fileNames) and in_array("BLOCKS", $fileNames)) {
-
-                        foreach ($fileNames as $key => $value) {
-                        if ($value == "BLOCKS") {
-                        $blocks = scandir($path . $fileNames[$key]);
-                        $blockLength = count($blocks);
-                        }
-
-                        if ($value == "BLOCK NUMBERS") {
-                        $blockNumbers = scandir($path . $fileNames[$key]);
-                        $blockNumberLength = count($blockNumbers);
-                        }
-
-                        if ($blockLength == $blockNumberLength) {
-
-                        $login = self::scriptLogin($username, $password);
-                        $login = $login["contentData"];
-
-                        $boundary_geojson = file_get_contents(
-                        "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
-                        );
-
-                        $result = self::indexProperty($login, $boundary_geojson, $foldername);
-                        // @todo retrieve the last inserted Id of the property estate entityId
-                        // for the next BLOCK stage
-
-                        $uploadStatus = "processing";
-                        $dataInputs = [
-                        "UserId" => $userId,
-                        "FolderName" => QB::wrapString($foldername, "'"),
-                        "Initials" => QB::wrapString($initials, "'"),
-                        "UploadStatus" => QB::wrapString($uploadStatus, "'"),
-                        ];
-
-                        $insertQuery = "INSERT INTO Properties.MapDataUploadStata (UserId,FolderName,Initials,UploadStatus) VALUES ($userId,'$foldername','$initials','processing')";
-                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-
-                        // DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
-
-                        sleep(10);
-
-                        $dir = "tmp/data/$foldername/BLOCKS/";
-                        $files = scandir($dir);
-                        $blocks = [];
-                        $result = [];
-                        if (count($files) > 0) {
-
-                        foreach ($files as $key => $file) {
-                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                        $geojson = file_get_contents($dir . $file);
-                        $geojson = str_replace("\"", "'", $geojson);
-                        try {
-                        $file = str_replace(".geojson", " $initials", $file);
-                        $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
-                        $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
-                        } catch (Exception $e) {
-                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                        }
-
-                        }
-                        }
-
-                        $dir = "tmp/data/$foldername/BLOCK EXTRA/";
-                        $files = scandir($dir);
-                        if (count($files) > 0) {
-                        foreach ($files as $file) {
-                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                        $geojson = file_get_contents($dir . $file);
-                        $geojson = str_replace("\"", "'", $geojson);
-                        try {
-                        $file = str_replace(".geojson", " $initials", $file);
-                        $result = self::indexBlock($login, $geojson, $file, $estateData['EntityId']); // edit last insert entityId of Estate
-                        // @todo no build $blocks array
-                        } catch (Exception $e) {
-                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                        }
-
-                        }
-                        }
-                        }
-                        }
-
-                        $blocks["location"] = $location;
-
-                        sleep(10);
-
-                        for ($i = 1; $i <= count($blocks); $i++) {
-                        $block = "BLOCK $i";
-                        $dir = "tmp/data/$foldername/$block/PLOTS/";
-                        $files = scandir($dir);
-                        foreach ($files as $file) {
-                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
-                        $geojson = file_get_contents($dir . $file);
-                        $geojson = str_replace("\"", "'", $geojson);
-                        try {
-                        $file = str_replace("Name_", "$block (", $file);
-                        $file = str_replace(".geojson", "", $file);
-                        $result = self::indexProperty($login, $geojson, "$initials " . $file, $blocks[$block]);
-                        } catch (Exception $e) {
-                        return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
-                        }
-
-                        //  echo "\nDone with " . $file; // @todo  return the success data
-                        if ($i > 7) {
-                        sleep(5);
-                        }
-
-                        }
-                        }
-
-                        // echo "\nDone with $block"; // @todo  return the success data
-                        }
-
-                        $uploadStatus = "uploaded";
-                        $dataInputs = [
-                        "UserId" => $userId,
-                        "FolderName" => QB::wrapString($foldername, "'"),
-                        "Initials" => QB::wrapString($initials, "'"),
-                        "UploadStatus" => QB::wrapString($uploadStatus, "'"),
-                        ];
-
-                        $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
-                        $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
-
-
-                        // DBQueryFactory::insert("[Properties].[MapDataUploadStata]", $dataInputs, false);
-
-                        return "Successfully Uploaded";
-
-                        }
-
-                        }
-
-                        } else {
-                        return "Estate Boundary File not found !!! \n";
-                        }
-
-                         */
 
                     } else {
                         return "File not Uploaded ! \n";
@@ -3469,6 +3342,7 @@ class UserProperty
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploaded' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
+        // Deleting uploaded folder and zip file
         \KuboPlugin\Utils\Util::recurseRmdir("tmp/data/$foldername");
         unlink("tmp/data/$foldername" . ".zip");
 

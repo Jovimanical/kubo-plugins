@@ -3627,7 +3627,13 @@ class UserProperty
             return "token error";
         }
 
-        $file = @$_FILES["propertyFeaturePhotoImg"]["tmp_name"] ?? "";
+        if (function_exists('curl_file_create')) { 
+            $filer = \curl_file_create($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
+          } else { // 
+            $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
+          }
+
+        $file = $filer ?? "";
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
@@ -3670,7 +3676,18 @@ class UserProperty
             return "token error";
         }
 
-        $file = @$_FILES["propertyTitlePhotosImgs"]["tmp_name"] ?? [];
+        $filer = [];
+
+        foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $value){
+            if (function_exists('curl_file_create')) { 
+                $filer[] = \curl_file_create($value);
+              } else { // 
+                $filer[] = '@' . realpath($value);
+            }
+        }
+       
+
+        $file = $filer ?? [];
         $action = "multiple";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";

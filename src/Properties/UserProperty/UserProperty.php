@@ -3638,7 +3638,7 @@ class UserProperty
             $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
         }
 
-       // $file = '@'.'./'.$data['singleFile'];
+        $file = './'.$data['singleFile'];
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
@@ -3653,7 +3653,7 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:".filesize('./'.$data['fileUpload']);
+        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:".filesize($file);
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 

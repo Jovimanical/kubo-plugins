@@ -53,37 +53,8 @@ class Util
 
         if ($method == 'POST') {
 
-            if(file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])){
-
-                $photoFile = $_FILES["propertyFeaturePhotoImg"]["tmp_name"];
-
-               // $cfile = \curl_file_create($photoFile);
-               // $data["fileUpload"] = $cfile;
-
-                $data["fileUpload"] = $photoFile;
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-            } else if(file_exists($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
-
-                $photoFile = $_FILES["propertyTitlePhotosImgs"]["tmp_name"];
-                
-                /*
-                foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $photo) {
-                    $cfile = new \CURLFile($photo);
-                    $data[$key] = $cfile;
-                }
-                */
-
-                $data["fileUpload[]"] = $photoFile;
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-            } else {
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            }
-
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
         }
 

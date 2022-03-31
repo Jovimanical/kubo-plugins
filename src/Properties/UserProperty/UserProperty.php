@@ -3627,13 +3627,13 @@ class UserProperty
             return "token error";
         }
 
-        $file = $_FILES["propertyFeaturePhotoImg"]["tmp_name"] ?? "";
+        $file = @$_FILES["propertyFeaturePhotoImg"]["tmp_name"] ?? "";
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload" => $_FILES["propertyFeaturePhotoImg"]["tmp_name"],
+            "fileUpload" => $file,
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,
@@ -3667,13 +3667,13 @@ class UserProperty
             return "token error";
         }
 
-        $file = $_FILES["propertyTitlePhotosImgs"]["tmp_name"] ?? [];
+        $file = @$_FILES["propertyTitlePhotosImgs"]["tmp_name"] ?? [];
         $action = "multiple";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload[]" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+            "fileUpload[]" => $file,
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,

@@ -3609,8 +3609,6 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        return $response;
-
         if ($response[0]["status"] == "success") {
             return $response[0]['token'];
         } else {
@@ -3644,7 +3642,7 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-Type: multipart/form-data";
+        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
@@ -3684,7 +3682,7 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-Type: multipart/form-data";
+        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 

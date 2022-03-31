@@ -61,8 +61,8 @@ class Util
                // $data["fileUpload"] = $cfile;
 
                 $data["fileUpload"] = $photoFile;
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
             } else if(file_exists($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
 
@@ -76,12 +76,12 @@ class Util
                 */
 
                 $data["fileUpload[]"] = $photoFile;
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
             } else {
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             }
 
 

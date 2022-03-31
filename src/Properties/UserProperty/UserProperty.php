@@ -2118,7 +2118,7 @@ class UserProperty
                 if ($key == "propertyFeaturePhoto") {
 
                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
-                        $uploadDir = './uploads';
+                        $uploadDir = './uploads/';
                         $uploadFile = $uploadDir . basename($_FILES['propertyFeaturePhotoImg']['name']);
                         if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)){
                             $dataImg = [

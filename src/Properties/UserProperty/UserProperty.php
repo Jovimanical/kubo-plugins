@@ -3609,6 +3609,8 @@ class UserProperty
 
         $response = json_decode($response, true);
 
+        return $response;
+
         if ($response[0]["status"] == "success") {
             return $response[0]['token'];
         } else {

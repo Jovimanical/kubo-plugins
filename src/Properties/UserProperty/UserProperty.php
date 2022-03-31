@@ -3641,6 +3641,7 @@ class UserProperty
         ];
 
         return $data;
+        die;
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 

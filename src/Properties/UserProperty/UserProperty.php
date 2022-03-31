@@ -2118,14 +2118,19 @@ class UserProperty
                 if ($key == "propertyFeaturePhoto") {
 
                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
+                        $uploadDir = './uploads';
+                        $uploadFile = $uploadDir . basename($_FILES['propertyFeaturePhotoImg']['name']);
+                        if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)){
+                            $dataImg = [
+                                "singleFile" => $uploadFile,
+                            ];
+    
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            $value = $imageDataResult;
+                        }
 
-                        $dataImg = [
-                            "singleFile" => $_FILES,
-                        ];
-
-                        $imageDataResult = self::uploadSingleImage($dataImg);
-                        return $imageDataResult;
-                        $value = $imageDataResult;
+                        
                     }
 
                 }
@@ -3629,17 +3634,17 @@ class UserProperty
 
         if (function_exists('curl_file_create')) { 
             $filer = \curl_file_create($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
-          } else { // 
+        } else { // 
             $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
-          }
+        }
 
-        $file = $filer ?? "";
+       // $file = '@'.'./'.$data['singleFile'];
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload" => $file,
+            "fileUpload" => '@'.'./'.$data['singleFile'],
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,

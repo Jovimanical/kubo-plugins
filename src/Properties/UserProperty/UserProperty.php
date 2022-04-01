@@ -3638,13 +3638,13 @@ class UserProperty
             $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
         }
 
-        $file = './'.$data['singleFile'];
+        $file = $data['singleFile'];
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload" => '@'.'./'.$data['singleFile'],
+            "fileUpload" => $data['singleFile'],
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,

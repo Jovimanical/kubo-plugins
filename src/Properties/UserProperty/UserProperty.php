@@ -1210,7 +1210,7 @@ class UserProperty
         return $metadata;
     }
 
-    // Redesigned getPropertymetadata not done yet
+    // Redesigned getPropertyMetadata not done yet
     public static function getPropertyMetadataSet(int $propertyId, int $floorLevel = 0)
     {
         $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
@@ -2118,7 +2118,7 @@ class UserProperty
                 if ($key == "propertyFeaturePhoto") {
 
                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
-                        $uploadDir = './uploads/';
+                        $uploadDir = '/var/www/html/kubo-core/uploads/';
                         $uploadFile = $uploadDir . basename($_FILES['propertyFeaturePhotoImg']['name']);
                         if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)){
                             $dataImg = [
@@ -3651,13 +3651,26 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
+        $dataItem = [
+            "action" => $action,
+            "token" => $token,
+            "requestType" => $requestType,
+            "endpoint" => $endpoint,
+        ];
+
+        $dataItem = json_encode($dataItem);
+
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
         $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:".filesize($file);
 
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
+        $outputRes= shell_exec("curl -X POST $host -H $header -d $dataItem -F fileUpload=@$file");
 
-        $response = json_decode($response, true);
+        $response = json_decode($outputRes, true);
+        
+       // $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
+
+       // $response = json_decode($response, true);
 
         return $response;
 

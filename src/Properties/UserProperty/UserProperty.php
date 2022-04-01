@@ -3658,19 +3658,21 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
-        $dataItem = json_encode($dataItem);
+        // $dataItem = json_encode($dataItem);
+
+        $dataItem = http_build_query($dataItem);
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
         $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:".filesize($file);
 
-        $outputRes= shell_exec("curl -X POST $host -H $header -d $dataItem -F fileUpload=@$file");
+        $outputRes = shell_exec("curl -X POST $host -H $header -F $dataItem -F fileUpload=@$file");
 
         $response = json_decode($outputRes, true);
         
-       // $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
+        // $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
-       // $response = json_decode($response, true);
+        // $response = json_decode($response, true);
 
         return $response;
 

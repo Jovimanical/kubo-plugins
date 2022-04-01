@@ -54,7 +54,11 @@ class Util
         if ($method == 'POST') {
 
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            if(isset($data['property_metadata'])){
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            } else {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            }
 
         }
 

@@ -3530,7 +3530,7 @@ class UserProperty
         // $host = "http://localhost:9000/v1/properties/user-property/new-property-estate"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property-estate";
 
         $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", http_build_query($data), $header); // http request
 
         $response = json_decode($response, true);
 

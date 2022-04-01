@@ -2884,7 +2884,7 @@ class UserProperty
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
-        $metadataType = $data["propertyMetaDataType"] ?? null;
+        $metadataType = (string)$data["metadataType"] ?? "";
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";
@@ -3508,7 +3508,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstate($login, $geojson, $title, $metadataType, $parent = 0)
+    protected static function indexPropertyEstate(array $login,string $geojson,String $title,String $metadataType,int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -3517,7 +3517,7 @@ class UserProperty
             "property_geometry" => $geojson,
             "property_metadata" => [
                 "property_description" => "",
-                "property_type" => ucfirst($metadataType),
+                "property_type" => $metadataType,
             ],
         ];
 

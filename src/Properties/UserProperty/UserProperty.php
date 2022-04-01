@@ -2947,7 +2947,7 @@ class UserProperty
 
                                     try {
                                         // inserting ESTATE_BOUNDARY.geojson
-                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername, $metadataType);
+                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername, $metadataType, 0);
                                     } catch (Exception $e) {
                                         return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                     }

@@ -3529,7 +3529,7 @@ class UserProperty
         $host = "https://rest.sytemap.com/v1/properties/user-property/new-property-estate"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property-estate";
         // $host = "http://localhost:9000/v1/properties/user-property/new-property-estate"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property-estate";
 
-        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456,Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
+        $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"].",Content-Type: multipart/form-data; boundary=687898976465498929523510456,";
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 

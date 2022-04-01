@@ -2884,7 +2884,7 @@ class UserProperty
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
-        $metadataType = (string)$data["metadataType"] ?? "";
+        $metaType = (string)$data["metaType"] ?? "";
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";
@@ -2947,7 +2947,7 @@ class UserProperty
 
                                     try {
                                         // inserting ESTATE_BOUNDARY.geojson
-                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername, $metadataType, 0);
+                                        $result = self::indexPropertyEstate($login, $boundary_geojson, $foldername, $metaType, 0);
                                     } catch (Exception $e) {
                                         return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                     }
@@ -3508,7 +3508,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstate(array $login,string $geojson,String $title,String $metadataType,int $parent = 0)
+    protected static function indexPropertyEstate(array $login,string $geojson,string $title,string $metaType,int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -3517,7 +3517,7 @@ class UserProperty
             "property_geometry" => $geojson,
             "property_metadata" => [
                 "property_description" => "",
-                "property_type" => $metadataType,
+                "property_type" => $metaType,
             ],
         ];
 
@@ -3535,10 +3535,11 @@ class UserProperty
 
         $response = json_decode($response, true);
 
+        return $response;
         if ($response["errorStatus"] == false) {
             return $response;
         } else {
-            self::indexPropertyEstate($login, $geojson, $title, $parent);
+            self::indexPropertyEstate($login, $geojson, $title, $metaType,$ $parent);
         }
     }
 

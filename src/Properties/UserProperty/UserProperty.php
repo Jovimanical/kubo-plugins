@@ -505,7 +505,7 @@ class UserProperty
         }
 
         // getting previous unit data
-        $propertyChildren = self::viewPropertyChildrenData((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1]);
+        $propertyChildren = self::viewPropertyChildrenData((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1, "floorSkip" => false]);
 
         foreach ($propertyChildren as $property) {
             $title = $property["PropertyTitle"] . " - F" . $floorLevel;
@@ -1564,9 +1564,14 @@ class UserProperty
             // get property children
             $query = "SELECT a.*, b.EntityParent FROM Properties.UserPropertyUnits a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyBlock = $propertyId";
 
-            if (isset($floorData["floorLevel"])) {
-                $floorLevel = $floorData["floorLevel"];
-                $query .= " AND a.PropertyFloor = $floorLevel";
+            if (isset($floorData["floorSkip"]) AND $floorData["floorSkip"] == false) {
+
+
+            } else {
+                if (isset($floorData["floorLevel"])) {
+                    $floorLevel = $floorData["floorLevel"];
+                    $query .= " AND a.PropertyFloor = $floorLevel";
+                }
             }
 
             $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

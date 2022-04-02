@@ -2129,13 +2129,12 @@ class UserProperty
                             $dataImg = [
                                 "singleFile" => $uploadFile,
                             ];
-    
+
                             $imageDataResult = self::uploadSingleImage($dataImg);
                             return $imageDataResult;
                             $value = $imageDataResult;
                         }
 
-                        
                     }
 
                 }
@@ -3538,7 +3537,7 @@ class UserProperty
         if ($response["errorStatus"] == false) {
             return $response;
         } else {
-            self::indexPropertyEstate($login, $geojson, $title, $metaType,$ $parent);
+            self::indexPropertyEstate($login, $geojson, $title, $metaType,$parent);
         }
     }
 

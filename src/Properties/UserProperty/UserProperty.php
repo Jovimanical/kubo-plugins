@@ -3385,7 +3385,7 @@ class UserProperty
         }
 
         // get inputs
-        $foldername = $data["folderName"] ?? "";
+        $folderName = $data["folderName"] ?? "";
         $propertyId = $data["propertyId"] ?? 0;
         $userId = $userId ?? 0;
 

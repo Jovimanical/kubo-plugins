@@ -3569,6 +3569,9 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http call
 
         $response = json_decode($response, true);
+
+        return $response;
+
         if ($response["errorStatus"] == false) {
             return $response;
         } else {
@@ -3604,6 +3607,8 @@ class UserProperty
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         $response = json_decode($response, true);
+
+        return $response;
 
         if ($response["errorStatus"] == false) {
             return $response;

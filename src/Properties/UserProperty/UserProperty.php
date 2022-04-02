@@ -2950,7 +2950,7 @@ class UserProperty
                                     } catch (Exception $e) {
                                         return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                     }
-                                    $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'processing'";
+                                    $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'processing' OR UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'uploaded' OR UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'uploading'";
                                     $selectExec = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
                                     if (count($selectExec) > 1) {

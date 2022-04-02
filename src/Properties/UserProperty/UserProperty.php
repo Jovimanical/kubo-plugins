@@ -3377,6 +3377,36 @@ class UserProperty
         return $result;
     }
 
+    public static function deleteUploadData(int $userId, array $data)
+    {
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        // get inputs
+        $foldername = $data["folderName"] ?? "";
+        $propertyId = $data["propertyId"] ?? 0;
+        $userId = $userId ?? 0;
+
+        $queries = [];
+
+        // prepare query
+        $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+
+        $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityName = '$folderName'";
+       
+        $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityEstate = $propertyId";
+
+        $queries[] = "DELETE FROM Properties.MapDataUploadStata WHERE FolderName = '$folderName'";
+
+        $query = implode(";",$queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
+
     protected static function camelToSnakeCase($string, $sc = "_")
     {
         return strtolower(preg_replace(

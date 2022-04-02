@@ -201,6 +201,12 @@ class UserProperty
         return UserProperty\UserProperty::viewMapDataUploadStatus($userId, $data);
     }
 
+
+    public static function deleteUploadData(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::deleteUploadData($userId, $data);
+    }
+
     public static function getEstatePropertyTotal(int $propertyId)
     {
         return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);

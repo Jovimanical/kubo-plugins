@@ -26,7 +26,11 @@ class Enquiry {
 	}
 
     public static function viewEnquiries(int $userId,array $data){
-        return UserEnquiry\Enquiry::viewEnquiry($userId,$data);
+        return UserEnquiry\Enquiry::viewEnquiries($userId,$data);
+    }
+
+    public static function viewEnquiryByDate(int $userId,array $data){
+        return UserEnquiry\Enquiry::viewEnquiryByDate($userId,$data);
     }
 
     public static function viewEnquiryBySeven(int $userId,array $data){

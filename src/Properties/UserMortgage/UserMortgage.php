@@ -28,6 +28,9 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
  */
 class UserMortgage {
 	public static function newMortgage(array $data){
+        if($empty($data)){
+            return "Parameter not set";
+        }
         $propertyId = $data["property_id"] ?? 0;
         $property_name =  $data["property_name"] ?? '';
         $property_address =  $data["property_address"] ?? '';
@@ -62,6 +65,9 @@ class UserMortgage {
 	}
 
     public static function viewMortgages(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
 
@@ -78,6 +84,9 @@ class UserMortgage {
 
 
     public static function viewMortgagesBySeven(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
 
        $fetch = "FIRST";
        $offset = 0;
@@ -99,6 +108,9 @@ class UserMortgage {
     }
 
     public static function viewMortgagesByThirty(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
 
@@ -119,6 +131,9 @@ class UserMortgage {
 
 
     public static function viewMortgagesByNinety(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
        $offset = 0;
 
@@ -140,6 +155,9 @@ class UserMortgage {
 
 
     public static function searchMortgages(int $userId,array $data){
+        if($userId == 0 OR empty($data)){
+            return "Parameters not set";
+        }
         $fetch = "FIRST";
         $offset = 0;
         $searchTerm = $data['searchTerm'];

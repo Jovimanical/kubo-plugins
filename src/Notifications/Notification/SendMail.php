@@ -27,7 +27,7 @@ use EmmetBlue\Core\Factory\MailerFactory as Mailer;
  * @author Sixtus Onumajuru <jigga.e10@gmail.com>
  * @since v0.0.1 25/10/2021 12:12
  */
-class sendMail {
+class SendMail {
 
 
     public static function sendMail(array $data){
@@ -56,6 +56,36 @@ class sendMail {
         $msg = $data['message'];
 
         return mail($receiver, $subject, $msg, $headers);
+    }
+
+    public static function sendNotifications(array $data){
+
+        
+
+        $mail = new Mailer($data['sender'],$data['recipients'],$data['message']);
+        
+        if($mail->send()){
+
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public static function readNotifications(array $data){
+
+        
+
+        $mail = new Mailer($data['sender'],$data['recipients'],$data['message']);
+        
+        if($mail->send()){
+
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 

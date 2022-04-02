@@ -45,11 +45,15 @@ class Entity {
         $parentId = $data["entityParentId"] ?? null;
         $geometry = $data["entityGeometry"] ?? null;
         $description = $data["description"] ?? "";
+        $estate = $data["entityEstate"] ?? 0;
+        $block = $data["entityBlock"] ?? 0;
 
         $inputData = [
             "EntityName"=>QB::wrapString($name, "'"),
             "EntityType"=>QB::wrapString($type, "'"),
-            "EntityDescription"=>QB::wrapString($description, "'")
+            "EntityDescription"=>QB::wrapString($description, "'"),
+            "EntityEstate"=>$estate,
+            "EntityBlock"=>$block,
         ];
 
         if (!is_null($parentId)){
@@ -81,9 +85,7 @@ class Entity {
         return $result;
     }
 
- 
 
-    
     public static function viewEntityChildren(array $data){
         $entity = $data["entityId"];
         $query = "SELECT EntityId, EntityName, EntityType, EntityGeometry, EntityDescription, DateCreated, LastModified FROM [SpatialEntities].[Entities] WHERE EntityParent = $entity";
@@ -98,7 +100,7 @@ class Entity {
 
         return $children;
     }
-    
+
 
     public static function viewEntityParent(array $data){
         $entity = $data["entityId"];
@@ -126,4 +128,6 @@ class Entity {
 
         return $result;
     }
+
+
 }

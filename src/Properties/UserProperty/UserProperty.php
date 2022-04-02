@@ -3534,6 +3534,8 @@ class UserProperty
 
         $response = json_decode($response, true);
 
+        return $response;
+
         if ($response["errorStatus"] == false) {
             return $response;
         } else {

@@ -3386,20 +3386,65 @@ class UserProperty
 
         // get inputs
         $folderName = $data["folderName"] ?? "";
-        $propertyId = $data["propertyId"] ?? 0;
+        // $propertyId = $data["propertyId"] ?? 0;
         $userId = $userId ?? 0;
+
+        // pik up property data
+        $selectQuery = "SELECT PropertyId FROM Properties.Userproperty WHERE PropertyTitle = '$foldername'";
+        $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $resultPropertyId = $resultSelect['PropertyId'];
 
         $queries = [];
 
         // prepare query
-        $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+        $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
 
         $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityName = '$folderName'";
        
-        $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityEstate = $propertyId";
+        $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityEstate = $resultPropertyId";
 
         $queries[] = "DELETE FROM Properties.MapDataUploadStata WHERE FolderName = '$folderName'";
 
+        $query = implode(";",$queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+    }
+
+    public static function deleteOldUploadData(int $userId, array $data)
+    {
+
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        // get inputs
+        $folderName = $data["folderName"] ?? "";
+        // $propertyId = $data["propertyId"] ?? 0;
+        $userId = $userId ?? 0;
+
+        // pik up property data
+        $selectQuery = "SELECT * FROM Properties.Userproperty WHERE PropertyTitle = '$foldername'";
+        $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $resultPropertyId = $resultSelect['PropertyId'];
+        $resultLinkedEntity = $resultSelect['LinkedEntity'];
+
+        $queries = [];
+
+        // prepare query
+       
+        $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId IN (SELECT a.PropertyId FROM Properties.UserProperty a
+        INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
+         WHERE b.EntityParent = $resultLinkedEntity);";
+
+
+        $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyTitle = '$folderName'";
+
+       
+       
         $query = implode(";",$queries);
 
         $result = DBConnectionFactory::getConnection()->exec($query);

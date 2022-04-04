@@ -207,6 +207,11 @@ class UserProperty
         return UserProperty\UserProperty::deleteUploadData($userId, $data);
     }
 
+    public static function deleteOldUploadData(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::deleteOldUploadData($userId, $data);
+    }
+
     public static function getEstatePropertyTotal(int $propertyId)
     {
         return UserProperty\UserProperty::getEstatePropertyTotal($propertyId);

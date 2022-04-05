@@ -3389,7 +3389,7 @@ class UserProperty
         $selectQuery = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$folderName'";
         $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $resultPropertyId = $resultSelect['PropertyId'];
+        $resultPropertyId = $resultSelect[0]['PropertyId'];
 
         $queries = [];
 

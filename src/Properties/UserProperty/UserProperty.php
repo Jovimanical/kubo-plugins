@@ -3429,8 +3429,8 @@ class UserProperty
         $selectQuery = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$folderName'";
         $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $resultPropertyId = $resultSelect['PropertyId'];
-        $resultLinkedEntity = $resultSelect['LinkedEntity'];
+        $resultPropertyId = $resultSelect["PropertyId"];
+        $resultLinkedEntity = $resultSelect["LinkedEntity"];
 
         $queries = [];
 

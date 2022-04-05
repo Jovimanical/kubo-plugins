@@ -3755,7 +3755,7 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:" . filesize($file);
+        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:" . filesize($data["singleFile"]);
 
        // $outputRes = shell_exec("curl -X POST $host -H $header -F $dataItem -F fileUpload=@$file");
        // $response = json_decode($outputRes, true);

@@ -3739,6 +3739,8 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
+        return $data;
+
         /*
         $dataItem = [
             "action" => $action,

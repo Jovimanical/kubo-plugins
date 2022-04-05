@@ -2121,7 +2121,8 @@ class UserProperty
 
                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
                         $uploadDir = '/var/www/html/kubo-core/uploads/';
-                        $uploadFile = $uploadDir . basename($_FILES['propertyFeaturePhotoImg']['name']);
+                        $uploadFile = $uploadDir.$_FILES['propertyFeaturePhotoImg']['name'];
+                        
                         if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)) {
                             $dataImg = [
                                 "singleFile" => $uploadFile,
@@ -3711,25 +3712,34 @@ class UserProperty
             return "token error";
         }
 
-        if (function_exists('curl_file_create')) {
-            $filer = \curl_file_create($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
-        } else { //
-            $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
-        }
+        $timerNow = time();
 
-        $file = $data['singleFile'];
+        // $fileOldName = __DIR__ . DIRECTORY_SEPARATOR . "uploads/".$_FILES['propertyFeaturePhotoImg']['name']; // File to upload
+        $fileOldName = $data["singleFile"]; // File to upload
+        $fileNewName = $_FILES['propertyFeaturePhotoImg']['name'].$timerNow; // File name to be uploaded as
+
+       // if (function_exists('curl_file_create')) {
+        //    $filer = \curl_file_create($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
+      //  } else { //
+        //    $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
+      //  }
+
+        $file_to_upload = new \CURLFile($fileOldName, mime_content_type($fileOldName), $fileNewName);
+
+        $file = $file_to_upload;
         $action = "single";
         $requestType = $data["imageInfo"] ?? "";
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload" => $data['singleFile'],
+            "fileUpload" => $file,
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,
             "endpoint" => $endpoint,
         ];
 
+        /*
         $dataItem = [
             "action" => $action,
             "token" => $token,
@@ -3737,21 +3747,22 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
+        */
+
         // $dataItem = json_encode($dataItem);
 
-        $dataItem = http_build_query($dataItem);
+        // $dataItem = http_build_query($dataItem);
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
         $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:" . filesize($file);
 
-        $outputRes = shell_exec("curl -X POST $host -H $header -F $dataItem -F fileUpload=@$file");
+       // $outputRes = shell_exec("curl -X POST $host -H $header -F $dataItem -F fileUpload=@$file");
+       // $response = json_decode($outputRes, true);
 
-        $response = json_decode($outputRes, true);
+        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
-        // $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-
-        // $response = json_decode($response, true);
+        $response = json_decode($response, true);
 
         return $response;
 

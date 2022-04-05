@@ -3438,7 +3438,7 @@ class UserProperty
        
         $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId IN (SELECT a.PropertyId FROM Properties.UserProperty a
         INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-         WHERE b.EntityParent = $resultLinkedEntity);";
+         WHERE b.EntityParent = $resultLinkedEntity)";
 
 
         $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyTitle = '$folderName'";

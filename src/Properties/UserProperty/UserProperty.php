@@ -3732,7 +3732,7 @@ class UserProperty
         $endpoint = $data["endpoint"] ?? "";
 
         $data = [
-            "fileUpload" => $fileOldName,
+            "fileUpload" => $file,
             "action" => $action,
             "token" => $token,
             "requestType" => $requestType,

@@ -316,7 +316,7 @@ class UserProperty
         }
     }
 
-    public static function newPropertyOnEntity(array $data)
+    public static function newPropertyOnEntityBlock(array $data)
     {
         // Getting parameters
         $user = $data["user"] ?? 0;
@@ -411,7 +411,7 @@ class UserProperty
     }
 
     // Redesigned newPropertyOnEntity
-    public static function newPropertyOnEntityBlock(array $data)
+    public static function newPropertyOnEntity(array $data)
     {
         // Getting parameters
         $user = $data["user"] ?? 0;
@@ -478,8 +478,7 @@ class UserProperty
             $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
 
             if (count($resultChecker) > 0) {
-                if($key == "property_floor_count"){
-                   
+                if ($key == "property_floor_count") {
 
                 } else {
                     //  Updating the existing field
@@ -487,19 +486,18 @@ class UserProperty
                     $result = DBConnectionFactory::getConnection()->exec($query);
 
                 }
-               
+
             } else {
                 // Inserting a new field
                 $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES ($propId, $estateId, '$key', '$value')"; // " . implode(",", $values);
                 $result = DBConnectionFactory::getConnection()->exec($query);
-                if($key == "property_floor_count"){
+                if ($key == "property_floor_count") {
                     //  Updating the existing field
                     $queryEstate = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $estateId AND FieldName = '$key'";
                     $resultEstate = DBConnectionFactory::getConnection()->exec($queryEstate);
 
                 }
-                
- 
+
             }
 
         }
@@ -529,7 +527,7 @@ class UserProperty
         return $result;
     }
 
-    public static function viewProperties(int $userId, array $data = [])
+    public static function viewPropertiesData(int $userId, array $data = [])
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -728,7 +726,7 @@ class UserProperty
     }
 
     // Redesigned viewProperties
-    public static function viewPropertiesData(int $userId, array $data = [])
+    public static function viewProperties(int $userId, array $data = [])
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -874,7 +872,7 @@ class UserProperty
         return $results;
     }
 
-    public static function viewProperty(int $propertyId)
+    public static function viewPropertyData(int $propertyId)
     {
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -901,7 +899,7 @@ class UserProperty
     }
 
     // Redesigned viewProperty
-    public static function viewPropertyData(int $propertyId)
+    public static function viewProperty(int $propertyId)
     {
 
         if (!isset($propertyId)) {
@@ -973,7 +971,7 @@ class UserProperty
         return "Invalid ID";
     }
 
-    public static function listAllProperties(int $propertyId = 1, array $data)
+    public static function listAllPropertiesData(int $propertyId = 1, array $data)
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -1094,7 +1092,7 @@ class UserProperty
     }
 
     // Redesigned listAllProperties
-    public static function listAllPropertiesData(int $propertyId = 1, array $data)
+    public static function listAllProperties(int $propertyId = 1, array $data)
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -1245,7 +1243,7 @@ class UserProperty
         return $metadata;
     }
 
-    public static function viewPropertyByName(array $data)
+    public static function viewPropertyByNameData(array $data)
     {
         $name = $data["name"] ?? 0;
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
@@ -1262,7 +1260,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyByName
-    public static function viewPropertyByNameData(array $data)
+    public static function viewPropertyByName(array $data)
     {
         $name = $data["name"] ?? 0;
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
@@ -1308,7 +1306,7 @@ class UserProperty
         return $results;
     }
 
-    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
+    public static function viewPropertyChildrenData(int $propertyId, array $floorData = [])
     {
         $floorLevel = 0;
 
@@ -1431,7 +1429,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildren
-    public static function viewPropertyChildrenData(int $propertyId, array $floorData = [])
+    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
     {
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -1564,8 +1562,7 @@ class UserProperty
             // get property children
             $query = "SELECT a.*, b.EntityParent FROM Properties.UserPropertyUnits a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyBlock = $propertyId";
 
-            if (isset($floorData["floorSkip"]) AND $floorData["floorSkip"] == false) {
-
+            if (isset($floorData["floorSkip"]) and $floorData["floorSkip"] == false) {
 
             } else {
                 if (isset($floorData["floorLevel"])) {
@@ -1689,7 +1686,7 @@ class UserProperty
 
     }
 
-    public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)
+    public static function viewPropertyMetadataSet(int $propertyId, int $floorLevel = 0)
     {
         $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
         $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
@@ -1734,7 +1731,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyMetadata
-    public static function viewPropertyMetadataSet(int $propertyId, int $floorLevel = 0)
+    public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)
     {
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -1847,7 +1844,7 @@ class UserProperty
         return "Invalid ID";
     }
 
-    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0)
+    public static function viewPropertyChildrenMetadataSet(int $parentId, int $floorLevel = 0)
     {
         // Get children data
         $query = "SELECT a.* FROM Properties.UserPropertyMetadata a
@@ -1888,7 +1885,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildrenMetadata
-    public static function viewPropertyChildrenMetadataSet(int $parentId, int $floorLevel = 0)
+    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0)
     {
         if (!isset($parentId)) {
             return "Parameter not set";
@@ -1976,7 +1973,7 @@ class UserProperty
         return "No Children Data";
     }
 
-    public static function editPropertyMetadata(int $propertyId, array $metadata = [])
+    public static function editPropertyMetadataSet(int $propertyId, array $metadata = [])
     {
         $queries = [];
 
@@ -2068,7 +2065,7 @@ class UserProperty
     }
 
     // Redesigned editPropertyMetadata
-    public static function editPropertyMetadataSet(int $propertyId, array $metadata = [])
+    public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
 
         if ($propertyId == 0 or empty($metadata)) {
@@ -2125,7 +2122,7 @@ class UserProperty
                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
                         $uploadDir = '/var/www/html/kubo-core/uploads/';
                         $uploadFile = $uploadDir . basename($_FILES['propertyFeaturePhotoImg']['name']);
-                        if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)){
+                        if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)) {
                             $dataImg = [
                                 "singleFile" => $uploadFile,
                             ];
@@ -2277,7 +2274,7 @@ class UserProperty
 
     // @todo refactor methods below
 
-    public static function getDashBoardTotal(int $userId)
+    public static function getDashBoardTotalData(int $userId)
     {
         $resultArr = [];
         $estateType = 1;
@@ -2304,7 +2301,7 @@ class UserProperty
     }
 
     // Redesigned getDashBoardTotal
-    public static function getDashBoardTotalData(int $userId)
+    public static function getDashBoardTotal(int $userId)
     {
         $resultArr = [];
         $estateType = 1;
@@ -2315,22 +2312,22 @@ class UserProperty
         }
 
         //fetching estate count
-        $resultArr['estate'] = self::getPropertyCountData($userId, $estateType);
+        $resultArr['estate'] = self::getPropertyCount($userId, $estateType);
 
         //fetching property count
-        $resultArr['property'] = self::getPropertyCountData($userId, $unitType);
+        $resultArr['property'] = self::getPropertyCount($userId, $unitType);
 
         //fetching mortgage count
-        $resultArr['mortgages'] = self::getMortgageCountData($userId);
+        $resultArr['mortgages'] = self::getMortgageCount($userId);
 
         //fetching reservations count
-        $resultArr['reservations'] = self::getReservationCountData($userId);
+        $resultArr['reservations'] = self::getReservationCount($userId);
 
         return $resultArr;
 
     }
 
-    public static function getEstatePropertyTotal(int $propertyId)
+    public static function getEstatePropertyTotalData(int $propertyId)
     {
         // @todo refactor later
 
@@ -2356,7 +2353,7 @@ class UserProperty
     }
 
     // Redesigned getEstatePropertyTotalData
-    public static function getEstatePropertyTotalData(int $propertyId)
+    public static function getEstatePropertyTotal(int $propertyId)
     {
         // @todo refactor later
 
@@ -2375,7 +2372,7 @@ class UserProperty
 
     }
 
-    public static function getEstatePropertyAvailable(int $propertyId)
+    public static function getEstatePropertyAvailableData(int $propertyId)
     {
         // @todo refactor later
         $result = [];
@@ -2413,7 +2410,7 @@ class UserProperty
     }
 
     // Redesigned getEstatePropertyAvailableData
-    public static function getEstatePropertyAvailableData(int $propertyId)
+    public static function getEstatePropertyAvailable(int $propertyId)
     {
         // @todo refactor later
         $result = [];
@@ -2439,7 +2436,7 @@ class UserProperty
 
     }
 
-    protected static function getPropertyCount(int $userId, int $entityType)
+    protected static function getPropertyCountData(int $userId, int $entityType)
     {
         if ($entityType == 1) {
             // Fetching property count by type
@@ -2464,13 +2461,13 @@ class UserProperty
     }
 
     // Redesigned getPropertyCount
-    protected static function getPropertyCountData(int $userId, int $entityType)
+    protected static function getPropertyCount(int $userId, int $entityType)
     {
         if ($entityType == 1) {
             // Fetching property count by type
             $query = "SELECT LinkedEntity FROM Properties.UserProperty
              WHERE UserId = $userId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 1)";
-        } else if($entityType == 3){
+        } else if ($entityType == 3) {
             // Fetching property count by type
             $query = "SELECT LinkedEntity FROM Properties.UserPropertyUnits WHERE UserId = $userId";
         } else {
@@ -2483,7 +2480,7 @@ class UserProperty
         return $propertyCount;
     }
 
-    protected static function getMortgageCount(int $userId)
+    protected static function getMortgageCountData(int $userId)
     {
         // Fetching property count
         $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
@@ -2493,9 +2490,8 @@ class UserProperty
         return $mortCount;
     }
 
-
     // Redesigned getMortgageCount
-    protected static function getMortgageCountData(int $userId)
+    protected static function getMortgageCount(int $userId)
     {
         // Fetching property count
         $query = "SELECT PropertyId FROM Properties.Mortgages  WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
@@ -2535,7 +2531,7 @@ class UserProperty
         return "invalid";
     }
 
-    protected static function getReservationCount(int $userId)
+    protected static function getReservationCountData(int $userId)
     {
         // Fetching reservation count
         $query = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId)";
@@ -2546,7 +2542,7 @@ class UserProperty
     }
 
     // Redesigned getReservationCount
-    protected static function getReservationCountData(int $userId)
+    protected static function getReservationCount(int $userId)
     {
         // Fetching reservation count
         $query = "SELECT EnquiryId FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId)";
@@ -2764,7 +2760,7 @@ class UserProperty
         }
     }
 
-    public static function uploadEstateData(int $userId, array $data)
+    public static function uploadEstateDataSet(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -2871,7 +2867,7 @@ class UserProperty
 
     // Redesigned uploadEstateData
 
-    public static function uploadEstateDataSet(int $userId, array $data)
+    public static function uploadEstateData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -2883,7 +2879,7 @@ class UserProperty
         $password = $data["inputPassword"] ?? null;
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
-        $metaType = (string)$data["metaType"] ?? "";
+        $metaType = (string) $data["metaType"] ?? "";
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";
@@ -2990,7 +2986,7 @@ class UserProperty
         }
     }
 
-    public static function uploadBlockData(int $userId, array $data)
+    public static function uploadBlockDataSet(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3088,7 +3084,7 @@ class UserProperty
 
     // Redesigned uploadBlockData
 
-    public static function uploadBlockDataSet(int $userId, array $data)
+    public static function uploadBlockData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3187,7 +3183,7 @@ class UserProperty
         return $resultData;
     }
 
-    public static function uploadUnitData(int $userId, array $data)
+    public static function uploadUnitDataSet(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3264,7 +3260,7 @@ class UserProperty
     }
 
     // Redesigned uploadUnitData
-    public static function uploadUnitDataSet(int $userId, array $data)
+    public static function uploadUnitData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3390,7 +3386,7 @@ class UserProperty
         $userId = $userId ?? 0;
 
         // pik up property data
-        $selectQuery = "SELECT PropertyId FROM Properties.Userproperty WHERE PropertyTitle = '$foldername'";
+        $selectQuery = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername'";
         $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultPropertyId = $resultSelect['PropertyId'];
@@ -3401,12 +3397,12 @@ class UserProperty
         $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId";
 
         $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityName = '$folderName'";
-       
+
         $queries[] = "DELETE FROM SpatialEntities.Entities WHERE EntityEstate = $resultPropertyId";
 
         $queries[] = "DELETE FROM Properties.MapDataUploadStata WHERE FolderName = '$folderName'";
 
-        $query = implode(";",$queries);
+        $query = implode(";", $queries);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
@@ -3435,17 +3431,14 @@ class UserProperty
         $queries = [];
 
         // prepare query
-       
+
         $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyId IN (SELECT a.PropertyId FROM Properties.UserProperty a
         INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
          WHERE b.EntityParent = $resultLinkedEntity)";
 
-
         $queries[] = "DELETE FROM Properties.UserProperty WHERE PropertyTitle = '$folderName'";
 
-       
-       
-        $query = implode(";",$queries);
+        $query = implode(";", $queries);
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
@@ -3582,7 +3575,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstate(array $login,string $geojson,string $title,string $metaType,int $parent = 0)
+    protected static function indexPropertyEstate(array $login, string $geojson, string $title, string $metaType, int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -3614,7 +3607,7 @@ class UserProperty
         if ($response["errorStatus"] == false) {
             return $response;
         } else {
-            self::indexPropertyEstate($login, $geojson, $title, $metaType,$parent);
+            self::indexPropertyEstate($login, $geojson, $title, $metaType, $parent);
         }
     }
 
@@ -3714,14 +3707,13 @@ class UserProperty
 
         $token = self::getUploadServerToken();
 
-
         if ($token == "failed") {
             return "token error";
         }
 
-        if (function_exists('curl_file_create')) { 
+        if (function_exists('curl_file_create')) {
             $filer = \curl_file_create($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
-        } else { // 
+        } else { //
             $filer = '@' . realpath($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
         }
 
@@ -3751,12 +3743,12 @@ class UserProperty
 
         $host = "http://ec2-44-201-189-208.compute-1.amazonaws.com/";
 
-        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:".filesize($file);
+        $header = "Content-Type: multipart/form-data; boundary=687898976465498929523510456, Content-Length:" . filesize($file);
 
         $outputRes = shell_exec("curl -X POST $host -H $header -F $dataItem -F fileUpload=@$file");
 
         $response = json_decode($outputRes, true);
-        
+
         // $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
         // $response = json_decode($response, true);
@@ -3782,14 +3774,13 @@ class UserProperty
 
         $filer = [];
 
-        foreach($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $value){
-            if (function_exists('curl_file_create')) { 
+        foreach ($_FILES["propertyTitlePhotosImgs"]["tmp_name"] as $key => $value) {
+            if (function_exists('curl_file_create')) {
                 $filer[] = \curl_file_create($value);
-              } else { // 
+            } else { //
                 $filer[] = '@' . realpath($value);
             }
         }
-       
 
         $file = $filer ?? [];
         $action = "multiple";

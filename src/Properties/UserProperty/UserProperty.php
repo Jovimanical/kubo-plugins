@@ -3716,7 +3716,7 @@ class UserProperty
 
         // $fileOldName = __DIR__ . DIRECTORY_SEPARATOR . "uploads/".$_FILES['propertyFeaturePhotoImg']['name']; // File to upload
         $fileOldName = $data["singleFile"]; // File to upload
-        $fileNewName = $_FILES['propertyFeaturePhotoImg']['name'].$timerNow; // File name to be uploaded as
+        $fileNewName = $_FILES['propertyFeaturePhotoImg']['name']; // File name to be uploaded as
 
        // if (function_exists('curl_file_create')) {
         //    $filer = \curl_file_create($_FILES["propertyFeaturePhotoImg"]["tmp_name"]);
@@ -3739,7 +3739,7 @@ class UserProperty
             "endpoint" => $endpoint,
         ];
 
-        return $data;
+       // return $data;
 
         /*
         $dataItem = [

@@ -3426,7 +3426,7 @@ class UserProperty
         $userId = $userId ?? 0;
 
         // pik up property data
-        $selectQuery = "SELECT * FROM Properties.Userproperty WHERE PropertyTitle = '$foldername'";
+        $selectQuery = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$folderName'";
         $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $resultPropertyId = $resultSelect['PropertyId'];

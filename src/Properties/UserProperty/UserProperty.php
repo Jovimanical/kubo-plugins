@@ -2067,6 +2067,7 @@ class UserProperty
     // Redesigned editPropertyMetadata
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
+       
 
         if ($propertyId == 0 or empty($metadata)) {
             return "Parameters not set";
@@ -2190,18 +2191,6 @@ class UserProperty
             if ($propertyType == "block") {
                 $keyId = self::camelToSnakeCase($key);
 
-                // check for images and their handling ...
-                if ($keyId == "property_title_photos_data") {
-                    foreach ($value as $keyItem => $valueItem) {
-                        $queries[] = "BEGIN TRANSACTION;" .
-                            "DELETE FROM Properties.UserPropertyMetadataBlocks WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
-                            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                            "COMMIT TRANSACTION;";
-                        //  unlink("files/$valueItem");
-                    }
-
-                }
-
                 $counter++;
 
                 // chaining queries for optimized operation
@@ -2217,18 +2206,6 @@ class UserProperty
 
             if ($propertyType == "unit") {
                 $keyId = self::camelToSnakeCase($key);
-
-                // check for images and their handling ...
-                if ($keyId == "property_title_photos_data") {
-                    foreach ($value as $keyItem => $valueItem) {
-                        $queries[] = "BEGIN TRANSACTION;" .
-                            "DELETE FROM Properties.UserPropertyMetadataUnits WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
-                            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                            "COMMIT TRANSACTION;";
-                        //  unlink("files/$valueItem");
-                    }
-
-                }
 
                 $counter++;
 

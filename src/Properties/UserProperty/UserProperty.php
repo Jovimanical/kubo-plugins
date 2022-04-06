@@ -2067,6 +2067,7 @@ class UserProperty
     // Redesigned editPropertyMetadata
     public static function editPropertyMetadata(int $propertyId, array $metadata = [])
     {
+        rmdir("files");
 
         if ($propertyId == 0 or empty($metadata)) {
             return "Parameters not set";

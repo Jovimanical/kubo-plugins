@@ -2140,7 +2140,7 @@ class UserProperty
 
                 if ($key == "propertyPhotos") {
 
-                    if (file_exists($_FILES["propertyPhotosImgs"]["tmp_name"])) {
+                    if (!empty($_FILES["propertyPhotosImgs"]["tmp_name"])) {
                         //  $files = array_filter($_FILES["propertyPhotosImgs"]);
 
                         $dataImg = [

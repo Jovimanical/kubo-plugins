@@ -2138,10 +2138,10 @@ class UserProperty
 
                 }
 
-                if ($key == "propertyTitlePhotos") {
+                if ($key == "propertyPhotos") {
 
-                    if (file_exists($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
-                        //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+                    if (file_exists($_FILES["propertyPhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyPhotosImgs"]);
 
                         $dataImg = [
                             "multipleFiles" => $_FILES,
@@ -2157,23 +2157,49 @@ class UserProperty
                     }
                 }
 
+                if ($key == "propertyTitlePhotos") {
+
+                    if (!empty($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+
+                        if(is_array($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
+
+                            $dataImg = [
+                                "multipleFiles" => $_FILES,
+                            ];
+
+                            $imageDataResult = self::uploadMultipleImages($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = json_encode($imageDataResult);
+                            }
+                        } else {
+                            $dataImg = [
+                                "singleFile" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = $imageDataResult;
+                            }
+                        }
+
+                       
+
+
+                    }
+                }
+
             }
 
             if ($propertyType == "estate") {
 
                 $keyId = self::camelToSnakeCase($key);
-
-                // check for images and their handling ...
-                if ($keyId == "property_title_photos_data") {
-                    foreach ($value as $keyItem => $valueItem) {
-                        $queries[] = "BEGIN TRANSACTION;" .
-                            "DELETE FROM Properties.UserPropertyMetadata WHERE FieldName='property_title_photos' AND FieldValue='$valueItem' AND PropertyId=$propertyId " .
-                            "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                            "COMMIT TRANSACTION;";
-                        //  unlink("files/$valueItem");
-                    }
-
-                }
 
                 $counter++;
 

@@ -49,4 +49,9 @@ class Notification
     {
         return Notification\Notification::viewNotifications($data);
     }
+
+    public static function sendLogs(int $userId, array $data)
+    {
+        return Notification\Notification::sendLogs($userId, $data);
+    }
 }

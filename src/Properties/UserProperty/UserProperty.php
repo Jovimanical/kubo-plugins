@@ -1643,7 +1643,7 @@ class UserProperty
 
                     foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                        if ($valueItemId["FieldValue"] == $valueSetId["PropertyId"]) {
+                        if ($valueItemId["PropertyBlock"] == $valueSetId["PropertyBlock"]) {
 
                             $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 
@@ -1661,7 +1661,7 @@ class UserProperty
 
                     foreach ($valueItem as $keyItemIdSet => $valueItemIdSet) {
 
-                        if ($valueItemIdSet["FieldValue"] == $valueSetId['PropertyId']) {
+                        if ($valueItemIdSet["PropertyId"] == $valueSetId['PropertyBlock']) {
                             if (!isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) or !isset($results[$keySetId]["Metadata"])) {
                                 $results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]] = ["FieldValue" => $valueItemIdSet["FieldValue"], "MetadataId" => $valueItemIdSet["MetadataId"], "PropertyId" => $valueItemIdSet["PropertyId"]];
                             } else if (isset($results[$keySetId]["Metadata"][$valueItemIdSet["FieldName"]]) and empty($results[$keySetId]["Metadata"][$valueItemIdSet["FieldValue"]])) {

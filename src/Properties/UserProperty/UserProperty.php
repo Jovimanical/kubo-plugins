@@ -2221,13 +2221,19 @@ class UserProperty
 
                 $counter++;
 
+                $selectBlockQuery = "SELECT PropertyEstate FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
+                $resultBlockQuery = DBConnectionFactory::getConnection()->query($selectBlockQuery)->fetch(PDO::FETCH_ASSOC);
+
+                $resultBlockEstate = $resultBlockQuery["PropertyEstate"];
+
+
                 // chaining queries for optimized operation
                 $queries[] = "BEGIN TRANSACTION;" .
                     "DECLARE @rowcount" . $counter . " INT;" .
                     "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
                     "SET @rowcount" . $counter . " = @@ROWCOUNT " .
                     "BEGIN TRY " .
-                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES ($propertyId, $resultBlockEstate, '$keyId', '$value') END;" .
                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                     "COMMIT TRANSACTION;";
             }
@@ -2237,13 +2243,19 @@ class UserProperty
 
                 $counter++;
 
+                $selectQuery = "SELECT PropertyEstate,PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId";
+                $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetch(\PDO::FETCH_ASSOC);
+
+                $resultUnitEstate = $resultSelect["PropertyEstate"];
+                $resultUnitBlock = $resultSelect["PropertyBlock"];
+
                 // chaining queries for optimized operation
                 $queries[] = "BEGIN TRANSACTION;" .
                     "DECLARE @rowcount" . $counter . " INT;" .
                     "UPDATE Properties.UserPropertyMetadataUnits SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
                     "SET @rowcount" . $counter . " = @@ROWCOUNT " .
                     "BEGIN TRY " .
-                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                    "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES ($propertyId, $resultUnitEstate, $resultUnitBlock, '$keyId', '$value') END;" .
                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                     "COMMIT TRANSACTION;";
             }

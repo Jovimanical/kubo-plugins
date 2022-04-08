@@ -2320,7 +2320,7 @@ class UserProperty
  
                  }
  
-                 $value = json_encode($value);
+                // $value = json_encode($value);
  
              } else {
                  if ($key == "propertyFeaturePhoto") {
@@ -3984,7 +3984,7 @@ class UserProperty
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
 
-        return $response;
+        
         $response = json_decode($response, true);
 
         return $response;

@@ -1465,6 +1465,8 @@ class UserProperty
             $unitQueries = [];
             $blockQueries = [];
             $metadata = [];
+
+            return $results;
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
                 $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];

@@ -3987,9 +3987,6 @@ class UserProperty
         
         $response = json_decode($response, true);
 
-        return $response;
-        exit;
-
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
         } else {

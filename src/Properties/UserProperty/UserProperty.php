@@ -1466,12 +1466,11 @@ class UserProperty
             $blockQueries = [];
             $metadata = [];
 
-            return $results;
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
                 $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
 
-                $resultPropertyId = $result["PropertyId"];
+                $resultPropertyId = $result["PropertyEstate"];
 
                 $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
@@ -1514,9 +1513,6 @@ class UserProperty
 
                 }
             } while ($stmtParent->nextRowset());
-
-            return $parentResultSetArr;
-            return $blockResultSetArr;
 
             // connecting and building result sets
             foreach ($results as $keySetId => $valueSetId) {

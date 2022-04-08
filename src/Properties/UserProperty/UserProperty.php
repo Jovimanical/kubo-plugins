@@ -1592,13 +1592,13 @@ class UserProperty
             foreach ($results as $key => $result) {
                 $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
 
-                $resultPropertyId = $result["PropertyId"];
+                $resultPropertyId = $result["PropertyBlock"];
 
                 $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
-                $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadataUnits a INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId  WHERE a.FieldName = 'property_block' AND a.FieldValue = '$resultPropertyId' AND b.PropertyFloor = $resultPropertyFloor";
+                $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyBlock FROM Properties.UserPropertyMetadataUnits a INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId  WHERE a.PropertyBlock = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
-                $parentQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.FieldName = 'property_block' AND a.FieldValue = '$resultPropertyId' AND b.PropertyFloor = $resultPropertyFloor";
+                $parentQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
             }
 

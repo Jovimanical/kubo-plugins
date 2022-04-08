@@ -1513,6 +1513,8 @@ class UserProperty
                 }
             } while ($stmtParent->nextRowset());
 
+            return $blockResultSetArr;
+
             // connecting and building result sets
             foreach ($results as $keySetId => $valueSetId) {
 

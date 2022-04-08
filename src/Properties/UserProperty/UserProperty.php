@@ -2220,7 +2220,7 @@ class UserProperty
                 $counter++;
 
                 $selectBlockQuery = "SELECT PropertyEstate FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
-                $resultBlockQuery = DBConnectionFactory::getConnection()->query($selectBlockQuery)->fetch(PDO::FETCH_ASSOC);
+                $resultBlockQuery = DBConnectionFactory::getConnection()->query($selectBlockQuery)->fetch(\PDO::FETCH_ASSOC);
 
                 $resultBlockEstate = $resultBlockQuery["PropertyEstate"];
 

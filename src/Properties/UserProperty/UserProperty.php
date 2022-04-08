@@ -1513,6 +1513,7 @@ class UserProperty
                 }
             } while ($stmtParent->nextRowset());
 
+            return $parentResultSetArr;
             return $blockResultSetArr;
 
             // connecting and building result sets

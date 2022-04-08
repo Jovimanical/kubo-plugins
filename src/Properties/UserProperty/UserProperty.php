@@ -2272,7 +2272,7 @@ class UserProperty
      public static function editPropertyMetadataTest(int $propertyId, array $metadata = [])
      {
         
-       // \KuboPlugin\Notifications\Notification::sendLogs(31, ['name'=>'House Africa', 'email'=>'sixtus.onumajuru@houseafrica.io', 'receiver'=>'sixtus.onumajuru@houseafrica.io','subject'=>'EC2 Docker Storage Data Check','message'=>'Warning !!! Check and Ensure VM is running with ample storage.','memory'=> 500000000000000000]);
+        \KuboPlugin\Notifications\Notification::sendLogs(31, ['name'=>'House Africa', 'email'=>'sixtus.onumajuru@houseafrica.io', 'receiver'=>'sixtus.onumajuru@houseafrica.io','subject'=>'EC2 Docker Storage Data Check','message'=>'Warning !!! Check and Ensure VM is running with ample storage.','memory'=> 500000000000000000]);
  
          if ($propertyId == 0 or empty($metadata)) {
              return "Parameters not set";
@@ -2320,7 +2320,7 @@ class UserProperty
  
                  }
  
-                // $value = json_encode($value);
+                 $value = json_encode($value);
  
              } else {
                  if ($key == "propertyFeaturePhoto") {
@@ -3986,8 +3986,6 @@ class UserProperty
 
         
         $response = json_decode($response, true);
-
-        return $response;
 
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];

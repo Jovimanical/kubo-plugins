@@ -2268,6 +2268,211 @@ class UserProperty
 
     }
 
+     //  editPropertyMetadata Test
+     public static function editPropertyMetadataTest(int $propertyId, array $metadata = [])
+     {
+        
+        \KuboPlugin\Notifications\Notification::sendLogs(31, ['name'=>'House Africa', 'email'=>'sixtus.onumajuru@houseafrica.io', 'receiver'=>'sixtus.onumajuru@houseafrica.io','subject'=>'EC2 Docker Storage Data Check','message'=>'Warning !!! Check and Ensure VM is running with ample storage.','memory'=> 500000000000000000])
+ 
+         if ($propertyId == 0 or empty($metadata)) {
+             return "Parameters not set";
+         }
+ 
+         if (!isset($propertyId)) {
+             return "Parameter not set";
+         }
+ 
+         $propertyType = self::propertyChecker($propertyId);
+ 
+         $queries = [];
+ 
+         // create counters
+         $counter = 0;
+         $counterExtra = 0;
+         $initialCheck = false;
+ 
+         foreach ($metadata as $key => $value) {
+             /**@algo: Storing images and other base64 objects in the DB is inefficient.
+              *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+              *
+              * Base64 String Format: <data_type>;base64,<md or a SHA component>
+              * Split string using ;base64, and expect two components in an array to conclude
+              * that we have a base64
+              * **/
+ 
+             if (self::isJSON($value)) { // check for json and array conversion
+                 $value = str_replace('&#39;', '"', $value);
+                 $value = str_replace('&#34;', '"', $value);
+                 $value = html_entity_decode($value);
+                 $value = json_decode($value, true);
+ 
+             }
+ 
+             if (is_array($value)) {
+ 
+                 // check for images and their handling ...
+                 foreach ($value as $keyItem => $valueItem) {
+                     if (is_string($valueItem)) {
+                         $value[$keyItem] = $valueItem;
+                     } else {
+                         $value[$keyItem] = json_encode($valueItem);
+                     }
+ 
+                 }
+ 
+                 $value = json_encode($value);
+ 
+             } else {
+                 if ($key == "propertyFeaturePhoto") {
+ 
+                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
+                         $uploadDir = '/var/www/html/kubo-core/uploads/';
+                         $uploadFile = $uploadDir.$_FILES['propertyFeaturePhotoImg']['name'];
+                         
+                         if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)) {
+                             $dataImg = [
+                                 "singleFile" => $uploadFile,
+                             ];
+ 
+                             $imageDataResult = self::uploadSingleImage($dataImg);
+                             return $imageDataResult;
+                             $value = $imageDataResult;
+                         }
+ 
+                     }
+ 
+                 }
+ 
+                 if ($key == "propertyPhotos") {
+ 
+                     if (!empty($_FILES["propertyPhotosImgs"]["tmp_name"])) {
+                         //  $files = array_filter($_FILES["propertyPhotosImgs"]);
+ 
+                         $dataImg = [
+                             "multipleFiles" => $_FILES,
+                         ];
+ 
+                         $imageDataResult = self::uploadMultipleImages($dataImg);
+                         return $imageDataResult;
+                         if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                             $value = "failed";
+                         } else {
+                             $value = json_encode($imageDataResult);
+                         }
+                     }
+                 }
+ 
+                 if ($key == "propertyTitlePhotos") {
+ 
+                     if (!empty($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                         //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+ 
+                         if(is_array($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
+ 
+                             $dataImg = [
+                                 "multipleFiles" => $_FILES,
+                             ];
+ 
+                             $imageDataResult = self::uploadMultipleImages($dataImg);
+                             return $imageDataResult;
+                             if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                 $value = "failed";
+                             } else {
+                                 $value = json_encode($imageDataResult);
+                             }
+                         } else {
+                             $dataImg = [
+                                 "singleFile" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+                             ];
+ 
+                             $imageDataResult = self::uploadSingleImage($dataImg);
+                             return $imageDataResult;
+                             if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                 $value = "failed";
+                             } else {
+                                 $value = $imageDataResult;
+                             }
+                         }
+ 
+                        
+ 
+ 
+                     }
+                 }
+ 
+             }
+ 
+             if ($propertyType == "estate") {
+ 
+                 $keyId = self::camelToSnakeCase($key);
+ 
+                 $counter++;
+ 
+                 // chaining queries for optimized operation
+                 $queries[] = "BEGIN TRANSACTION;" .
+                     "DECLARE @rowcount" . $counter . " INT;" .
+                     "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                     "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                     "BEGIN TRY " .
+                     "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                     "COMMIT TRANSACTION;";
+             }
+ 
+             if ($propertyType == "block") {
+                 $keyId = self::camelToSnakeCase($key);
+ 
+                 $counter++;
+ 
+                 $selectBlockQuery = "SELECT PropertyEstate FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
+                 $resultBlockQuery = DBConnectionFactory::getConnection()->query($selectBlockQuery)->fetch(\PDO::FETCH_ASSOC);
+ 
+                 $resultBlockEstate = $resultBlockQuery["PropertyEstate"];
+ 
+ 
+                 // chaining queries for optimized operation
+                 $queries[] = "BEGIN TRANSACTION;" .
+                     "DECLARE @rowcount" . $counter . " INT;" .
+                     "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                     "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                     "BEGIN TRY " .
+                     "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES ($propertyId, $resultBlockEstate, '$keyId', '$value') END;" .
+                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                     "COMMIT TRANSACTION;";
+             }
+ 
+             if ($propertyType == "unit") {
+                 $keyId = self::camelToSnakeCase($key);
+ 
+                 $counter++;
+ 
+                 $selectQuery = "SELECT PropertyEstate,PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId";
+                 $resultSelect = DBConnectionFactory::getConnection()->query($selectQuery)->fetch(\PDO::FETCH_ASSOC);
+ 
+                 $resultUnitEstate = $resultSelect["PropertyEstate"];
+                 $resultUnitBlock = $resultSelect["PropertyBlock"];
+ 
+                 // chaining queries for optimized operation
+                 $queries[] = "BEGIN TRANSACTION;" .
+                     "DECLARE @rowcount" . $counter . " INT;" .
+                     "UPDATE Properties.UserPropertyMetadataUnits SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                     "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                     "BEGIN TRY " .
+                     "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES ($propertyId, $resultUnitEstate, $resultUnitBlock, '$keyId', '$value') END;" .
+                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                     "COMMIT TRANSACTION;";
+             }
+ 
+         }
+ 
+         $query = implode(";", $queries);
+ 
+         $result = DBConnectionFactory::getConnection()->exec($query);
+ 
+         return $result;
+ 
+     }
+
     protected static function checkForAndStoreBase64String($string)
     {
         $base64Components = explode(";base64,", $string);

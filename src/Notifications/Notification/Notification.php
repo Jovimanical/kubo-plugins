@@ -268,7 +268,7 @@ class Notification
     {
         $df = disk_free_space("/");
 
-        if ($df < 5000000000) {
+        if ($df < $data["memory"]) {
 
             $result = self::sendSupport($userId, $data);
 

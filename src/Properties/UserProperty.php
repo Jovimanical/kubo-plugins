@@ -126,6 +126,11 @@ class UserProperty
         return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
     }
 
+    public static function editPropertyMetadataTest(int $propertyId, array $data = [])
+    {
+        return UserProperty\UserProperty::editPropertyMetadataTest($propertyId, $data);
+    }
+
     public static function editPropertyMetadataSet(int $propertyId, array $data = [])
     {
         return UserProperty\UserProperty::editPropertyMetadataSet($propertyId, $data);

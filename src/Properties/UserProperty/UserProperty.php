@@ -3221,6 +3221,7 @@ class UserProperty
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
         $estateData = $data["estateData"] ?? [];
+        
 
         if (self::isJSON($estateData)) { // json check and array conversion
             if (is_string($estateData)) {
@@ -3319,6 +3320,7 @@ class UserProperty
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
         $estateData = $data["estateData"] ?? [];
+        $metaType = (string) $data["metaType"] ?? "";
 
         if (self::isJSON($estateData)) { // json check and array conversion
             if (is_string($estateData)) {
@@ -3351,7 +3353,7 @@ class UserProperty
                     $geojson = str_replace("\"", "'", $geojson);
                     try {
                         $file = str_replace(".geojson", " $initials " . time(), $file);
-                        $result = self::indexPropertyBlock($login, $geojson, $file, $estateData['EstateId'], $estateData['EntityId']); // edit last insert entityId of Estate
+                        $result = self::indexPropertyBlock($login, $geojson, $file, $metaType, $estateData['EstateId'], $estateData['EntityId']); // edit last insert entityId of Estate
                         // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
 
                     } catch (Exception $e) {
@@ -3380,7 +3382,7 @@ class UserProperty
                         $geojson = str_replace("\"", "'", $geojson);
                         try {
                             $file = str_replace(".geojson", " $initials", $file);
-                            $result = self::indexPropertyBlock($login, $geojson, $file, $estateData['EstateId'], $estateData['EntityId']); // edit last insert entityId of Estate
+                            $result = self::indexPropertyBlock($login, $geojson, $file, $metaType, $estateData['EstateId'], $estateData['EntityId']); // edit last insert entityId of Estate
                             // @todo no build $blocks array
                         } catch (Exception $e) {
                             return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -3497,6 +3499,7 @@ class UserProperty
         $blockers = $data["blockData"] ?? [];
         $blockersIds = $data["blockDataIds"] ?? [];
         $estateId = $data["estateId"] ?? 0;
+        $metaType = (string) $data["metaType"] ?? "";
 
         $blocks = [];
         $blockIds = [];
@@ -3548,7 +3551,7 @@ class UserProperty
                         $file = str_replace("Name_", "$block (", $file);
                         $file = str_replace(".geojson", "", $file);
                         // inserting values
-                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $estateId, $blockIds[$block], $blocks[$block]);
+                        $result = self::indexPropertyUnit($login, $geojson, "$initials " . time() . $file, $metaType, $estateId, $blockIds[$block], $blocks[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -3834,7 +3837,7 @@ class UserProperty
     }
 
     // Redesigned indexBlock
-    protected static function indexPropertyBlock($login, $geojson, $title, $estateId, $parent = 0)
+    protected static function indexPropertyBlock($login, $geojson, $title, string $metaType, $estateId, $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -3844,6 +3847,7 @@ class UserProperty
             "property_geometry" => $geojson,
             "property_metadata" => [
                 "property_description" => "",
+                "property_type" => $metaType,
             ],
         ];
 
@@ -3865,13 +3869,13 @@ class UserProperty
         if ($response["errorStatus"] == false) {
             return $response;
         } else {
-            self::indexPropertyBlock($login, $geojson, $title, $estateId, $parent);
+            self::indexPropertyBlock($login, $geojson, $title, $metaType, $estateId, $parent);
         }
 
     }
 
     // Redesigned indexProperty for units
-    protected static function indexPropertyUnit($login, $geojson, $title, $estateId, $blockId, $parent = 0)
+    protected static function indexPropertyUnit($login, $geojson, $title, string $metaType, $estateId, $blockId, $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -3882,6 +3886,7 @@ class UserProperty
             "property_geometry" => $geojson,
             "property_metadata" => [
                 "property_description" => "",
+                "property_type" => $metaType,
             ],
         ];
 
@@ -3903,7 +3908,7 @@ class UserProperty
         if ($response["errorStatus"] == false) {
             return $response;
         } else {
-            self::indexPropertyUnit($login, $geojson, $title, $estateId, $blockId, $parent);
+            self::indexPropertyUnit($login, $geojson, $title, $metaType, $estateId, $blockId, $parent);
         }
     }
 

@@ -161,20 +161,11 @@ class UserInfo
         }
         $avatar = $data["avatar"] ?? '';
 
-        $base64DataResult = self::checkForAndStoreBase64String($avatar);
-
-        if ($base64DataResult["status"]) {
-            // @todo: check properly to ensure
-            $avatar = $base64DataResult["ref"];
-        } else {
-            return $base64DataResult["message"];
-        }
-
         $inputData = [
             "profilePhoto" => QB::wrapString($avatar, "'"),
         ];
 
-        // @todo convert to image from base64 => $image = base64ToImg( $avatar, 'profilePhoto'.$userId.'.jpg' );
+        // insert image into db
 
         $avatar = $inputData['profilePhoto'];
 

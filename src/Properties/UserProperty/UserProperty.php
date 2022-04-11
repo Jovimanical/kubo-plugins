@@ -1460,7 +1460,7 @@ class UserProperty
 
             $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
-            $childrenMetadata = self::viewPropertyChildrenMetadataSet((int) $propertyId, (int) $floorLevel);
+            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, (int) $floorLevel);
 
             $unitQueries = [];
             $blockQueries = [];
@@ -1583,7 +1583,7 @@ class UserProperty
 
             $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
-            $childrenMetadata = self::viewPropertyChildrenMetadataSet((int) $propertyId, (int) $floorLevel);
+            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, (int) $floorLevel);
 
             $unitQueries = [];
             $blockQueries = [];
@@ -1592,9 +1592,9 @@ class UserProperty
             foreach ($results as $key => $result) {
                 $results[$key]["Entity"] = $propertyChildren[$result["LinkedEntity"]] ?? [];
 
-                $resultPropertyId = $result["PropertyBlock"];
+                $resultPropertyId = $result[0]["PropertyBlock"];
 
-                $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
+                $resultPropertyFloor = $result[0]["PropertyFloor"] ?? 0;
 
                 $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyBlock FROM Properties.UserPropertyMetadataUnits a INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId  WHERE a.PropertyBlock = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 

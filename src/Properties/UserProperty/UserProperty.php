@@ -2730,21 +2730,21 @@ class UserProperty
         }
 
         // Property type check
-        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 1)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         if (count($result) > 0) {
             return "estate";
         }
 
         // Property type check
-        $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
+        $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 2)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         if (count($result) > 0) {
             return "block";
         }
 
         // Property type check
-        $query = "SELECT PropertyId FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId";
+        $query = "SELECT PropertyId FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 3)";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         if (count($result) > 0) {
             return "unit";

@@ -1732,7 +1732,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyMetadata
-    public static function viewPropertyMetadata(int $propertyId, string $propertyType, int $floorLevel = 0)
+    public static function viewPropertyMetadata(int $propertyId, array $data, int $floorLevel = 0)
     {
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -1740,7 +1740,7 @@ class UserProperty
 
        // $propertyType = self::propertyChecker($propertyId);
 
-        if ($propertyType == "estate") {
+        if ($data["propertyType"] == "estate") {
             $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1758,7 +1758,7 @@ class UserProperty
             return $metadata;
         }
 
-        if ($propertyType == "block") {
+        if ($data["propertyType"] == "block") {
             $queryFloor = "SELECT PropertyFloor, PropertyEstate FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1800,7 +1800,7 @@ class UserProperty
             return $metadata;
         }
 
-        if ($propertyType == "unit") {
+        if ($data["propertyType"] == "unit") {
             $queryFloor = "SELECT PropertyFloor, PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId";
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1886,14 +1886,14 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildrenMetadata
-    public static function viewPropertyChildrenMetadata(int $parentId, string $propertyType, int $floorLevel = 0)
+    public static function viewPropertyChildrenMetadata(int $parentId, array $data, int $floorLevel = 0)
     {
         if (!isset($parentId)) {
             return "Parameter not set";
         }
       //  $propertyType = self::propertyChecker($parentId);
 
-        if ($propertyType == "estate") {
+        if ($data["propertyType"] == "estate") {
             // Get children data
             $query = "SELECT a.* FROM Properties.UserPropertyMetadataBlocks a
         INNER JOIN Properties.UserPropertyBlocks b ON a.PropertyId = b.PropertyId
@@ -1929,7 +1929,7 @@ class UserProperty
 
             return $metadata;
 
-        } else if ($propertyType == "block") {
+        } else if ($data["propertyType"] == "block") {
             // Get children data
             $query = "SELECT a.* FROM Properties.UserPropertyMetadataUnits a
         INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId
@@ -1965,7 +1965,7 @@ class UserProperty
 
             return $metadata;
 
-        } else if ($propertyType == "unit") {
+        } else if ($data["propertyType"] == "unit") {
 
             return "Property Unit - No Children";
 

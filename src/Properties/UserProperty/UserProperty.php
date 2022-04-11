@@ -1460,7 +1460,7 @@ class UserProperty
 
             $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
-            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, $floorData["propertyType"], (int) $floorLevel);
+            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, $floorData, (int) $floorLevel);
 
             $unitQueries = [];
             $blockQueries = [];
@@ -1583,7 +1583,7 @@ class UserProperty
 
             $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
-            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, $floorData["propertyType"], (int) $floorLevel);
+            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, $floorData, (int) $floorLevel);
 
             $unitQueries = [];
             $blockQueries = [];

@@ -899,16 +899,16 @@ class UserProperty
     }
 
     // Redesigned viewProperty
-    public static function viewProperty(int $propertyId)
+    public static function viewProperty(int $propertyId, array $data = [])
     {
 
         if (!isset($propertyId)) {
             return "Parameter not set";
         }
 
-        $propertyType = self::propertyChecker($propertyId);
+       // $propertyType = self::propertyChecker($propertyId, $data["propertyType"]);
 
-        if ($propertyType == "estate") {
+        if ($data["propertyType"] == "estate") {
             $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId = $propertyId";
             $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -928,7 +928,7 @@ class UserProperty
             return $result;
         }
 
-        if ($propertyType == "block") {
+        if ($data["propertyType"] == "block") {
             $query = "SELECT * FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
             $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -948,7 +948,7 @@ class UserProperty
             return $result;
         }
 
-        if ($propertyType == "unit") {
+        if ($data["propertyType"] == "unit") {
             $query = "SELECT * FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId";
             $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1435,9 +1435,9 @@ class UserProperty
             return "Parameter not set";
         }
 
-        $propertyType = self::propertyChecker($propertyId);
+       // $propertyType = self::propertyChecker($propertyId);
 
-        if ($propertyType == "estate") {
+        if ($floorData["propertyType"] == "estate") {
 
             $floorLevel = 0;
 
@@ -1460,7 +1460,7 @@ class UserProperty
 
             $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
-            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, (int) $floorLevel);
+            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, $floorData["propertyType"], (int) $floorLevel);
 
             $unitQueries = [];
             $blockQueries = [];
@@ -1556,7 +1556,7 @@ class UserProperty
             return $results;
         }
 
-        if ($propertyType == "block") {
+        if ($floorData["propertyType"] == "block") {
 
             $floorLevel = 0;
 
@@ -1583,7 +1583,7 @@ class UserProperty
 
             $propertyChildren = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntityChildren(["entityId" => $propertyId]);
 
-            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, (int) $floorLevel);
+            $childrenMetadata = self::viewPropertyChildrenMetadata((int) $propertyId, $floorData["propertyType"], (int) $floorLevel);
 
             $unitQueries = [];
             $blockQueries = [];
@@ -1678,7 +1678,7 @@ class UserProperty
             return $results;
         }
 
-        if ($propertyType == "unit") {
+        if ($floorData["propertyType"] == "unit") {
 
             return "No Children Data";
         }
@@ -1732,13 +1732,13 @@ class UserProperty
     }
 
     // Redesigned viewPropertyMetadata
-    public static function viewPropertyMetadata(int $propertyId, int $floorLevel = 0)
+    public static function viewPropertyMetadata(int $propertyId, string $propertyType, int $floorLevel = 0)
     {
         if (!isset($propertyId)) {
             return "Parameter not set";
         }
 
-        $propertyType = self::propertyChecker($propertyId);
+       // $propertyType = self::propertyChecker($propertyId);
 
         if ($propertyType == "estate") {
             $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
@@ -1886,12 +1886,12 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildrenMetadata
-    public static function viewPropertyChildrenMetadata(int $parentId, int $floorLevel = 0)
+    public static function viewPropertyChildrenMetadata(int $parentId, string $propertyType, int $floorLevel = 0)
     {
         if (!isset($parentId)) {
             return "Parameter not set";
         }
-        $propertyType = self::propertyChecker($parentId);
+      //  $propertyType = self::propertyChecker($parentId);
 
         if ($propertyType == "estate") {
             // Get children data
@@ -2723,32 +2723,45 @@ class UserProperty
         return $mortCount;
     }
 
-    protected static function propertyChecker($propertyId)
+    protected static function propertyChecker(int $propertyId, string $propertyType)
     {
-        if (!isset($propertyId)) {
+        if (!isset($propertyId) OR !isset($propertyType)) {
             return "Parameter not set";
         }
 
-        // Property type check
-        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 1)";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        if (count($result) > 0) {
-            return "estate";
+        if($propertyType == "estate"){
+            // Property type check
+            $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 1)";
+            $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+if (count($result) > 0) {
+    return "estate";
+}
+
+        } else if($propertyType == "block"){
+
+ // Property type check
+ $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 2)";
+ $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+ if (count($result) > 0) {
+     return "block";
+ }
+        } else if($propertyType == "unit"){
+ // Property type check
+ $query = "SELECT PropertyId FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 3)";
+ $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+ if (count($result) > 0) {
+     return "unit";
+ }
+
+        } else {
+            return "Wrong property type";
         }
 
-        // Property type check
-        $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 2)";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        if (count($result) > 0) {
-            return "block";
-        }
+        
 
-        // Property type check
-        $query = "SELECT PropertyId FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId AND LinkedEntity IN (SELECT EntityId FROM SpatialEntities.Entities WHERE EntityType = 3)";
-        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        if (count($result) > 0) {
-            return "unit";
-        }
+       
+
+       
 
         return "invalid";
     }

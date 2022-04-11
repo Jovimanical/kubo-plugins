@@ -1643,7 +1643,7 @@ class UserProperty
 
                     foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                        if ($valueItemId["PropertyBlock"] == $valueSetId["PropertyBlock"]) {
+                        if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
 
                             $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 

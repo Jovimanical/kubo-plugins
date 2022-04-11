@@ -111,9 +111,9 @@ class UserProperty
         return UserProperty\UserProperty::viewPropertyChildrenTest($propertyId, $floorLevel);
     }
 
-    public static function viewPropertyMetadata(int $propertyId, string $propertyType)
+    public static function viewPropertyMetadata(int $propertyId, array $data)
     {
-        return UserProperty\UserProperty::viewPropertyMetadata($propertyId, $propertyType);
+        return UserProperty\UserProperty::viewPropertyMetadata($propertyId, $data);
     }
 
     public static function viewPropertyMetadataSet(int $propertyId)

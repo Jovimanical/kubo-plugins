@@ -62,9 +62,9 @@ class UserProperty
         return UserProperty\UserProperty::viewPropertiesData($userId);
     }
 
-    public static function viewProperty(int $propertyId)
+    public static function viewProperty(int $propertyId, array $data)
     {
-        return UserProperty\UserProperty::viewProperty($propertyId);
+        return UserProperty\UserProperty::viewProperty($propertyId,$data);
     }
 
     public static function viewPropertyData(int $propertyId)
@@ -111,9 +111,9 @@ class UserProperty
         return UserProperty\UserProperty::viewPropertyChildrenTest($propertyId, $floorLevel);
     }
 
-    public static function viewPropertyMetadata(int $propertyId)
+    public static function viewPropertyMetadata(int $propertyId, string $propertyType)
     {
-        return UserProperty\UserProperty::viewPropertyMetadata($propertyId);
+        return UserProperty\UserProperty::viewPropertyMetadata($propertyId, $propertyType);
     }
 
     public static function viewPropertyMetadataSet(int $propertyId)

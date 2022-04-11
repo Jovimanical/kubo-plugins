@@ -2065,8 +2065,8 @@ class UserProperty
         return $result;
     }
 
-    // Redesigned editPropertyMetadata
-    public static function editPropertyMetadata(int $propertyId, array $metadata = [])
+    // Redesigned editPropertyMetadata Estate
+    public static function editPropertyMetadataEstate(int $propertyId, array $metadata = [])
     {
        
 
@@ -2078,7 +2078,7 @@ class UserProperty
             return "Parameter not set";
         }
 
-        $propertyType = self::propertyChecker($propertyId);
+       // $propertyType = self::propertyChecker($propertyId);
 
         $queries = [];
 
@@ -2198,7 +2198,7 @@ class UserProperty
 
             }
 
-            if ($propertyType == "estate") {
+            
 
                 $keyId = self::camelToSnakeCase($key);
 
@@ -2213,9 +2213,154 @@ class UserProperty
                     "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                     "COMMIT TRANSACTION;";
+            
+
+           
+
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+
+    }
+
+    // Redesigned editPropertyMetadata Block
+    public static function editPropertyMetadataBlock(int $propertyId, array $metadata = [])
+    {
+       
+
+        if ($propertyId == 0 or empty($metadata)) {
+            return "Parameters not set";
+        }
+
+        if (!isset($propertyId)) {
+            return "Parameter not set";
+        }
+
+       // $propertyType = self::propertyChecker($propertyId);
+
+        $queries = [];
+
+        // create counters
+        $counter = 0;
+        $counterExtra = 0;
+        $initialCheck = false;
+
+        foreach ($metadata as $key => $value) {
+            /**@algo: Storing images and other base64 objects in the DB is inefficient.
+             *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+             *
+             * Base64 String Format: <data_type>;base64,<md or a SHA component>
+             * Split string using ;base64, and expect two components in an array to conclude
+             * that we have a base64
+             * **/
+
+            if (self::isJSON($value)) { // check for json and array conversion
+                $value = str_replace('&#39;', '"', $value);
+                $value = str_replace('&#34;', '"', $value);
+                $value = html_entity_decode($value);
+                $value = json_decode($value, true);
+
             }
 
-            if ($propertyType == "block") {
+            if (is_array($value)) {
+
+                // check for images and their handling ...
+                foreach ($value as $keyItem => $valueItem) {
+                    if (is_string($valueItem)) {
+                        $value[$keyItem] = $valueItem;
+                    } else {
+                        $value[$keyItem] = json_encode($valueItem);
+                    }
+
+                }
+
+                $value = json_encode($value);
+
+            } else {
+                if ($key == "propertyFeaturePhoto") {
+
+                    if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
+                        $uploadDir = '/var/www/html/kubo-core/uploads/';
+                        $uploadFile = $uploadDir.$_FILES['propertyFeaturePhotoImg']['name'];
+                        
+                        if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)) {
+                            $dataImg = [
+                                "singleFile" => $uploadFile,
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            $value = $imageDataResult;
+                        }
+
+                    }
+
+                }
+
+                if ($key == "propertyPhotos") {
+
+                    if (!empty($_FILES["propertyPhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyPhotosImgs"]);
+
+                        $dataImg = [
+                            "multipleFiles" => $_FILES,
+                        ];
+
+                        $imageDataResult = self::uploadMultipleImages($dataImg);
+                        return $imageDataResult;
+                        if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                            $value = "failed";
+                        } else {
+                            $value = json_encode($imageDataResult);
+                        }
+                    }
+                }
+
+                if ($key == "propertyTitlePhotos") {
+
+                    if (!empty($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+
+                        if(is_array($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
+
+                            $dataImg = [
+                                "multipleFiles" => $_FILES,
+                            ];
+
+                            $imageDataResult = self::uploadMultipleImages($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = json_encode($imageDataResult);
+                            }
+                        } else {
+                            $dataImg = [
+                                "singleFile" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = $imageDataResult;
+                            }
+                        }
+
+                       
+
+
+                    }
+                }
+
+            }
+
+           
                 $keyId = self::camelToSnakeCase($key);
 
                 $counter++;
@@ -2235,9 +2380,151 @@ class UserProperty
                     "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES ($propertyId, $resultBlockEstate, '$keyId', '$value') END;" .
                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                     "COMMIT TRANSACTION;";
+            
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+
+    }
+
+    // Redesigned editPropertyMetadata Unit
+    public static function editPropertyMetadataUnit(int $propertyId, array $metadata = [])
+    {
+       
+
+        if ($propertyId == 0 or empty($metadata)) {
+            return "Parameters not set";
+        }
+
+        if (!isset($propertyId)) {
+            return "Parameter not set";
+        }
+
+       // $propertyType = self::propertyChecker($propertyId);
+
+        $queries = [];
+
+        // create counters
+        $counter = 0;
+        $counterExtra = 0;
+        $initialCheck = false;
+
+        foreach ($metadata as $key => $value) {
+            /**@algo: Storing images and other base64 objects in the DB is inefficient.
+             *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+             *
+             * Base64 String Format: <data_type>;base64,<md or a SHA component>
+             * Split string using ;base64, and expect two components in an array to conclude
+             * that we have a base64
+             * **/
+
+            if (self::isJSON($value)) { // check for json and array conversion
+                $value = str_replace('&#39;', '"', $value);
+                $value = str_replace('&#34;', '"', $value);
+                $value = html_entity_decode($value);
+                $value = json_decode($value, true);
+
             }
 
-            if ($propertyType == "unit") {
+            if (is_array($value)) {
+
+                // check for images and their handling ...
+                foreach ($value as $keyItem => $valueItem) {
+                    if (is_string($valueItem)) {
+                        $value[$keyItem] = $valueItem;
+                    } else {
+                        $value[$keyItem] = json_encode($valueItem);
+                    }
+
+                }
+
+                $value = json_encode($value);
+
+            } else {
+                if ($key == "propertyFeaturePhoto") {
+
+                    if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
+                        $uploadDir = '/var/www/html/kubo-core/uploads/';
+                        $uploadFile = $uploadDir.$_FILES['propertyFeaturePhotoImg']['name'];
+                        
+                        if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)) {
+                            $dataImg = [
+                                "singleFile" => $uploadFile,
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            $value = $imageDataResult;
+                        }
+
+                    }
+
+                }
+
+                if ($key == "propertyPhotos") {
+
+                    if (!empty($_FILES["propertyPhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyPhotosImgs"]);
+
+                        $dataImg = [
+                            "multipleFiles" => $_FILES,
+                        ];
+
+                        $imageDataResult = self::uploadMultipleImages($dataImg);
+                        return $imageDataResult;
+                        if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                            $value = "failed";
+                        } else {
+                            $value = json_encode($imageDataResult);
+                        }
+                    }
+                }
+
+                if ($key == "propertyTitlePhotos") {
+
+                    if (!empty($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+
+                        if(is_array($_FILES["propertyTitlePhotosImgs"]["tmp_name"])){
+
+                            $dataImg = [
+                                "multipleFiles" => $_FILES,
+                            ];
+
+                            $imageDataResult = self::uploadMultipleImages($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = json_encode($imageDataResult);
+                            }
+                        } else {
+                            $dataImg = [
+                                "singleFile" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = $imageDataResult;
+                            }
+                        }
+
+                       
+
+
+                    }
+                }
+
+            }
+
+          
                 $keyId = self::camelToSnakeCase($key);
 
                 $counter++;
@@ -2257,7 +2544,7 @@ class UserProperty
                     "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES ($propertyId, $resultUnitEstate, $resultUnitBlock, '$keyId', '$value') END;" .
                     "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
                     "COMMIT TRANSACTION;";
-            }
+            
 
         }
 

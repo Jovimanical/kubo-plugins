@@ -121,9 +121,19 @@ class UserProperty
         return UserProperty\UserProperty::viewPropertyMetadataSet($propertyId);
     }
 
-    public static function editPropertyMetadata(int $propertyId, array $data = [])
+    public static function editPropertyMetadataEstate(int $propertyId, array $data = [])
     {
-        return UserProperty\UserProperty::editPropertyMetadata($propertyId, $data);
+        return UserProperty\UserProperty::editPropertyMetadataEstate($propertyId, $data);
+    }
+
+    public static function editPropertyMetadataBlock(int $propertyId, array $data = [])
+    {
+        return UserProperty\UserProperty::editPropertyMetadataBlock($propertyId, $data);
+    }
+
+    public static function editPropertyMetadataUnit(int $propertyId, array $data = [])
+    {
+        return UserProperty\UserProperty::editPropertyMetadataUnit($propertyId, $data);
     }
 
     public static function editPropertyMetadataTest(int $propertyId, array $data = [])

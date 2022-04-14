@@ -46,4 +46,10 @@ class Util
     {
         return Utils\Util::sendNota($token,$apikey,$title,$message,$channelId,$data);
     }
+
+    
+    public static function checkAuthorization()
+    {
+        return Utils\Util::checkAuthorization();
+    }
 }

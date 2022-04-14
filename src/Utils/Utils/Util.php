@@ -132,7 +132,7 @@ class Util
 
     public static function checkAuthorization()
     {
-        $authHeader = $_SERVER['HTTP_Authorization'];
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
         $authHeaderValues = implode(",",$authHeader);
         $tokenHead = $authHeaderValues[0];
         $sessionIdHead = $authHeaderValues[1];

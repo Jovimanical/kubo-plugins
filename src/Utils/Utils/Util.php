@@ -130,5 +130,24 @@ class Util
         return rmdir($dir);
     }
 
+    public static function checkAuthorization()
+    {
+        $authHeader = $_SERVER['HTTP_Authorization'];
+        $authHeaderValues = implode(",",$authHeader);
+        $tokenHead = $authHeaderValues[0];
+        $sessionIdHead = $authHeaderValues[1];
+        $userIdHead = $authHeaderValues[2];
+        $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userId, (int)$sessionId);
+        
+        if($authHeader == $authCheck){
+            return true;
+        } else {
+            return false;
+            die("Unauthorized access or ensure your login/token has not expired !");
+        }
+
+        
+    }
+
     
 }

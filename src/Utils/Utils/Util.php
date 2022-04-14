@@ -134,7 +134,7 @@ class Util
     {
         $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
        // $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-        $authHeaders = get_headers($link,true);
+        $authHeaders = get_headers($link,1);
         $authHeader = $authHeaders["Authorization"];
         $authHeaderValues = implode(",",$authHeader);
         $tokenHead = $authHeaderValues[0];

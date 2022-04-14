@@ -1734,7 +1734,7 @@ class UserProperty
     // Redesigned viewPropertyMetadata
     public static function viewPropertyMetadata(int $propertyId, array $data, int $floorLevel = 0)
     {
-       \KuboPlugin\Utils\Util::checkAuthorization();       
+     //  \KuboPlugin\Utils\Util::checkAuthorization();       
 
         if (!isset($propertyId)) {
             return "Parameter not set";

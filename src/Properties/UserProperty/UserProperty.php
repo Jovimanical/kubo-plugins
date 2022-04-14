@@ -3393,6 +3393,9 @@ class UserProperty
                     $path = "tmp/data/";
                     $location = $path . $_FILES["geojsons"]["name"];
 
+                    try {
+
+                   
                     // moved uploaded file
                     if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
                         $zip = new \ZipArchive();
@@ -3468,6 +3471,10 @@ class UserProperty
                     } else {
                         return "File not Uploaded ! \n";
                     }
+                }
+                catch(\Exception $e){
+                    return $e->getMessage();
+                }
                 } else {
                     return "File not Zip ! \n";
                 }

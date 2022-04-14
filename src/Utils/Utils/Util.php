@@ -132,7 +132,10 @@ class Util
 
     public static function checkAuthorization()
     {
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+       // $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        $authHeaders = get_headers($link,true);
+        $authHeader = $authHeaders["Authorization"];
         $authHeaderValues = implode(",",$authHeader);
         $tokenHead = $authHeaderValues[0];
         $sessionIdHead = $authHeaderValues[1];

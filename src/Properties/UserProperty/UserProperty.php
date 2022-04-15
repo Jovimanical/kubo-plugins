@@ -1847,6 +1847,122 @@ class UserProperty
         return "Invalid ID";
     }
 
+    // Redesigned viewPropertyMetadata Testing
+    public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
+    {
+       \KuboPlugin\Utils\Util::checkAuthorization();       
+
+        if (!isset($propertyId)) {
+            return "Parameter not set";
+        }
+
+        // $propertyType = self::propertyChecker($propertyId);
+
+        if ($data["propertyType"] == "estate") {
+            $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
+            $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
+
+            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+
+            $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $propertyId";
+            $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+            $metadata = [];
+            $plotOfLand = false;
+            foreach ($result as $key => $value) {
+                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+            }
+
+            return $metadata;
+        }
+
+        if ($data["propertyType"] == "block") {
+            $queryFloor = "SELECT PropertyFloor, PropertyEstate FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
+            $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
+
+            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultEstate = $resultFloor['PropertyEstate'] ?? 0;
+
+            $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadataBlocks WHERE PropertyId = $propertyId";
+            $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+            // getting parent data
+            $parentQuery = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultEstate";
+            $parentResult = DBConnectionFactory::getConnection()->query($parentQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+            $metadata = [];
+            $plotOfLand = false;
+            foreach ($result as $key => $value) {
+                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+            }
+
+            foreach ($parentResult as $keyItem => $valueItem) {
+                if ($valueItem["FieldValue"] == "Plot of land") {
+                    $plotOfLand = true;
+                }
+            }
+
+            // compensating empty field data with parent data
+            foreach ($parentResult as $keyItem => $valueItem) {
+                if (!isset($metadata[$valueItem["FieldName"]])) {
+                    if ($valueItem["FieldName"] == "property_bedroom_count" and $plotOfLand or $valueItem["FieldName"] == "property_sittingroom_count" and $plotOfLand or $valueItem["FieldName"] == "property_kitchen_count" and $plotOfLand or $valueItem["FieldName"] == "property_bathroom_count" and $plotOfLand) {
+
+                    } else {
+                        $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                    }
+                } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
+                    // $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                }
+            }
+
+            return $metadata;
+        }
+
+        if ($data["propertyType"] == "unit") {
+            $queryFloor = "SELECT PropertyFloor, PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $propertyId";
+            $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
+
+            $resultFloorPoint = $resultFloor['PropertyFloor'] ?? 0;
+            $resultBlock = $resultFloor['PropertyBlock'] ?? 0;
+
+            $query = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadataUnits WHERE PropertyId = $propertyId";
+            $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+            // getting parent data
+            $parentQuery = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadataBlocks WHERE PropertyId = $resultBlock";
+            $parentResult = DBConnectionFactory::getConnection()->query($parentQuery)->fetchAll(\PDO::FETCH_ASSOC);
+
+            $metadata = [];
+            $plotOfLand = false;
+            foreach ($result as $key => $value) {
+                $metadata[$value["FieldName"]] = ["FieldValue" => $value["FieldValue"], "MetadataId" => $value["MetadataId"]];
+            }
+
+            foreach ($parentResult as $keyItem => $valueItem) {
+                if ($valueItem["FieldValue"] == "Plot of land") {
+                    $plotOfLand = true;
+                }
+            }
+
+            // compensating empty unit data with parent data
+            foreach ($parentResult as $keyItem => $valueItem) {
+                if (!isset($metadata[$valueItem["FieldName"]])) {
+                    if ($valueItem["FieldName"] == "property_bedroom_count" and $plotOfLand or $valueItem["FieldName"] == "property_sittingroom_count" and $plotOfLand or $valueItem["FieldName"] == "property_kitchen_count" and $plotOfLand or $valueItem["FieldName"] == "property_bathroom_count" and $plotOfLand) {
+
+                    } else {
+                        $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                    }
+                } else if (isset($metadata[$valueItem["FieldName"]]) and empty($metadata[$valueItem["FieldValue"]])) {
+                    // $metadata[$valueItem["FieldName"]] = ["FieldValue" => $valueItem["FieldValue"], "MetadataId" => $valueItem["MetadataId"]];
+                }
+            }
+
+            return $metadata;
+        }
+
+        return "Invalid ID";
+    }
+
     public static function viewPropertyChildrenMetadataSet(int $parentId, int $floorLevel = 0)
     {
         // Get children data
@@ -2065,6 +2181,159 @@ class UserProperty
         $result = DBConnectionFactory::getConnection()->exec($query);
 
         return $result;
+    }
+
+    // Redesigned editPropertyMetadata Estate
+    public static function editPropertyMetadataEstateTe(int $propertyId, array $metadata = [])
+    {
+
+        if ($propertyId == 0 or empty($metadata)) {
+            return "Parameters not set";
+        }
+
+        if (!isset($propertyId)) {
+            return "Parameter not set";
+        }
+
+        // $propertyType = self::propertyChecker($propertyId);
+
+        $queries = [];
+
+        // create counters
+        $counter = 0;
+        $counterExtra = 0;
+        $initialCheck = false;
+
+        foreach ($metadata as $key => $value) {
+            /**@algo: Storing images and other base64 objects in the DB is inefficient.
+             *  Check if $value is a base64 encoded object, export object to solution storage and store ref to this object as $key.
+             *
+             * Base64 String Format: <data_type>;base64,<md or a SHA component>
+             * Split string using ;base64, and expect two components in an array to conclude
+             * that we have a base64
+             * **/
+
+            if (self::isJSON($value)) { // check for json and array conversion
+                $value = str_replace('&#39;', '"', $value);
+                $value = str_replace('&#34;', '"', $value);
+                $value = html_entity_decode($value);
+                $value = json_decode($value, true);
+
+            }
+
+            if (is_array($value)) {
+
+                // check for images and their handling ...
+                foreach ($value as $keyItem => $valueItem) {
+                    if (is_string($valueItem)) {
+                        $value[$keyItem] = $valueItem;
+                    } else {
+                        $value[$keyItem] = json_encode($valueItem);
+                    }
+
+                }
+
+                $value = json_encode($value);
+
+            } else {
+                if ($key == "propertyFeaturePhoto") {
+
+                    if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {
+                        $uploadDir = '/var/www/html/kubo-core/uploads/';
+                        $uploadFile = $uploadDir . $_FILES['propertyFeaturePhotoImg']['name'];
+
+                        if (move_uploaded_file($_FILES["propertyFeaturePhotoImg"]["tmp_name"], $uploadFile)) {
+                            $dataImg = [
+                                "singleFile" => $uploadFile,
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            $value = $imageDataResult;
+                        }
+
+                    }
+
+                }
+
+                if ($key == "propertyPhotos") {
+
+                    if (!empty($_FILES["propertyPhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyPhotosImgs"]);
+
+                        $dataImg = [
+                            "multipleFiles" => $_FILES,
+                        ];
+
+                        $imageDataResult = self::uploadMultipleImages($dataImg);
+                        return $imageDataResult;
+                        if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                            $value = "failed";
+                        } else {
+                            $value = json_encode($imageDataResult);
+                        }
+                    }
+                }
+
+                if ($key == "propertyTitlePhotos") {
+
+                    if (!empty($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+                        //  $files = array_filter($_FILES["propertyTitlePhotosImgs"]);
+
+                        if (is_array($_FILES["propertyTitlePhotosImgs"]["tmp_name"])) {
+
+                            $dataImg = [
+                                "multipleFiles" => $_FILES,
+                            ];
+
+                            $imageDataResult = self::uploadMultipleImages($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = json_encode($imageDataResult);
+                            }
+                        } else {
+                            $dataImg = [
+                                "singleFile" => $_FILES["propertyTitlePhotosImgs"]["tmp_name"],
+                            ];
+
+                            $imageDataResult = self::uploadSingleImage($dataImg);
+                            return $imageDataResult;
+                            if ($imageDataResult == "failed") { // @todo: check properly to ensure
+                                $value = "failed";
+                            } else {
+                                $value = $imageDataResult;
+                            }
+                        }
+
+                    }
+                }
+
+            }
+
+            $keyId = self::camelToSnakeCase($key);
+
+            $counter++;
+
+            // chaining queries for optimized operation
+            $queries[] = "BEGIN TRANSACTION;" .
+                "DECLARE @rowcount" . $counter . " INT;" .
+                "UPDATE Properties.UserPropertyMetadata SET FieldValue='$value' WHERE FieldName='$keyId' AND PropertyId=$propertyId " .
+                "SET @rowcount" . $counter . " = @@ROWCOUNT " .
+                "BEGIN TRY " .
+                "IF @rowcount" . $counter . " = 0 BEGIN INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES ($propertyId, '$keyId', '$value') END;" .
+                "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
+                "COMMIT TRANSACTION;";
+
+        }
+
+        $query = implode(";", $queries);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+
     }
 
     // Redesigned editPropertyMetadata Estate

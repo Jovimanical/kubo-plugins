@@ -121,6 +121,16 @@ class UserProperty
         return UserProperty\UserProperty::viewPropertyMetadataSet($propertyId);
     }
 
+    public static function viewPropertyMetadataTester(int $propertyId, array $data)
+    {
+        return UserProperty\UserProperty::viewPropertyMetadataTester($propertyId, $data);
+    }
+
+    public static function editPropertyMetadataEstateTester(int $propertyId, array $data = [])
+    {
+        return UserProperty\UserProperty::editPropertyMetadataEstateTester($propertyId, $data);
+    }
+
     public static function editPropertyMetadataEstate(int $propertyId, array $data = [])
     {
         return UserProperty\UserProperty::editPropertyMetadataEstate($propertyId, $data);

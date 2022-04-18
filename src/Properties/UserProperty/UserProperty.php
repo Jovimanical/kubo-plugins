@@ -2183,8 +2183,8 @@ class UserProperty
         return $result;
     }
 
-    // Redesigned editPropertyMetadata Estate
-    public static function editPropertyMetadataEstateTe(int $propertyId, array $metadata = [])
+    // Redesigned editPropertyMetadata Estate Tester
+    public static function editPropertyMetadataEstateTester(int $propertyId, array $metadata = [])
     {
 
         if ($propertyId == 0 or empty($metadata)) {

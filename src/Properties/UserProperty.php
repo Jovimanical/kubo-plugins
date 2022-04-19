@@ -256,9 +256,9 @@ class UserProperty
         return UserProperty\UserProperty::getEstatePropertyAvailableData($propertyId);
     }
 
-    public static function updateDbEstate()
+    public static function updateDbEstate($resourceId)
     {
-        return UserProperty\UserProperty::updateDbEstate();
+        return UserProperty\UserProperty::updateDbEstate($resourceId);
     }
 
 }

@@ -4611,7 +4611,7 @@ class UserProperty
             foreach($resultEntity as $keyId => $valueId){
                 if($value["LinkedEntity"] == $valueId["EntityId"]){
                     $entityGeometry = $valueId["EntityGeometry"];
-                    $linkedEntity = $value["LinkendEntity"];
+                    $linkedEntity = $value["LinkedEntity"];
                     $queryUpdate[] = "UPDATE Properties.UserProperty SET EntityGeometry = '$entityGeometry' WHERE LinkedEntity = $linkedEntity";
                 }
 

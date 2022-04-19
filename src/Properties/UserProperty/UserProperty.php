@@ -4606,7 +4606,7 @@ class UserProperty
          $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityParent IS NULL";
          $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetch(\PDO::FETCH_ASSOC);
 
-         return $queryEntity;
+         return $resultEntity;
 
          foreach($resultProperty as $key => $value){
             foreach($resultEntity as $keyId => $valueId){

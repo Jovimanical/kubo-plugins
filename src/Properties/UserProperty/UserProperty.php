@@ -4606,19 +4606,23 @@ class UserProperty
          $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityParent IS NULL";
          $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetch(\PDO::FETCH_ASSOC);
 
-         return $resultEntity;
-
+         $queryUpdate = [];
          foreach($resultProperty as $key => $value){
             foreach($resultEntity as $keyId => $valueId){
-                if($value == $valueId){
-                    $queryUpdate = "UPDATE Properties.UserProperty SET EntityGeometry = ";
-
+                if($value["LinkedEntity"] == $valueId["EntityId"]){
+                    $queryUpdate[] = "UPDATE Properties.UserProperty SET EntityGeometry = ".$valueId["EntityGeometry"];
                 }
 
             }
-                    
+
          }
-         
+
+         $query = implode(";",$queryUpdate);
+
+         $result = DBConnectionFactory::getConnection()->exec($query);
+
+         return $result;
+
 
     }
 

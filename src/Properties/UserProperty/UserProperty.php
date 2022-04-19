@@ -4535,9 +4535,10 @@ class UserProperty
         // $response = json_decode($outputRes, true);
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-
+        return $response;
         $response = json_decode($response, true);
 
+        
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
         } else {
@@ -4591,6 +4592,37 @@ class UserProperty
         } else {
             return "failed";
         }
+
+    }
+
+    public static function updateDbEstate(){
+       
+        // get property estate data
+         $queryProperty = "SELECT * FROM Properties.UserProperty";
+         $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetch(\PDO::FETCH_ASSOC);
+
+         $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityParent IS NULL";
+         $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetch(\PDO::FETCH_ASSOC);
+         
+         foreach($resultProperty as $key => $value){
+            foreach($resultEntity as $keyId => $valueId){
+                if($value == $valueId){
+                    $queryUpdate = "UPDATE Properties.UserProperty SET EntityGeometry = ";
+
+                }
+
+            }
+                    
+         }
+         
+
+    }
+
+    public static function updateDbBlock(){
+
+    }
+
+    public static function updateDbUnit(){
 
     }
 

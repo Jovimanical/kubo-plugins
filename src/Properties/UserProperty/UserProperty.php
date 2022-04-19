@@ -4597,7 +4597,7 @@ class UserProperty
 
     }
 
-    public static function updateDbEstate(){
+    public static function updateDbEstate(int $resourceId){
 
         // get property estate data
          $queryProperty = "SELECT * FROM Properties.UserProperty";

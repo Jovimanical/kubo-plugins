@@ -2249,6 +2249,7 @@ class UserProperty
 
                             $imageDataResult = self::uploadSingleImage($dataImg);
                             return $imageDataResult;
+                            die();
                             $value = $imageDataResult;
                         }
 
@@ -4597,14 +4598,16 @@ class UserProperty
     }
 
     public static function updateDbEstate(){
-       
+
         // get property estate data
          $queryProperty = "SELECT * FROM Properties.UserProperty";
          $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetch(\PDO::FETCH_ASSOC);
 
          $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityParent IS NULL";
          $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetch(\PDO::FETCH_ASSOC);
-         
+
+         return $queryEntity;
+
          foreach($resultProperty as $key => $value){
             foreach($resultEntity as $keyId => $valueId){
                 if($value == $valueId){

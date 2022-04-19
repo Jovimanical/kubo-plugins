@@ -64,7 +64,7 @@ class UserProperty
 
     public static function viewProperty(int $propertyId, array $data)
     {
-        return UserProperty\UserProperty::viewProperty($propertyId,$data);
+        return UserProperty\UserProperty::viewProperty($propertyId, $data);
     }
 
     public static function viewPropertyData(int $propertyId)
@@ -226,7 +226,6 @@ class UserProperty
         return UserProperty\UserProperty::viewMapDataUploadStatus($userId, $data);
     }
 
-
     public static function deleteUploadData(int $userId, array $data)
     {
         return UserProperty\UserProperty::deleteUploadData($userId, $data);
@@ -255,6 +254,11 @@ class UserProperty
     public static function getEstatePropertyAvailableData(int $propertyId)
     {
         return UserProperty\UserProperty::getEstatePropertyAvailableData($propertyId);
+    }
+
+    public static function updateDbEstate()
+    {
+        return UserProperty\UserProperty::updateDbEstate();
     }
 
 }

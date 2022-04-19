@@ -4536,6 +4536,7 @@ class UserProperty
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
         return $response;
+        exit;
         $response = json_decode($response, true);
 
         

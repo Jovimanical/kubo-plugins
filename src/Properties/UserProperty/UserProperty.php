@@ -4600,12 +4600,13 @@ class UserProperty
     public static function updateDbEstate(int $resourceId){
 
         // get property estate data
-         $queryProperty = "SELECT * FROM Properties.UserProperty";
-         $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetch(\PDO::FETCH_ASSOC);
+         $queryProperty = "SELECT * FROM Properties.UserProperty WHERE PropertyId IS NOT NULL";
+         $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetchAll(\PDO::FETCH_ASSOC);
 
          $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityParent IS NULL";
-         $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetch(\PDO::FETCH_ASSOC);
+         $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetchAll(\PDO::FETCH_ASSOC);
 
+         return $resultEntity;
          $queryUpdate = [];
          foreach($resultProperty as $key => $value){
             foreach($resultEntity as $keyId => $valueId){

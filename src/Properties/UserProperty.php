@@ -261,4 +261,14 @@ class UserProperty
         return UserProperty\UserProperty::updateDbEstate($resourceId);
     }
 
+    public static function updateDbBlock($resourceId)
+    {
+        return UserProperty\UserProperty::updateDbBlock($resourceId);
+    }
+
+    public static function updateDbUnit($resourceId)
+    {
+        return UserProperty\UserProperty::updateDbUnit($resourceId);
+    }
+
 }

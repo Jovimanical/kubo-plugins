@@ -4629,10 +4629,61 @@ class UserProperty
     }
 
     public static function updateDbBlock(){
+        // get property estate data
+        $queryProperty = "SELECT * FROM Properties.UserPropertyBlocks";
+        $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityType = 2";
+        $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryUpdate = [];
+        foreach($resultProperty as $key => $value){
+           foreach($resultEntity as $keyId => $valueId){
+               if($value["LinkedEntity"] == $valueId["EntityId"]){
+                   $entityGeometry = $valueId["EntityGeometry"];
+                   $linkedEntity = $value["LinkedEntity"];
+                   $queryUpdate[] = "UPDATE Properties.UserPropertyBlocks SET EntityGeometry = '$entityGeometry' WHERE LinkedEntity = $linkedEntity";
+               }
+
+           }
+
+        }
+
+        $query = implode(";",$queryUpdate);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+
 
     }
 
     public static function updateDbUnit(){
+        // get property estate data
+        $queryProperty = "SELECT * FROM Properties.UserPropertyUnits";
+        $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityType = 3";
+        $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryUpdate = [];
+        foreach($resultProperty as $key => $value){
+           foreach($resultEntity as $keyId => $valueId){
+               if($value["LinkedEntity"] == $valueId["EntityId"]){
+                   $entityGeometry = $valueId["EntityGeometry"];
+                   $linkedEntity = $value["LinkedEntity"];
+                   $queryUpdate[] = "UPDATE Properties.UserPropertyUnits SET EntityGeometry = '$entityGeometry' WHERE LinkedEntity = $linkedEntity";
+               }
+
+           }
+
+        }
+
+        $query = implode(";",$queryUpdate);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
 
     }
 

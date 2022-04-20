@@ -4621,8 +4621,6 @@ class UserProperty
 
          $query = implode(";",$queryUpdate);
 
-         return $query;
-
          $result = DBConnectionFactory::getConnection()->exec($query);
 
          return $result;

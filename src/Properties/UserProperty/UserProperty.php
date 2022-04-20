@@ -2248,8 +2248,9 @@ class UserProperty
                             ];
 
                             $imageDataResult = self::uploadSingleImage($dataImg);
+
                             return $imageDataResult;
-                            die();
+                            
                             $value = $imageDataResult;
                         }
 
@@ -2617,6 +2618,13 @@ class UserProperty
                     }
                 }
 
+                if ($key == "propertyDisplayTitle") {
+                    $queryUpdate = "UPDATE Properties.UserPropertyUnits SET PropertyTitle = '$value' WHERE PropertyId = $propertyId";
+                    $queryResult = DBConnection::getConnection()->exec($queryUpdate);
+                    $key = "propertyName";
+                
+                }
+
             }
 
             $keyId = self::camelToSnakeCase($key);
@@ -2773,6 +2781,13 @@ class UserProperty
                         }
 
                     }
+                }
+
+                if ($key == "propertyDisplayTitle") {
+                    $queryUpdate = "UPDATE Properties.UserPropertyUnits SET PropertyTitle = '$value' WHERE PropertyId = $propertyId";
+                    $queryResult = DBConnection::getConnection()->exec($queryUpdate);
+                    $key = "propertyName";
+                
                 }
 
             }
@@ -4536,8 +4551,9 @@ class UserProperty
         // $response = json_decode($outputRes, true);
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
+       
         return $response;
-        exit;
+
         $response = json_decode($response, true);
 
         

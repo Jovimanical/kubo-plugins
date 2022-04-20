@@ -1850,7 +1850,7 @@ class UserProperty
     // Redesigned viewPropertyMetadata Testing
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
-       \KuboPlugin\Utils\Util::checkAuthorization();       
+       \KuboPlugin\Utils\Util::checkAuthorization();
 
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -2183,8 +2183,8 @@ class UserProperty
         return $result;
     }
 
-    // Redesigned editPropertyMetadata Estate
-    public static function editPropertyMetadataEstateTe(int $propertyId, array $metadata = [])
+    // Redesigned editPropertyMetadata Estate Tester
+    public static function editPropertyMetadataEstateTester(int $propertyId, array $metadata = [])
     {
 
         if ($propertyId == 0 or empty($metadata)) {
@@ -2248,7 +2248,9 @@ class UserProperty
                             ];
 
                             $imageDataResult = self::uploadSingleImage($dataImg);
+
                             return $imageDataResult;
+                            
                             $value = $imageDataResult;
                         }
 
@@ -2616,6 +2618,13 @@ class UserProperty
                     }
                 }
 
+                if ($key == "propertyDisplayTitle") {
+                    $queryUpdate = "UPDATE Properties.UserPropertyUnits SET PropertyTitle = '$value' WHERE PropertyId = $propertyId";
+                    $queryResult = DBConnection::getConnection()->exec($queryUpdate);
+                    $key = "propertyName";
+                
+                }
+
             }
 
             $keyId = self::camelToSnakeCase($key);
@@ -2772,6 +2781,13 @@ class UserProperty
                         }
 
                     }
+                }
+
+                if ($key == "propertyDisplayTitle") {
+                    $queryUpdate = "UPDATE Properties.UserPropertyUnits SET PropertyTitle = '$value' WHERE PropertyId = $propertyId";
+                    $queryResult = DBConnection::getConnection()->exec($queryUpdate);
+                    $key = "propertyName";
+                
                 }
 
             }
@@ -4535,9 +4551,12 @@ class UserProperty
         // $response = json_decode($outputRes, true);
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
+       
+        return $response;
 
         $response = json_decode($response, true);
 
+        
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
         } else {
@@ -4591,6 +4610,96 @@ class UserProperty
         } else {
             return "failed";
         }
+
+    }
+
+    public static function updateDbEstate(int $resourceId){
+
+        // get property estate data
+         $queryProperty = "SELECT * FROM Properties.UserProperty WHERE PropertyId IS NOT NULL";
+         $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetchAll(\PDO::FETCH_ASSOC);
+
+         $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityParent IS NULL";
+         $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetchAll(\PDO::FETCH_ASSOC);
+
+         $queryUpdate = [];
+         foreach($resultProperty as $key => $value){
+            foreach($resultEntity as $keyId => $valueId){
+                if($value["LinkedEntity"] == $valueId["EntityId"]){
+                    $entityGeometry = $valueId["EntityGeometry"];
+                    $linkedEntity = $value["LinkedEntity"];
+                    $queryUpdate[] = "UPDATE Properties.UserProperty SET EntityGeometry = '$entityGeometry' WHERE LinkedEntity = $linkedEntity";
+                }
+
+            }
+
+         }
+
+         $query = implode(";",$queryUpdate);
+
+         $result = DBConnectionFactory::getConnection()->exec($query);
+
+         return $result;
+
+
+    }
+
+    public static function updateDbBlock(){
+        // get property estate data
+        $queryProperty = "SELECT * FROM Properties.UserPropertyBlocks";
+        $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityType = 2";
+        $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryUpdate = [];
+        foreach($resultProperty as $key => $value){
+           foreach($resultEntity as $keyId => $valueId){
+               if($value["LinkedEntity"] == $valueId["EntityId"]){
+                   $entityGeometry = $valueId["EntityGeometry"];
+                   $linkedEntity = $value["LinkedEntity"];
+                   $queryUpdate[] = "UPDATE Properties.UserPropertyBlocks SET EntityGeometry = '$entityGeometry' WHERE LinkedEntity = $linkedEntity";
+               }
+
+           }
+
+        }
+
+        $query = implode(";",$queryUpdate);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
+
+
+    }
+
+    public static function updateDbUnit(){
+        // get property estate data
+        $queryProperty = "SELECT * FROM Properties.UserPropertyUnits";
+        $resultProperty = DBConnectionFactory::getConnection()->query($queryProperty)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryEntity = "SELECT * FROM SpatialEntities.Entities WHERE EntityType = 3";
+        $resultEntity = DBConnectionFactory::getConnection()->query($queryEntity)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $queryUpdate = [];
+        foreach($resultProperty as $key => $value){
+           foreach($resultEntity as $keyId => $valueId){
+               if($value["LinkedEntity"] == $valueId["EntityId"]){
+                   $entityGeometry = $valueId["EntityGeometry"];
+                   $linkedEntity = $value["LinkedEntity"];
+                   $queryUpdate[] = "UPDATE Properties.UserPropertyUnits SET EntityGeometry = '$entityGeometry' WHERE LinkedEntity = $linkedEntity";
+               }
+
+           }
+
+        }
+
+        $query = implode(";",$queryUpdate);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        return $result;
 
     }
 

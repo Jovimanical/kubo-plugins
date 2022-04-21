@@ -133,7 +133,7 @@ class Util
     public static function checkAuthorization()
     {
         // Get the header
-        global $app;
+        $app = new \Slim\Slim();
         $author = [];
         $authy = $app->request->headers->get('AUTHORIZATION');
         $auther = $app->request->headers;

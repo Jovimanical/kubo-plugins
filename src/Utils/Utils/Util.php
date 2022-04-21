@@ -138,7 +138,9 @@ class Util
         $authHeaderValues = explode(",",$authHeader);
         $tokenHead = $authHeaderValues[0];
         $sessionIdHead = $authHeaderValues[1];
-        $userIdHead = $authHeaderValues[2];       
+        $userIdHead = $authHeaderValues[2];
+        
+        return $authHeaderValues;
     
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead, (int)$sessionIdHead);
         

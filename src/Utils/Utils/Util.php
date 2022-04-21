@@ -132,6 +132,7 @@ class Util
 
     public static function checkAuthorization()
     {
+        return $_SERVER;
         // Get the header
         $author = [];
         $authy = $request->getHeader('Authorization');
@@ -149,7 +150,7 @@ class Util
         $author['first'] = $authy;
         $author['second'] = $auther;
 
-        return $_SERVER;
+       
     
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead, (int)$sessionIdHead);
         

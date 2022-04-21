@@ -1850,7 +1850,9 @@ class UserProperty
     // Redesigned viewPropertyMetadata Testing
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
-       \KuboPlugin\Utils\Util::checkAuthorization();
+       $responser = \KuboPlugin\Utils\Util::checkAuthorization();
+
+       return $responser;
 
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -4552,7 +4554,6 @@ class UserProperty
 
         $response = json_decode($response, true);
 
-        
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
         } else {

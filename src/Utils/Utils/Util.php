@@ -12,6 +12,8 @@
 
 namespace KuboPlugin\Utils\Utils;
 
+require "vendor/autoload.php";
+
 /**
  * class KuboPlugin\Utils\Utils
  *

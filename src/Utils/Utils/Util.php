@@ -132,8 +132,13 @@ class Util
 
     public static function checkAuthorization()
     {
+        // Get the ACCEPT_CHARSET header
+        $author = [];
+        $authy = $app->request->headers->get('AUTHORIZATION');
+        $auther = $app->request->headers;
+
         $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-       // $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        // $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
         $authHeaders = get_headers($link,1);
         $authHeader = $authHeaders["Authorization"];
         $authHeaderValues = implode(",",$authHeader);
@@ -141,7 +146,10 @@ class Util
         $sessionIdHead = $authHeaderValues[1];
         $userIdHead = $authHeaderValues[2];
 
-        return $authHeader;
+        $author['first'] = $authy;
+        $author['second'] = $auther;
+
+        return $author;
     
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead, (int)$sessionIdHead);
         

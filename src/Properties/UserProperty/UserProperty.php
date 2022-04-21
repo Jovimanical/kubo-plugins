@@ -16,8 +16,6 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
 
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\RequestInterface as Requester;
 
 /**
  * class KuboPlugin\Properties\UserProperty
@@ -1854,8 +1852,7 @@ class UserProperty
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
         
-        $request = new Requester();
-       $responser = \KuboPlugin\Utils\Util::checkAuthorization($request);
+       $responser = \KuboPlugin\Utils\Util::checkAuthorization();
 
        return $responser;
 

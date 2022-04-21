@@ -132,7 +132,8 @@ class Util
 
     public static function checkAuthorization()
     {
-        // Get the ACCEPT_CHARSET header
+        // Get the header
+        global $app;
         $author = [];
         $authy = $app->request->headers->get('AUTHORIZATION');
         $auther = $app->request->headers;

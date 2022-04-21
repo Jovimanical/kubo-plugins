@@ -130,10 +130,9 @@ class Util
         return rmdir($dir);
     }
 
-    public static function checkAuthorization()
+    public static function checkAuthorization($request)
     {
         // Get the header
-        global $request;
         $author = [];
         $authy = $request->getHeader('Authorization');
         $auther = $request->getHeaders();

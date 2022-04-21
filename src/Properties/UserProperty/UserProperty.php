@@ -1853,8 +1853,8 @@ class UserProperty
     // Redesigned viewPropertyMetadata Testing
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
-        $request = new Request();
-        $requester = new Requester();
+        
+        $request = new Requester();
        $responser = \KuboPlugin\Utils\Util::checkAuthorization($request);
 
        return $responser;

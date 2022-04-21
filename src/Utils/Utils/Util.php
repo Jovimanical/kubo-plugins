@@ -12,6 +12,8 @@
 
 namespace KuboPlugin\Utils\Utils;
 
+require "vendor/autoload.php";
+
 /**
  * class KuboPlugin\Utils\Utils
  *
@@ -133,7 +135,7 @@ class Util
     public static function checkAuthorization()
     {
         // Get the header
-        $app = new \Slim\Slim();
+        $app = new \Slim\App();
         $author = [];
         $authy = $app->request->headers->get('AUTHORIZATION');
         $auther = $app->request->headers;

@@ -140,9 +140,15 @@ class Util
         $sessionIdHead = $authHeaderValues[1];
 
         $userIdHead = $authHeaderValues[2];
+
+        $res = [];
+
+        $res['first'] = $authHeader;
+        $res['second'] = $authHeaderValues;
+
         
         
-        return $authHeaderValues;
+        return $res;
 
     
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead, (int)$sessionIdHead);

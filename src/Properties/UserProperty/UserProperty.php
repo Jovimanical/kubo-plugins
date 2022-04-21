@@ -16,6 +16,7 @@ use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
 use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
 use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
 
+
 /**
  * class KuboPlugin\Properties\UserProperty
  *
@@ -1850,7 +1851,8 @@ class UserProperty
     // Redesigned viewPropertyMetadata Testing
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
-       \KuboPlugin\Utils\Util::checkAuthorization();
+        
+        \KuboPlugin\Utils\Util::checkAuthorization();
 
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -2248,8 +2250,6 @@ class UserProperty
                             ];
 
                             $imageDataResult = self::uploadSingleImage($dataImg);
-
-                            return $imageDataResult;
                             
                             $value = $imageDataResult;
                         }
@@ -2268,7 +2268,7 @@ class UserProperty
                         ];
 
                         $imageDataResult = self::uploadMultipleImages($dataImg);
-                        return $imageDataResult;
+                       
                         if ($imageDataResult == "failed") { // @todo: check properly to ensure
                             $value = "failed";
                         } else {
@@ -2301,7 +2301,7 @@ class UserProperty
                             ];
 
                             $imageDataResult = self::uploadSingleImage($dataImg);
-                            return $imageDataResult;
+                            
                             if ($imageDataResult == "failed") { // @todo: check properly to ensure
                                 $value = "failed";
                             } else {
@@ -4551,12 +4551,9 @@ class UserProperty
         // $response = json_decode($outputRes, true);
 
         $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-       
-        return $response;
 
         $response = json_decode($response, true);
 
-        
         if ($response[0]["status"] == "success") {
             return $response[0]['filename'];
         } else {

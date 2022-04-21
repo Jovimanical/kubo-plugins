@@ -130,7 +130,7 @@ class Util
         return rmdir($dir);
     }
 
-    public static function checkAuthorization($request)
+    public static function checkAuthorization()
     {
         // Get the header
         $author = [];
@@ -149,7 +149,7 @@ class Util
         $author['first'] = $authy;
         $author['second'] = $auther;
 
-        return $author;
+        return $_SERVER;
     
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead, (int)$sessionIdHead);
         

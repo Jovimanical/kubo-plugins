@@ -137,12 +137,11 @@ class Util
         $authHeader = $_SERVER['HTTP_AUTHORIZATION_TOKEN'];
         $authHeaderValues = explode(",",$authHeader);
         $tokenHead = $authHeaderValues[0];
-        $sessionIdHead = $authHeaderValues[1];
+        $sessionIdHead = (int)$authHeaderValues[1];
 
         $userIdHead = (int)$authHeaderValues[2];
 
-        return $userIdHead;
-        $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession((int)$userIdHead, (int)$sessionIdHead);
+        $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead,$sessionIdHead);
 
         if($authHeader == $authCheck){
             return true;

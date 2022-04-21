@@ -133,6 +133,7 @@ class Util
     public static function checkAuthorization()
     {
         return $_SERVER;
+        
         // Get the header
         $author = [];
         $authy = $request->getHeader('Authorization');

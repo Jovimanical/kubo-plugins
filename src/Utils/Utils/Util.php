@@ -135,7 +135,7 @@ class Util
 
        // Get Authorization-Token header info
         $authHeader = $_SERVER['HTTP_AUTHORIZATION_TOKEN'];
-        $authHeaderValues = implode(",",$authHeader);
+        $authHeaderValues = explode(",",$authHeader);
         $tokenHead = $authHeaderValues[0];
         $sessionIdHead = $authHeaderValues[1];
         $userIdHead = $authHeaderValues[2];       

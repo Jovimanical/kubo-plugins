@@ -143,6 +143,10 @@ class Util
 
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead,$sessionIdHead);
 
+        $reso = [];
+        $reso['first'] = $authCheck;
+        $reso['second'] = $authHeader;
+        return $reso;
         if($authHeader == $authCheck){
             return true;
         } else {

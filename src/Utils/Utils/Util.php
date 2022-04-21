@@ -147,7 +147,7 @@ class Util
             return true;
         } else {
             return false;
-            die("Unauthorized access or ensure your login/token has not expired !");
+           // die("Unauthorized access or ensure your login/token has not expired !");
         }
 
         

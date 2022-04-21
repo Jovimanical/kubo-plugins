@@ -1852,7 +1852,9 @@ class UserProperty
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
         
-        \KuboPlugin\Utils\Util::checkAuthorization();
+        $res = \KuboPlugin\Utils\Util::checkAuthorization();
+
+        return $res;
 
         if (!isset($propertyId)) {
             return "Parameter not set";

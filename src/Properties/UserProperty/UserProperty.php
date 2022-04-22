@@ -479,6 +479,9 @@ class UserProperty
         } else {
             // inserting new property data
             $result = DBQueryFactory::insert("[Properties].[UserPropertyBlocks]", $inputData, false);
+            // updating former block property data
+            $queryUpdateOld = "UPDATE Properties.UserPropertyBlocks SET PropertyFloorCount = ".$inputData['PropertyFloorCount']." WHERE PropertyFloor = $floorLevel - 1 AND LinkedEntity = $entityId";
+            $resultUpdateOld = DBConnectionFactory::getConnection()->exec($queryUpdateOld);
 
             $propId = $result["lastInsertId"];
         }

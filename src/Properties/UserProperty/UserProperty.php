@@ -1001,7 +1001,7 @@ class UserProperty
             // getting particular data
             if (count($result) > 0) {
                 $result["Entity"] = $result["EntityGeometry"];
-                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
+                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"],["propertyType"=>"estate"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
 
@@ -1021,7 +1021,7 @@ class UserProperty
             // getting particular data
             if (count($result) > 0) {
                 $result["Entity"] = $result["EntityGeometry"];
-                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
+                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"],["propertyType"=>"block"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
 
@@ -1041,7 +1041,7 @@ class UserProperty
             // getting particular data
             if (count($result) > 0) {
                 $result["Entity"] = $result["EntityGeometry"];
-                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
+                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"],["propertyType"=>"unit"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
 
@@ -1298,7 +1298,7 @@ class UserProperty
         // getting property data if exist
         if (count($result) > 0) {
             $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
-            $result["Metadata"] = self::viewPropertyMetadataSet((int) $result["PropertyId"]);
+            $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"],["propertyType"=>"estate"]);
         }
 
         return $result;
@@ -1316,7 +1316,7 @@ class UserProperty
          // getting property data if exist
          if (count($result) > 0) {
              $result["Entity"] = $result["EntityGeometry"];
-             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
+             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"],["propertyType"=>"estate"]);
          }
  
          return $result;

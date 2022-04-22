@@ -1851,16 +1851,12 @@ class UserProperty
     // Redesigned viewPropertyMetadata Testing
     public static function viewPropertyMetadataTester(int $propertyId, array $data, int $floorLevel = 0)
     {
-        
-        $res = \KuboPlugin\Utils\Util::checkAuthorization();
-
-        return $res;
+        \KuboPlugin\Utils\Util::checkAuthorization();
 
         if (!isset($propertyId)) {
             return "Parameter not set";
         }
 
-        // $propertyType = self::propertyChecker($propertyId);
 
         if ($data["propertyType"] == "estate") {
             $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";

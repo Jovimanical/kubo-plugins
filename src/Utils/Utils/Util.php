@@ -141,6 +141,12 @@ class Util
 
         $userIdHead = (int)$authHeaderValues[2];
 
+        if(isset($_SESSION['userId']) && $_SESSION['userId'] == $userIdHead){
+            
+        } else {
+            die("Unauthorized access or ensure your login/token has not expired !");
+        }
+
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead,$sessionIdHead);
 
         if($tokenHead == $authCheck['token']){

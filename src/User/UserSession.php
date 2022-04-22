@@ -49,6 +49,8 @@ class UserSession {
 
             UserSession\Session::activate((int)$id, ["sessionId"=>$result["lastInsertId"], "accountType"=>$accountType]);
 
+            $_SESSION['userId'] = $id;
+
             return ["status"=>true, "userId"=>$id, "sessionId"=>$result["lastInsertId"], "sessionData"=>$sessionData];
         }
 
@@ -59,6 +61,8 @@ class UserSession {
     	$sessionId = $data["session"];
 
     	$result = UserSession\Session::deactivate($userId, (int)$sessionId);
+
+        $_SESSION['userId'] = null;
 
     	return $result;
     }

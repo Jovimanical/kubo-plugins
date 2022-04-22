@@ -27,68 +27,6 @@ use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
  */
 class UserProperty
 {
-    public static function newProperty(array $data)
-    {
-        // collecting parameters
-        $user = $data["user"];
-        $metadata = $data["property_metadata"] ?? [];
-        $title = $data["property_title"];
-        $geometry = $data["property_geometry"] ?? null;
-        $parent = $data["property_parent"] ?? null;
-        $type = $data["property_type"];
-
-        if (self::isJSON($metadata)) { // checking for json data and converting to array
-            if (is_string($metadata)) {
-                $metadata = str_replace('&#39;', '"', $metadata);
-                $metadata = str_replace('&#34;', '"', $metadata);
-                $metadata = html_entity_decode($metadata);
-                $metadata = json_decode($metadata, true);
-            }
-
-        }
-
-        // return $metadata;
-
-        //STEP 1: Index Spatial Entity
-        $entity = [
-            "entityName" => $title,
-            "entityType" => $type,
-            "entityParentId" => $parent,
-            "entityGeometry" => $geometry,
-        ];
-
-        // Getting entity data
-        $indexEntityResult = \KuboPlugin\SpatialEntity\Entity\Entity::newEntity($entity);
-        $entityId = $indexEntityResult["lastInsertId"];
-
-        //STEP 2: Index User Property
-        $inputData = [
-            "UserId" => $user,
-            "LinkedEntity" => $entityId,
-            "PropertyTitle" => QB::wrapString($title, "'"),
-        ];
-        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
-
-        $propertyId = $result["lastInsertId"];
-
-        //STEP 3: Index Metadata
-        $values = [];
-        foreach ($metadata as $key => $value) {
-            if (is_array($values)) {
-                $value = json_encode($value);
-            }
-            $values[] = "($propertyId, '$key', '$value')";
-        }
-
-        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
-
-        $result = DBConnectionFactory::getConnection()->exec($query);
-
-        $resultData['EntityId'] = $entityId;
-        $resultData['result'] = $result;
-
-        return $resultData;
-    }
 
     // Redesigned newProperty 1
     public static function newPropertyEstate(array $data)
@@ -154,6 +92,61 @@ class UserProperty
 
         $resultData['EstateId'] = $propertyId;
         $resultData['EntityId'] = $entityId;
+        $resultData['result'] = $result;
+
+        return $resultData;
+    }
+
+    // Redesigned newProperty 1
+    public static function newPropertyEstateTest(array $data)
+    {
+        // collecting parameters
+        $user = $data["user"];
+        $metadata = $data["property_metadata"] ?? [];
+        $title = $data["property_title"];
+        $geometry = $data["property_geometry"] ?? null;
+        $parent = $data["property_parent"] ?? null;
+        $type = $data["property_type"];
+        $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+        if (self::isJSON($metadata)) { // checking for json data and converting to array
+            if (is_string($metadata)) {
+                $metadata = str_replace('&#39;', '"', $metadata);
+                $metadata = str_replace('&#34;', '"', $metadata);
+                $metadata = html_entity_decode($metadata);
+                $metadata = json_decode($metadata, true);
+            }
+
+        }
+
+        //STEP 2: Index User Property
+        $inputData = [
+            "UserId" => $user,
+            "LinkedEntity" => $entityId,
+            "PropertyTitle" => QB::wrapString($title, "'"),
+            "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
+            "EntityGeometry" => QB::wrapString($geometry, "'")
+        ];
+        $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
+
+        $propertyId = $result["lastInsertId"];
+
+        $metadata["property_floor_count"] = 1;
+
+        //STEP 3: Index Metadata
+        $values = [];
+        foreach ($metadata as $key => $value) {
+            if (is_array($values)) {
+                $value = json_encode($value);
+            }
+            $values[] = "($propertyId, '$key', '$value')";
+        }
+
+        $query = "INSERT INTO Properties.UserPropertyMetadata (PropertyId, FieldName, FieldValue) VALUES " . implode(",", $values);
+
+        $result = DBConnectionFactory::getConnection()->exec($query);
+
+        $resultData['EstateId'] = $propertyId;
         $resultData['result'] = $result;
 
         return $resultData;
@@ -234,6 +227,64 @@ class UserProperty
 
         return $resultData;
     }
+
+     // Redesigned newProperty 2
+     public static function newPropertyBlockTest(array $data)
+     {
+         // collecting parameters
+         $user = $data["user"];
+         $metadata = $data["property_metadata"] ?? [];
+         $title = $data["property_title"];
+         $estateId = $data["property_estate_id"];
+         $geometry = $data["property_geometry"] ?? null;
+         $parent = $data["property_parent"] ?? null;
+         $type = $data["property_type"];
+         $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+ 
+         if (self::isJSON($metadata)) { // checking for json data and converting to array
+             if (is_string($metadata)) {
+                 $metadata = str_replace('&#39;', '"', $metadata);
+                 $metadata = str_replace('&#34;', '"', $metadata);
+                 $metadata = html_entity_decode($metadata);
+                 $metadata = json_decode($metadata, true);
+             }
+ 
+         }
+
+         //STEP 2: Index User Property
+         $inputData = [
+             "UserId" => $user,
+             "LinkedEntity" => $entityId,
+             "PropertyTitle" => QB::wrapString($title, "'"),
+             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
+             "PropertyEstate" => $estateId,
+             "EntityGeometry" => QB::wrapString($geometry, "'")
+         ];
+         $result = DBQueryFactory::insert("[Properties].[UserPropertyBlocks]", $inputData, false);
+ 
+         $propertyId = $result["lastInsertId"];
+ 
+         $metadata["property_floor_count"] = 1;
+ 
+         //STEP 3: Index Metadata
+         $values = [];
+         foreach ($metadata as $key => $value) {
+             if (is_array($values)) {
+                 $value = json_encode($value);
+             }
+             $values[] = "($propertyId, $estateId, '$key', '$value')";
+         }
+ 
+         $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES " . implode(",", $values);
+ 
+         $result = DBConnectionFactory::getConnection()->exec($query);
+ 
+         $resultData['EstateId'] = $estateId;
+         $resultData['BlockId'] = $propertyId;
+         $resultData['result'] = $result;
+ 
+         return $resultData;
+     }
 
     // Redesigned newProperty 3
     public static function newPropertyUnit(array $data)
@@ -317,6 +368,72 @@ class UserProperty
         }
     }
 
+    // Redesigned newProperty 3
+    public static function newPropertyUnitTest(array $data)
+    {
+        try {
+            // collecting parameters
+            $user = $data["user"];
+            $metadata = $data["property_metadata"] ?? [];
+            $title = $data["property_title"];
+            $estateId = $data["property_estate_id"];
+            $blockId = $data["property_block_id"];
+            $blockChainAddress = ""; // $data["block_chain_address"];
+            $geometry = $data["property_geometry"] ?? null;
+            $parent = $data["property_parent"] ?? null;
+            $type = $data["property_type"];
+            $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+            if (self::isJSON($metadata)) { // checking for json data and converting to array
+                if (is_string($metadata)) {
+                    $metadata = str_replace('&#39;', '"', $metadata);
+                    $metadata = str_replace('&#34;', '"', $metadata);
+                    $metadata = html_entity_decode($metadata);
+                    $metadata = json_decode($metadata, true);
+                }
+
+            }
+
+            //STEP 2: Index User Property
+            $inputData = [
+                "UserId" => $user,
+                "LinkedEntity" => $entityId,
+                "PropertyTitle" => QB::wrapString($title, "'"),
+                "PropertyEstate" => $estateId,
+                "PropertyBlock" => $blockId,
+                "BlockChainAddress" => QB::wrapString($blockChainAddress, "'"),
+                "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
+                "EntityGeometry" => QB::wrapString($geometry, "'")
+            ];
+
+            $result = DBQueryFactory::insert("[Properties].[UserPropertyUnits]", $inputData, false);
+
+            $propertyId = $result["lastInsertId"];
+
+            //STEP 3: Index Metadata
+            $values = [];
+            foreach ($metadata as $key => $value) {
+                if (is_array($values)) {
+                    $value = json_encode($value);
+                }
+                $values[] = "($propertyId, $estateId, $blockId, '$key', '$value')";
+            }
+
+            $query = "INSERT INTO Properties.UserPropertyMetadataUnits (PropertyId, PropertyEstate, PropertyBlock, FieldName, FieldValue) VALUES " . implode(",", $values);
+
+            $result = DBConnectionFactory::getConnection()->exec($query);
+
+            $resultData['EstateId'] = $estateId;
+            $resultData['BlockId'] = $blockId;
+            $resultData['UnitId'] = $propertyId;
+            $resultData['result'] = $result;
+
+            return $resultData;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     // Redesigned newPropertyOnEntity
     public static function newPropertyOnEntity(array $data)
     {
@@ -334,6 +451,7 @@ class UserProperty
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         $entityId = $result[0]["LinkedEntity"] ?? 0;
+        $propertyFloorCount = $floorLevel + 1;
 
         $inputData = [
             "UserId" => $user,
@@ -342,6 +460,7 @@ class UserProperty
             "PropertyTitle" => QB::wrapString($title, "'"),
             "PropertyEstate" => $estateId,
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
+            "PropertyFloorCount" => $propertyFloorCount
         ];
 
         // checking old property data
@@ -351,7 +470,7 @@ class UserProperty
         $propId = 0;
         if (count($resultCheck) > 0) {
             // updating old property data
-            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $inputData['PropertyUUID'] . ", PropertyEstate = " . $inputData['PropertyEstate'] . " WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $inputData['PropertyUUID'] . ", PropertyEstate = " . $inputData['PropertyEstate'] . ", PropertyFloorCount = ".$inputData['PropertyFloorCount']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
             $queryCheck = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
             $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
@@ -403,6 +522,10 @@ class UserProperty
                     $queryEstate = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $estateId AND FieldName = '$key'";
                     $resultEstate = DBConnectionFactory::getConnection()->exec($queryEstate);
 
+                    $queryPropEstate = "UPDATE Properties.UserProperty SET PropertyFloorCount = $propertyFloorCount WHERE PropertyId = $estateId";
+                    $resultPropEstate = DBConnectionFactory::getConnection()->exec($queryPropEstate);
+
+
                 }
 
             }
@@ -425,6 +548,133 @@ class UserProperty
                 "PropertyEstate" => $estateId,
                 "PropertyBlock" => $propId,
                 "PropertyUUID" => QB::wrapString($propertyUnitUUID, "'"),
+            ];
+
+            // inserting new properties data
+            DBQueryFactory::insert("[Properties].[UserPropertyUnits]", $inputDataExtra, false);
+        }
+
+        return $result;
+    }
+
+    // Redesigned newPropertyOnEntity
+    public static function newPropertyOnEntityTest(array $data)
+    {
+        // Getting parameters
+        $user = $data["user"] ?? 0;
+        $metadata = $data["property_metadata"] ?? [];
+        $title = $data["property_title"];
+        $propertyId = $data["property_id"];
+        $floorLevel = $data["floor_level"];
+        $estateId = $data["property_estate_id"];
+        $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+        // getting old property data
+        $query = "SELECT * FROM Properties.UserPropertyBlocks WHERE PropertyId = $propertyId";
+        $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $entityId = $result[0]["LinkedEntity"] ?? 0;
+        $geometry = $result[0]["EntityGeometry"] ?? "";
+        $propertyFloorCount = $floorLevel + 1;
+
+        $inputData = [
+            "UserId" => $user,
+            "LinkedEntity" => $entityId,
+            "PropertyFloor" => $floorLevel,
+            "PropertyTitle" => QB::wrapString($title, "'"),
+            "PropertyEstate" => $estateId,
+            "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
+            "PropertyFloorCount" => $propertyFloorCount,
+            "EntityGeometry" => QB::wrapString($geometry, "'")
+        ];
+
+        // checking old property data
+        $queryCheck = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+        $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $propId = 0;
+        if (count($resultCheck) > 0) {
+            // updating old property data
+            $queryUpdate = "UPDATE Properties.UserPropertyBlocks SET UserId = " . $inputData['UserId'] . ", LinkedEntity = " . $inputData['LinkedEntity'] . ", PropertyFloor = " . $inputData['PropertyFloor'] . ", PropertyTitle = " . $inputData['PropertyTitle'] . ", PropertyUUID = " . $inputData['PropertyUUID'] . ", PropertyEstate = " . $inputData['PropertyEstate'] . ", EntityGeometry = ". $inputData['EntityGeometry']. ", PropertyFloorCount = ".$inputData['PropertyFloorCount']." WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $resultUpdate = DBConnectionFactory::getConnection()->exec($queryUpdate);
+            $queryCheck = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyFloor = $floorLevel AND LinkedEntity = $entityId";
+            $resultCheck = DBConnectionFactory::getConnection()->query($queryCheck)->fetchAll(\PDO::FETCH_ASSOC);
+            // getting property id
+            $propId = $resultCheck[0]["PropertyId"];
+        } else {
+            // inserting new property data
+            $result = DBQueryFactory::insert("[Properties].[UserPropertyBlocks]", $inputData, false);
+
+            $propId = $result["lastInsertId"];
+        }
+
+        // checking json data and sanitizing html entities
+        if (self::isJSON($metadata)) {
+            $metadata = str_replace('&#34;', '"', $metadata);
+            $metadata = str_replace('&#39;', '"', $metadata);
+            $metadata = html_entity_decode($metadata);
+            $metadata = json_decode($metadata, true);
+        }
+
+        $metadata["property_floor_count"] = $floorLevel + 1;
+
+        // STEP 3: Index Metadata
+        foreach ($metadata as $key => $value) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
+            // checking existing metadata
+            $queryChecker = "SELECT PropertyId,FieldName FROM Properties.UserPropertyMetadataBlocks WHERE PropertyId = $propId AND FieldName = '$key'";
+            $resultChecker = DBConnectionFactory::getConnection()->query($queryChecker)->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (count($resultChecker) > 0) {
+                if ($key == "property_floor_count") {
+
+                } else {
+                    //  Updating the existing field
+                    $query = "UPDATE Properties.UserPropertyMetadataBlocks SET FieldValue = '$value' WHERE PropertyId = $propId AND FieldName = '$key'";
+                    $result = DBConnectionFactory::getConnection()->exec($query);
+
+                }
+
+            } else {
+                // Inserting a new field
+                $query = "INSERT INTO Properties.UserPropertyMetadataBlocks (PropertyId, PropertyEstate, FieldName, FieldValue) VALUES ($propId, $estateId, '$key', '$value')"; // " . implode(",", $values);
+                $result = DBConnectionFactory::getConnection()->exec($query);
+                if ($key == "property_floor_count") {
+                    //  Updating the existing field
+                    $queryEstate = "UPDATE Properties.UserPropertyMetadata SET FieldValue = '$value' WHERE PropertyId = $estateId AND FieldName = '$key'";
+                    $resultEstate = DBConnectionFactory::getConnection()->exec($queryEstate);
+
+                    $queryPropEstate = "UPDATE Properties.UserProperty SET PropertyFloorCount = $propertyFloorCount WHERE PropertyId = $estateId";
+                    $resultPropEstate = DBConnectionFactory::getConnection()->exec($queryPropEstate);
+
+
+                }
+
+            }
+
+        }
+
+        // getting previous unit data
+        $propertyChildren = self::viewPropertyChildren((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1, "floorSkip" => false, "propertyType" => "block"]);
+
+        foreach ($propertyChildren as $property) {
+            $title = $property["PropertyTitle"] . " - F" . $floorLevel;
+            $entityId = $property["LinkedEntity"];
+            $geometry = $property["EntityGeometry"];
+            $propertyUnitUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+            $inputDataExtra = [
+                "UserId" => $user,
+                "LinkedEntity" => $entityId,
+                "PropertyFloor" => $floorLevel,
+                "PropertyTitle" => QB::wrapString($title, "'"),
+                "PropertyEstate" => $estateId,
+                "PropertyBlock" => $propId,
+                "PropertyUUID" => QB::wrapString($propertyUnitUUID, "'"),
+                "EntityGeometry" => QB::wrapString($geometry, "'")
             ];
 
             // inserting new properties data
@@ -581,6 +831,153 @@ class UserProperty
         return $results;
     }
 
+    // Redesigned viewProperties
+    public static function viewPropertiesTest(int $userId, array $data = [])
+    {
+        $fetch = "FIRST";
+        $offset = 0;
+
+        if (isset($data['offset']) and $data['offset'] != 0) {
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+        $query = "SELECT * FROM Properties.UserProperty WHERE UserId = $userId ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+        $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $unitQueries = [];
+        $blockQueries = [];
+        $metadata = [];
+        $queryTotals = [];
+        $queryAvailables = [];
+        // looping through estates to get particular data
+        foreach ($results as $key => $property) {
+            $resultPropertyId = $property["PropertyId"];
+
+            $resultPropertyFloor = $property["PropertyFloor"] ?? 0;
+
+            // chaining queries for optimized operation
+            $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
+
+            // Fetch total estate property units
+            $queryTotals[] = "SELECT PropertyEstate FROM Properties.UserPropertyUnits WHERE PropertyEstate = $resultPropertyId";
+
+            $queryAvailables[] = "SELECT a.PropertyId, b.FieldName, b.FieldValue, b.PropertyEstate  FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
+            WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 AND a.PropertyEstate = $resultPropertyId";
+
+            $results[$key]["Entity"] = $property["EntityGeometry"];
+
+        }
+
+        $unitQuery = implode(";", $unitQueries);
+        $blockQuery = implode(";", $blockQueries);
+
+        $unitResultSetArr = [];
+        $blockResultSetArr = [];
+
+        $resultSetArr = [];
+
+        // looping and building result set through complex chain returned results
+        $stmtResult = DBConnectionFactory::getConnection()->query($unitQuery);
+
+        do {
+
+            $unitResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
+            if (count($unitResultArr) > 0) {
+                // Add $rowset to array
+                array_push($unitResultSetArr, $unitResultArr);
+
+            }
+
+        } while ($stmtResult->nextRowset());
+
+        // connecting and building the results
+        foreach ($results as $keySetId => $valueSetId) {
+
+            foreach ($unitResultSetArr as $keySet => $valueSet) {
+
+                foreach ($valueSet as $keyItemId => $valueItemId) {
+
+                    if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
+
+                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        $queryTotal = implode(";", $queryTotals);
+        $propertyCounter = [];
+        $totalResultSetArr = [];
+        $stmtResultTotal = DBConnectionFactory::getConnection()->query($queryTotal);
+
+        // looping and building result set through complex chain returned results
+        do {
+
+            $totalResultArr = $stmtResultTotal->fetchAll(\PDO::FETCH_ASSOC);
+            if (count($totalResultArr) > 0) {
+                // Add $rowset to array
+                array_push($totalResultSetArr, $totalResultArr);
+
+            }
+
+        } while ($stmtResultTotal->nextRowset());
+        // connecting and building the results
+        foreach ($results as $keySetId => $valueSetId) {
+            foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
+                if ($valueItemId[$keyItemId]["PropertyEstate"] == $valueSetId["PropertyId"]) {
+                    $results[$keySetId]["PropertyTotal"] = count($valueItemId);
+                    $propertyCounter[$keySetId] = count($valueItemId);
+                }
+            }
+
+        }
+
+        $queryAvailable = implode(";", $queryAvailables);
+        $propertyAvailable = 0;
+        $availableResultSetArr = [];
+        $stmtResultAvailable = DBConnectionFactory::getConnection()->query($queryAvailable);
+
+        do {
+
+            $availableResultArr = $stmtResultAvailable->fetchAll(\PDO::FETCH_ASSOC);
+            if (count($availableResultArr) > 0) {
+                // Add $rowset to array
+                array_push($availableResultSetArr, $availableResultArr);
+
+            }
+
+        } while ($stmtResultAvailable->nextRowset());
+
+        // connecting and building the results
+        if (count($availableResultSetArr) == 0) {
+            foreach ($results as $keySetId => $valueSetId) {
+                foreach ($totalResultSetArr as $keyItemId => $valueItemId) {
+                    if ($valueItemId[$keyItemId]["PropertyEstate"] == $valueSetId["PropertyId"]) {
+                        $results[$keySetId]["PropertyTotal"] = count($valueItemId);
+                        $propertyCounter[$keySetId] = count($valueItemId);
+                        $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - 0;
+                    }
+                }
+            }
+        } else {
+            foreach ($results as $keySetId => $valueSetId) {
+                foreach ($availableResultSetArr as $keyItemId => $valueItemId) {
+                    if ($valueItemId[$keyItemId]["PropertyEstate"] == $valueSetId["PropertyId"]) {
+                        $results[$keySetId]["PropertyAvailable"] = $propertyCounter[$keySetId] - count($valueItemId);
+
+                    }
+                }
+
+            }
+        }
+
+        return $results;
+    }
+
     // Redesigned viewProperty
     public static function viewProperty(int $propertyId, array $data = [])
     {
@@ -603,8 +1000,8 @@ class UserProperty
             $result = $result[0] ?? [];
             // getting particular data
             if (count($result) > 0) {
-                $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
-                $result["Metadata"] = self::viewPropertyMetadataSet((int) $result["PropertyId"]);
+                $result["Entity"] = $result["EntityGeometry"];
+                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
 
@@ -623,8 +1020,8 @@ class UserProperty
             $result = $result[0] ?? [];
             // getting particular data
             if (count($result) > 0) {
-                $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
-                $result["Metadata"] = self::viewPropertyMetadataSet((int) $result["PropertyId"]);
+                $result["Entity"] = $result["EntityGeometry"];
+                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
 
@@ -643,8 +1040,8 @@ class UserProperty
             $result = $result[0] ?? [];
             // getting particular data
             if (count($result) > 0) {
-                $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
-                $result["Metadata"] = self::viewPropertyMetadataSet((int) $result["PropertyId"]);
+                $result["Entity"] = $result["EntityGeometry"];
+                $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
 
@@ -737,6 +1134,89 @@ class UserProperty
         return $results;
     }
 
+    // Redesigned listAllProperties
+    public static function listAllPropertiesTest(int $propertyId = 1, array $data)
+    {
+        $fetch = "FIRST";
+        $offset = 0;
+        $limit = 10;
+
+        if ($data['offset'] != 0) {
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        if ($data['limit'] == "") {
+            $limit = 10;
+        } else {
+            $limit = $data['limit'] ?? 10;
+        }
+
+        if (!isset($propertyId) or empty($data)) {
+
+            return "Parameters not set";
+        }
+
+        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyId IS NOT NULL ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";
+        $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $blockQueries = [];
+        $parentQueries = [];
+        $metadata = [];
+        // looping through estates to get particular data
+        foreach ($results as $key => $result) {
+
+            $resultPropertyId = $result["PropertyId"];
+
+            $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
+
+            $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
+
+            $results[$key]["Entity"] = $result["EntityGeometry"];
+        }
+
+        $blockQuery = implode(";", $blockQueries);
+
+        $blockResultSetArr = [];
+
+        $resultSetArr = [];
+
+        // looping and building result set through complex chain returned results
+        $stmtResult = DBConnectionFactory::getConnection()->query($blockQuery);
+
+        do {
+
+            $blockResultArr = $stmtResult->fetchAll(\PDO::FETCH_ASSOC);
+            if (count($blockResultArr) > 0) {
+                // Add $rowset to array
+                array_push($blockResultSetArr, $blockResultArr);
+
+            }
+
+        } while ($stmtResult->nextRowset());
+
+        // connecting and building result sets
+        foreach ($results as $keySetId => $valueSetId) {
+
+            foreach ($blockResultSetArr as $keySet => $valueSet) {
+
+                foreach ($valueSet as $keyItemId => $valueItemId) {
+
+                    if ($valueItemId["PropertyEstate"] == $valueSetId["PropertyId"]) {
+
+                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyEstate"]];
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return $results;
+    }
+
     public static function getPropertyMetadata(int $propertyId, int $floorLevel = 0)
     {
         $queryFloor = "SELECT PropertyFloor FROM Properties.UserProperty WHERE PropertyId = $propertyId";
@@ -750,7 +1230,7 @@ class UserProperty
         // compensating unit with block data
         $blockQuery = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
         WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $propertyId)) AND c.PropertyFloor = $resultFloorPoint";
+        SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE PropertyId = $propertyId)) AND c.PropertyFloor = $resultFloorPoint";
         $blockResult = DBConnectionFactory::getConnection()->query($blockQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         $metadata = [];
@@ -823,6 +1303,24 @@ class UserProperty
 
         return $result;
     }
+
+
+     // Redesigned viewPropertyByName
+     public static function viewPropertyByNameTest(array $data)
+     {
+         $name = $data["name"] ?? 0;
+         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
+         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+ 
+         $result = $result[0] ?? [];
+         // getting property data if exist
+         if (count($result) > 0) {
+             $result["Entity"] = $result["EntityGeometry"];
+             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
+         }
+ 
+         return $result;
+     }
 
     // Redesigned viewPropertyChildren
     public static function viewPropertyChildren(int $propertyId, array $floorData = [])

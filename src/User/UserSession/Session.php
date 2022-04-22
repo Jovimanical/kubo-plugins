@@ -40,7 +40,7 @@ class Session
 	}
 
 	public static function retrieveDecodedSession(int $userId, int $sessionId, bool $onlyActiveSession=false){
-		$query = "SELECT Session FROM Users.UserSession WHERE UserId=$userId AND SessionId=$sessionId AND LastModified > '".date('Y-m-d H:i:s',\strtotime('-1 hours'))."'";
+		$query = "SELECT Session FROM Users.UserSession WHERE UserId=$userId AND SessionId=$sessionId AND LastModified > '".date('Y-m-d H:i:s',\strtotime('-30 days'))."'";
 		$query = $onlyActiveSession ? $query." AND Status=1;" : $query;
 
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -69,7 +69,7 @@ class Session
 
 		if (!$result['lastInsertId']){
 			//throw an exception, insert was unsuccessful
-		}	
+		}
 
 		return $result;
 	}

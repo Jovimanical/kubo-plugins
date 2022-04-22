@@ -1298,7 +1298,7 @@ class UserProperty
         // getting property data if exist
         if (count($result) > 0) {
             $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["LinkedEntity"]]);
-            $result["Metadata"] = self::viewPropertyMetadataSet((int) $result["PropertyId"]);
+            $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"]);
         }
 
         return $result;

@@ -28,9 +28,19 @@ class UserProperty
         return UserProperty\UserProperty::newPropertyEstate($data);
     }
 
+    public static function newPropertyEstateTest(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyEstateTest($data);
+    }
+
     public static function newPropertyBlock(array $data)
     {
         return UserProperty\UserProperty::newPropertyBlock($data);
+    }
+
+    public static function newPropertyBlockTest(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyBlockTest($data);
     }
 
     public static function newPropertyUnit(array $data)
@@ -38,9 +48,19 @@ class UserProperty
         return UserProperty\UserProperty::newPropertyUnit($data);
     }
 
+    public static function newPropertyUnitTest(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyUnitTest($data);
+    }
+
     public static function newPropertyOnEntity(array $data)
     {
         return UserProperty\UserProperty::newPropertyOnEntity($data);
+    }
+
+    public static function newPropertyOnEntityTest(array $data)
+    {
+        return UserProperty\UserProperty::newPropertyOnEntityTest($data);
     }
 
     public static function viewProperties(int $userId)
@@ -48,9 +68,19 @@ class UserProperty
         return UserProperty\UserProperty::viewProperties($userId);
     }
 
+    public static function viewPropertiesTest(int $userId)
+    {
+        return UserProperty\UserProperty::viewPropertiesTest($userId);
+    }
+
     public static function viewProperty(int $propertyId, array $data)
     {
         return UserProperty\UserProperty::viewProperty($propertyId, $data);
+    }
+
+    public static function viewPropertyTest(int $propertyId, array $data)
+    {
+        return UserProperty\UserProperty::viewPropertyTest($propertyId, $data);
     }
 
     public static function listAllProperties(int $userId = 1, array $data)
@@ -58,14 +88,29 @@ class UserProperty
         return UserProperty\UserProperty::listAllProperties($userId, $data);
     }
 
+    public static function listAllPropertiesTest(int $userId = 1, array $data)
+    {
+        return UserProperty\UserProperty::listAllPropertiesTest($userId, $data);
+    }
+
     public static function viewPropertyByName(array $data)
     {
         return UserProperty\UserProperty::viewPropertyByName($data);
     }
 
+    public static function viewPropertyByNameTest(array $data)
+    {
+        return UserProperty\UserProperty::viewPropertyByNameTest($data);
+    }
+
     public static function viewPropertyChildren(int $propertyId, array $floorLevel = [])
     {
         return UserProperty\UserProperty::viewPropertyChildren($propertyId, $floorLevel);
+    }
+
+    public static function viewPropertyChildrenTest(int $propertyId, array $floorLevel = [])
+    {
+        return UserProperty\UserProperty::viewPropertyChildrenTest($propertyId, $floorLevel);
     }
 
     public static function getPropertyChildren(int $propertyId, array $floorLevel = [])
@@ -76,6 +121,11 @@ class UserProperty
     public static function viewPropertyMetadata(int $propertyId, array $data)
     {
         return UserProperty\UserProperty::viewPropertyMetadata($propertyId, $data);
+    }
+
+    public static function viewPropertyMetadataTest(int $propertyId, array $data)
+    {
+        return UserProperty\UserProperty::viewPropertyMetadataTest($propertyId, $data);
     }
 
     public static function viewPropertyMetadataTester(int $propertyId, array $data)
@@ -128,14 +178,15 @@ class UserProperty
         return UserProperty\UserProperty::viewDeveloperName($userId);
     }
 
-    public static function uploadMapData(int $userId, array $data)
-    {
-        return UserProperty\UserProperty::uploadMapData($userId, $data);
-    }
 
     public static function uploadEstateData(int $userId, array $data)
     {
         return UserProperty\UserProperty::uploadEstateData($userId, $data);
+    }
+
+    public static function uploadEstateDataTest(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::uploadEstateDataTest($userId, $data);
     }
 
     public static function uploadBlockData(int $userId, array $data)
@@ -143,9 +194,19 @@ class UserProperty
         return UserProperty\UserProperty::uploadBlockData($userId, $data);
     }
 
+    public static function uploadBlockDataTest(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::uploadBlockDataTest($userId, $data);
+    }
+
     public static function uploadUnitData(int $userId, array $data)
     {
         return UserProperty\UserProperty::uploadUnitData($userId, $data);
+    }
+
+    public static function uploadUnitDataTest(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::uploadUnitDataTest($userId, $data);
     }
 
     public static function viewMapDataUploadStatus(int $userId, array $data)
@@ -158,9 +219,9 @@ class UserProperty
         return UserProperty\UserProperty::deleteUploadData($userId, $data);
     }
 
-    public static function deleteOldUploadData(int $userId, array $data)
+    public static function deleteUploadDataTest(int $userId, array $data)
     {
-        return UserProperty\UserProperty::deleteOldUploadData($userId, $data);
+        return UserProperty\UserProperty::deleteUploadDataTest($userId, $data);
     }
 
     public static function getEstatePropertyTotal(int $propertyId)

@@ -3945,7 +3945,7 @@ class UserProperty
         // get inputs
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
-        $level = $data["uploadlevel"] ?? null;
+        $level = $data["uploadLevel"] ?? null;
         $userId = $userId ?? null;
 
         // return progress data
@@ -3962,7 +3962,8 @@ class UserProperty
             $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername'";
             $estateData = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $estateId = $estateData['PropertyId'];
+            $estateId = $estateData[0]['PropertyId'];
+
             // return block data
             $query = "SELECT * FROM Properties.UserPropertyBlocks WHERE PropertyEstate = $estateId";
             $result["block"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -3970,9 +3971,9 @@ class UserProperty
         } else if ($level == "unit") {
             // return estate data
             $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername'";
-            $estateId = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+            $estateData = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $estateId = $estateData['PropertyId'];
+            $estateId = $estateData[0]['PropertyId'];
             // return block Id data
             $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = $estateId";
             $result["block"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);

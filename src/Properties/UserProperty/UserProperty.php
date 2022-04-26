@@ -122,6 +122,7 @@ class UserProperty
         //STEP 2: Index User Property
         $inputData = [
             "UserId" => $user,
+            "LinkedEntity" => (int)time(),
             "PropertyTitle" => QB::wrapString($title, "'"),
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
             "PropertyFloorCount" => 1,

@@ -97,7 +97,7 @@ class Enquiry {
             $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
 
             $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
-            $resultBlockId = $resultFloor['PropertyBlock'];
+            $resultBlockId = $resultFloor[0]['PropertyBlock'];
 
             $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadataUnits WHERE PropertyId = $resultPropertyId";
 

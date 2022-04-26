@@ -3956,11 +3956,46 @@ class UserProperty
         // get inputs
         $foldername = $data["inputName"] ?? null;
         $initials = $data["inputInitials"] ?? null;
+        $level = $data["uploadlevel"] ?? null;
         $userId = $userId ?? null;
 
         // return progress data
         $query = "SELECT * FROM Properties.MapDataUploadStata WHERE UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials'";
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if($level == "estate"){
+        // return estate data
+        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$foldername' AND Initials = '$initials'";
+        $result["estate"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        } else if($level == "block"){
+            // return estate data
+        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername' AND Initials = '$initials'";
+        $estateId = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+            // return block data
+        $query = "SELECT * FROM Properties.UserPropertyBlocks WHERE PropertyEstate = ".$estateId['PropertyId'];
+        $result["block"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        } else if($level == "unit"){
+   // return estate data
+   $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername' AND Initials = '$initials'";
+   $estateId = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+       // return block Id data
+   $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = ".$estateId['PropertyId'];
+   $result["block"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+   foreach($result["block"] as $key => $value){
+    // return unit data
+    $query = "SELECT * FROM Properties.UserPropertyUnits WHERE PropertyEstate = ".$estateId['PropertyId']." AND PropertyBlock = $value";
+    $result["block"]["unit"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC); 
+
+   }
+
+        } else {
+
+        }
 
         return $result;
     }

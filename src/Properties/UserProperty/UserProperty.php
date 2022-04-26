@@ -252,7 +252,9 @@ class UserProperty
  
          }
 
-         $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')";
+         $query = "BEGIN TRANSACTION;" .
+                  "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')".
+                  "COMMIT TRANSACTION;";
  
          return $query;
         
@@ -366,7 +368,9 @@ class UserProperty
 
             }
 
-            $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,$blockId,$blockChainAddress,'$geometry',1,'$type')";
+            $query = "BEGIN TRANSACTION;" .
+                     "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,$blockId,$blockChainAddress,'$geometry',1,'$type')".
+                     "COMMIT TRANSACTION;";
  
             return $query;
 
@@ -3498,8 +3502,8 @@ class UserProperty
  
                                  if ($blockLength == $blockNumberLength) {
  
-                                     $login = self::scriptLogin($username, $password);
-                                     $login = $login["contentData"];
+                                    // $login = self::scriptLogin($username, $password);
+                                    // $login = $login["contentData"];
  
                                      $boundary_geojson = file_get_contents(
                                          "tmp/data/$foldername/ESTATE_BOUNDARY.geojson"
@@ -3507,7 +3511,7 @@ class UserProperty
  
                                      try {
                                          // inserting ESTATE_BOUNDARY.geojson
-                                         $result = self::indexPropertyEstateTest($login, $boundary_geojson, $foldername, $metaType, 0);
+                                         $result = self::indexPropertyEstateTest($userId, $boundary_geojson, $foldername, $metaType, 0);
                                      } catch (Exception $e) {
                                          return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                      }
@@ -3686,8 +3690,8 @@ class UserProperty
             return "Parameters not set";
         }
 
-        $login = self::scriptLogin($username, $password);
-        $login = $login["contentData"];
+        // $login = self::scriptLogin($username, $password);
+        // $login = $login["contentData"];
 
         $dir = "tmp/data/$foldername/BLOCKS/";
         $files = scandir($dir);
@@ -3703,7 +3707,7 @@ class UserProperty
                     $geojson = str_replace("\"", "'", $geojson);
                     try {
                         $file = str_replace(".geojson", "", $file);
-                        $result[] = self::indexPropertyBlockTest($login, $geojson, $file, $metaType, $estateData['EstateId']); // edit last insert entityId of Estate
+                        $result[] = self::indexPropertyBlockTest($userid, $geojson, $file, $metaType, $estateData['EstateId']); // edit last insert entityId of Estate
                         // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
 
                     } catch (Exception $e) {
@@ -3743,7 +3747,7 @@ class UserProperty
                         $geojson = str_replace("\"", "'", $geojson);
                         try {
                             $file = str_replace(".geojson", " $initials", $file);
-                            $resultExtra = self::indexPropertyBlockTest($login, $geojson, $file, $metaType, $estateData['EstateId']); // edit last insert entityId of Estate
+                            $resultExtra = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, $estateData['EstateId']); // edit last insert entityId of Estate
                             // @todo no build $blocks array
                         } catch (Exception $e) {
                             return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -3881,8 +3885,8 @@ class UserProperty
         $estateId = $data["estateId"] ?? 0;
         $metaType = (string) $data["metaType"] ?? "";
 
-        $login = self::scriptLogin($username, $password);
-        $login = $login["contentData"];
+        // $login = self::scriptLogin($username, $password);
+        // $login = $login["contentData"];
 
         if (self::isJSON($blockersIds)) { // json check and array conversion
             if (is_string($blockersIds)) {
@@ -3911,7 +3915,7 @@ class UserProperty
                         $file = str_replace("name_", "$block (", $file);
                         $file = str_replace(".geojson", ")", $file);
                         // inserting values
-                        $result[] = self::indexPropertyUnitTest($login, $geojson, $file, $metaType, $estateId, $blockersIds[$block]);
+                        $result[] = self::indexPropertyUnitTest($userId, $geojson, $file, $metaType, $estateId, $blockersIds[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -4133,10 +4137,10 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstateTest(array $login, string $geojson, string $title, string $metaType, int $parent = 0)
+    protected static function indexPropertyEstateTest(int $userId, string $geojson, string $title, string $metaType, int $parent = 0)
     {
         $data = [
-            "user" => $login["userId"],
+            "user" => $userId,
             "property_title" => $title,
             "property_type" => $metaType,
             "property_geometry" => $geojson,
@@ -4151,7 +4155,7 @@ class UserProperty
     }
 
     // Redesigned indexBlock
-    protected static function indexPropertyBlock($login, $geojson, $title, string $metaType, $estateId, $parent = 0)
+    protected static function indexPropertyBlock(array $login, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -4187,12 +4191,12 @@ class UserProperty
         }
 
     }
-
+    
     // Redesigned indexBlock
-    protected static function indexPropertyBlockTest($login, $geojson, $title, string $metaType, $estateId, $parent = 0)
+    protected static function indexPropertyBlockTest(int $userId, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
     {
         $data = [
-            "user" => $login["userId"],
+            "user" => $userId,
             "property_title" => $title,
             "property_estate_id" => $estateId,
             "property_type" => $metaType,
@@ -4208,7 +4212,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty for units
-    protected static function indexPropertyUnit($login, $geojson, $title, string $metaType, $estateId, $blockId, $parent = 0)
+    protected static function indexPropertyUnit(array $login, string $geojson, string $title, string $metaType, int $estateId, array $blockId, int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -4246,10 +4250,10 @@ class UserProperty
     }
 
      // Redesigned indexProperty for units
-     protected static function indexPropertyUnitTest($login, $geojson, $title, string $metaType, $estateId, $blockId, $parent = 0)
+     protected static function indexPropertyUnitTest(int $userId, string $geojson, string $title, string $metaType, int $estateId, array $blockId, int $parent = 0)
      {
          $data = [
-             "user" => $login["userId"],
+             "user" => $userId,
              "property_title" => $title,
              "property_estate_id" => $estateId,
              "property_block_id" => $blockId,

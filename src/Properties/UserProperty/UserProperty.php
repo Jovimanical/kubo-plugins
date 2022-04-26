@@ -122,11 +122,10 @@ class UserProperty
         //STEP 2: Index User Property
         $inputData = [
             "UserId" => $user,
-            "LinkedEntity" => $entityId,
             "PropertyTitle" => QB::wrapString($title, "'"),
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
-            "EntityGeometry" => QB::wrapString($geometry, "'"),
-            "PropertyFloorCount" => 1
+            "PropertyFloorCount" => 1,
+            "EntityGeometry" => QB::wrapString($geometry, "'")
         ];
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
 
@@ -4138,18 +4137,13 @@ class UserProperty
         $data = [
             "user" => $login["userId"],
             "property_title" => $title,
-            "property_type" => 1,
+            "property_type" => $metaType,
             "property_geometry" => $geojson,
             "property_metadata" => [
                 "property_description" => "",
                 "property_type" => $metaType,
             ],
         ];
-
-        if ($parent != 0) {
-            $data["property_type"] = 3;
-            $data["property_parent"] = $parent;
-        }
 
          return self::newPropertyEstateTest($data);
 

@@ -3966,12 +3966,12 @@ class UserProperty
 
         if($level == "estate"){
         // return estate data
-        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$foldername' AND Initials = '$initials'";
+        $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$foldername'";
         $result["estate"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         } else if($level == "block"){
             // return estate data
-        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername' AND Initials = '$initials'";
+        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername'";
         $estateId = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
             // return block data
@@ -3980,7 +3980,7 @@ class UserProperty
 
         } else if($level == "unit"){
    // return estate data
-   $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername' AND Initials = '$initials'";
+   $query = "SELECT PropertyId FROM Properties.UserProperty WHERE PropertyTitle = '$foldername'";
    $estateId = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
        // return block Id data

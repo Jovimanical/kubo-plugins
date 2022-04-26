@@ -93,7 +93,7 @@ class Enquiry {
             $resultEstateId = $resultum['EstateId'];
             
 
-            $queryData = "SELECT PropertyFloor,PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $resultPropertyId";
+            $queryData = "SELECT PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $resultPropertyId";
             $resultData = DBConnectionFactory::getConnection()->query($queryData)->fetchAll(\PDO::FETCH_ASSOC);
 
             $resultBlockId = $resultData[0]['PropertyBlock'];
@@ -107,7 +107,7 @@ class Enquiry {
             $totalQuery[] = "SELECT count(PropertyId) FROM Properties.UserPropertyUnits WHERE PropertyEstate = $resultEstateId";
 
             $availQuery[] = "SELECT COUNT(a.PropertyId) FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
-            WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 WHERE a.PropertyEstate = $resultEstateId";
+            WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 AND a.PropertyEstate = $resultEstateId";
 
             $resultMsg = $resultum['MessageJson'];
 

@@ -125,7 +125,8 @@ class UserProperty
             "LinkedEntity" => $entityId,
             "PropertyTitle" => QB::wrapString($title, "'"),
             "PropertyUUID" => QB::wrapString($propertyUUID, "'"),
-            "EntityGeometry" => QB::wrapString($geometry, "'")
+            "EntityGeometry" => QB::wrapString($geometry, "'"),
+            "PropertyFloorCount" => 1
         ];
         $result = DBQueryFactory::insert("[Properties].[UserProperty]", $inputData, false);
 
@@ -4150,22 +4151,8 @@ class UserProperty
             $data["property_parent"] = $parent;
         }
 
-        $host = "https://rest.sytemap.com/v1/properties/user-property/new-property-estate-test"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property-estate";
-        // $host = "http://localhost:9000/v1/properties/user-property/new-property-estate"; //"http://127.0.0.1:5464/v1/properties/user-property/new-property-estate";
+         return self::newPropertyEstateTest($data);
 
-        $header = "Authorization: " . $login["sessionData"]["token"] . "," . $login["sessionId"] . "," . $login["userId"];
-
-        $response = \KuboPlugin\Utils\Util::clientRequest($host, "POST", $data, $header); // http request
-
-        $response = json_decode($response, true);
-
-        return $response;
-
-        if ($response["errorStatus"] == false) {
-            return $response;
-        } else {
-            self::indexPropertyEstateTest($login, $geojson, $title, $metaType, $parent);
-        }
     }
 
     // Redesigned indexBlock

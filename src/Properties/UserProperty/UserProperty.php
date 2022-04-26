@@ -3883,6 +3883,7 @@ class UserProperty
         $initials = $data["inputInitials"] ?? null;
         $blockersIds = $data["blockDataIds"] ?? [];
         $estateId = $data["estateId"] ?? 0;
+        $startCounter = (int)$data["startCounter"] ?? 1;
         $metaType = (string) $data["metaType"] ?? "";
 
         // $login = self::scriptLogin($username, $password);
@@ -3902,7 +3903,7 @@ class UserProperty
             return "Parameters not set";
         }
 
-        for ($i = 1; $i <= count($blockersIds); $i++) {
+        for ($i = $startCounter; $i <= count($blockersIds); $i++) {
             $block = "BLOCK $i";
             $dir = "tmp/data/$foldername/BLOCK NUMBERS/$block/";
             $files = scandir($dir);

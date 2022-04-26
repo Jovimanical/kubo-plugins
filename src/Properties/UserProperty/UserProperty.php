@@ -3982,7 +3982,7 @@ class UserProperty
                 $valueId = $value['PropertyId'];
                 // return unit data
                 $query = "SELECT * FROM Properties.UserPropertyUnits WHERE PropertyEstate = $estateId AND PropertyBlock = $valueId";
-                $result["block"]["unit"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+                $result[$valueId]["unit"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
             }
 

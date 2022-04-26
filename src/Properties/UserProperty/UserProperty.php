@@ -3976,9 +3976,9 @@ class UserProperty
             $estateId = $estateData[0]['PropertyId'];
             // return block Id data
             $query = "SELECT PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = $estateId";
-            $result["block"] = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+            $resultBlock = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-            foreach ($result["block"] as $key => $value) {
+            foreach ($resultBlock as $key => $value) {
                 $valueId = $value['PropertyId'];
                 // return unit data
                 $query = "SELECT * FROM Properties.UserPropertyUnits WHERE PropertyEstate = $estateId AND PropertyBlock = $valueId";

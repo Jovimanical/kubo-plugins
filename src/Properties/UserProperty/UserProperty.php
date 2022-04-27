@@ -3717,7 +3717,7 @@ class UserProperty
             $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
 
             // returning block data array
-            $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . $estateData['EstateId'];
+            $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int)$estateData['EstateId'];
             $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($resultBlocks as $keyBlock => $blockValue) {

@@ -3696,7 +3696,7 @@ class UserProperty
                     $geojson = str_replace("\"", "'", $geojson);
                     try {
                         $file = str_replace(".geojson", "", $file);
-                        $result[] = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, $estateData['EstateId']); // edit last insert entityId of Estate
+                        $result[] = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, (int)$estateData['EstateId']); // edit last insert entityId of Estate
                         // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
 
                     } catch (Exception $e) {
@@ -3735,7 +3735,7 @@ class UserProperty
                         $geojson = str_replace("\"", "'", $geojson);
                         try {
                             $file = str_replace(".geojson", " $initials", $file);
-                            $resultExtra = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, $estateData['EstateId']); // edit last insert entityId of Estate
+                            $resultExtra = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, (int)$estateData['EstateId']); // edit last insert entityId of Estate
                             // @todo no build $blocks array
                         } catch (Exception $e) {
                             return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate

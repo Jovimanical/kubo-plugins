@@ -1770,7 +1770,7 @@ class UserProperty
             $metadata = [];
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
-               // $results[$key]["Entity"] = $result["EntityGeometry"] ?? [];
+                $geometry = $result["EntityGeometry"] ?? [];
 
                 $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 

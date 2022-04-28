@@ -3902,7 +3902,6 @@ class UserProperty
 
         }
 
-        return $blockersIds;
 
         if ($username == null or $password == null or $foldername == null or $initials == null) {
             return "Parameters not set";

@@ -158,5 +158,19 @@ class Util
         
     }
 
+    public static function serializeObject($object){
+        return serialize($object);
+    }
+
+    public static function unserializeObject($str){
+        $data = html_entity_decode(unserialize($str));
+        $reps = ["\n"=>"",'\\'=>"", "&#39;"=>"\""];
+        foreach($reps as $dirt=>$val){
+            $data = str_replace($dirt, $val, $data);
+        }
+
+        return $data;
+    }
+
     
 }

@@ -1640,9 +1640,14 @@ class UserProperty
 
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
-                $results[$key]["Entity"] = $result["EntityGeometry"] ?? [];
 
-                $resultPropertyId = $result["PropertyEstate"];
+                $geometry = $result["EntityGeometry"] ?? [];
+
+                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+                $result["EntityGeometry"] = null;
+
+                $resultPropertyId = $result["PropertyEstate"] ?? 0;
 
                 $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
@@ -3712,6 +3717,8 @@ class UserProperty
             }
 
             $queryInsertBlocks = implode(";", $queries);
+
+            return $queryInsertBlocks;
 
             $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
 

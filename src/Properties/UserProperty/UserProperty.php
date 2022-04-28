@@ -1622,6 +1622,7 @@ class UserProperty
                 $floorLevel = $floorData["floorLevel"];
                 $query .= " AND a.PropertyFloor = $floorLevel";
             }
+            
 
             $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 

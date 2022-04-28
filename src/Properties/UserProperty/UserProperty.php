@@ -251,6 +251,8 @@ class UserProperty
 
         }
 
+        $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
+
         $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')";
 
 
@@ -1643,7 +1645,7 @@ class UserProperty
 
                 $geometry = $result["EntityGeometry"] ?? [];
 
-                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::serializeObject($geometry);
+                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
                 $result["EntityGeometry"] = null;
 

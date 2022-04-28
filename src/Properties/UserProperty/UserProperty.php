@@ -355,7 +355,7 @@ class UserProperty
             $blockId = $data["property_block_id"];
             $blockChainAddress = ""; // $data["block_chain_address"];
             $geometry = $data["property_geometry"] ?? null;
-            $parent = (int)$data["property_parent"] ?? null;
+            $parent = $data["property_parent"] ?? null;
             $type = $data["property_type"];
             $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
@@ -1647,7 +1647,7 @@ class UserProperty
 
                 $geometry = $result["EntityGeometry"] ?? [];
 
-                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
+                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject(html_entity_decode($geometry));
 
                // $result["EntityGeometry"] = null;
 

@@ -253,7 +253,8 @@ class UserProperty
 
         $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 
-        $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')";
+        $linkedTimer = (int)time();
+        $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',1,'$type')";
 
 
         return $query;
@@ -368,8 +369,9 @@ class UserProperty
 
             }
 
+            $linkedTimer = (int)time();
             $query = "BEGIN TRANSACTION;" .
-                "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,$blockId,$blockChainAddress,'$geometry','$type')" .
+                "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,$blockChainAddress,'$geometry','$type')" .
                 "COMMIT TRANSACTION;";
 
             return $query;
@@ -814,7 +816,7 @@ class UserProperty
             $queryAvailables[] = "SELECT a.PropertyId, b.FieldName, b.FieldValue, b.PropertyEstate  FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
             WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 AND a.PropertyEstate = $resultPropertyId";
 
-            $results[$key]["Entity"] = $property["EntityGeometry"];
+            $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($property["EntityGeometry"]);
 
         }
 
@@ -1023,7 +1025,7 @@ class UserProperty
             $result = $result[0] ?? [];
             // getting particular data
             if (count($result) > 0) {
-                $result["Entity"] = $result["EntityGeometry"];
+                $result["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
                 $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], ["propertyType" => "estate"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
@@ -1043,7 +1045,7 @@ class UserProperty
             $result = $result[0] ?? [];
             // getting particular data
             if (count($result) > 0) {
-                $result["Entity"] = $result["EntityGeometry"];
+                $result["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
                 $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], ["propertyType" => "block"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
@@ -1063,7 +1065,7 @@ class UserProperty
             $result = $result[0] ?? [];
             // getting particular data
             if (count($result) > 0) {
-                $result["Entity"] = $result["EntityGeometry"];
+                $result["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
                 $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], ["propertyType" => "unit"]);
                 $result["FloorCount"] = $resultFloorCount;
             }
@@ -1195,7 +1197,7 @@ class UserProperty
 
             $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
-            $results[$key]["Entity"] = $result["EntityGeometry"];
+            $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
         }
 
         $blockQuery = implode(";", $blockQueries);
@@ -1336,7 +1338,7 @@ class UserProperty
         $result = $result[0] ?? [];
         // getting property data if exist
         if (count($result) > 0) {
-            $result["Entity"] = $result["EntityGeometry"];
+            $result["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
             $result["Metadata"] = self::viewPropertyMetadata((int) $result["PropertyId"], ["propertyType" => "estate"]);
         }
 

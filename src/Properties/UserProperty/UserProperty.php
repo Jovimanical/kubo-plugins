@@ -1643,15 +1643,15 @@ class UserProperty
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
 
-                $geometry = $result["EntityGeometry"] ?? [];
+                $geometry = $result[0]["EntityGeometry"] ?? [];
 
                 $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
                // $result["EntityGeometry"] = null;
 
-                $resultPropertyId = $result["PropertyEstate"] ?? 0;
+                $resultPropertyId = $result[0]["PropertyEstate"] ?? 0;
 
-                $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
+                $resultPropertyFloor = $result[0]["PropertyFloor"] ?? 0;
 
                 $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserPropertyBlocks b ON a.PropertyId = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
@@ -1770,15 +1770,15 @@ class UserProperty
             $metadata = [];
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
-                $geometry = $result["EntityGeometry"] ?? [];
+                $geometry = $result[0]["EntityGeometry"] ?? [];
 
                 $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
                // $result["EntityGeometry"] = null;
 
-                $resultPropertyId = $result["PropertyId"];
+                $resultPropertyId = $result[0]["PropertyId"];
 
-                $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
+                $resultPropertyFloor = $result[0]["PropertyFloor"] ?? 0;
 
                 $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyBlock FROM Properties.UserPropertyMetadataUnits a INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId  WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 

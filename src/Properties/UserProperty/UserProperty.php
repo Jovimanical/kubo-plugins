@@ -1647,7 +1647,7 @@ class UserProperty
 
                 $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
-                $result["EntityGeometry"] = null;
+               // $result["EntityGeometry"] = null;
 
                 $resultPropertyId = $result["PropertyEstate"] ?? 0;
 
@@ -1658,7 +1658,7 @@ class UserProperty
                 $parentQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
             }
-            
+
 
             $blockQuery = implode(";", $blockQueries);
             $parentQuery = implode(";", $parentQueries);
@@ -1770,7 +1770,11 @@ class UserProperty
             $metadata = [];
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
-                $results[$key]["Entity"] = $result["EntityGeometry"] ?? [];
+               // $results[$key]["Entity"] = $result["EntityGeometry"] ?? [];
+
+                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
+
+               // $result["EntityGeometry"] = null;
 
                 $resultPropertyId = $result["PropertyId"];
 

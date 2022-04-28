@@ -3770,7 +3770,7 @@ class UserProperty
         $resultData["data"] = $data;
         $resultData['estateId'] = $estateData['EstateId'];
         $resultData["blockIds"] = $blockIds;
-        $resultData['resultSet'] = $result;
+
         return $resultData;
 
     }
@@ -3919,7 +3919,7 @@ class UserProperty
                         $file = str_replace("name_", "$block (", $file);
                         $file = str_replace(".geojson", ")", $file);
                         // inserting values
-                        $result[] = self::indexPropertyUnitTest($userId, $geojson, $file, $metaType, $estateId, $blockersIds[$block]);
+                        $result[] = self::indexPropertyUnitTest($userId, $geojson, $file, $metaType, (int)$estateId, $blockersIds[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate

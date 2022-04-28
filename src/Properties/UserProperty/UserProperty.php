@@ -1642,6 +1642,8 @@ class UserProperty
             $blockQueries = [];
             $metadata = [];
 
+            return $results;
+
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
 

@@ -1658,6 +1658,7 @@ class UserProperty
                 $parentQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
             }
+            
 
             $blockQuery = implode(";", $blockQueries);
             $parentQuery = implode(";", $parentQueries);

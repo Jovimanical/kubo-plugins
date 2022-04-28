@@ -4295,7 +4295,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty for units
-    protected static function indexPropertyUnitTest(int $userId, string $geojson, string $title, string $metaType, int $estateId, array $blockId, int $parent = 0)
+    protected static function indexPropertyUnitTest(int $userId, string $geojson, string $title, string $metaType, int $estateId, string $blockId, int $parent = 0)
     {
         $data = [
             "user" => $userId,

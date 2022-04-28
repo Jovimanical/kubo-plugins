@@ -1622,7 +1622,7 @@ class UserProperty
                 $floorLevel = $floorData["floorLevel"];
                 $query .= " AND a.PropertyFloor = $floorLevel";
             }
-            
+
 
             $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -1644,15 +1644,15 @@ class UserProperty
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
 
-                $geometry = $result[0]["EntityGeometry"] ?? [];
+                $geometry = $result["EntityGeometry"] ?? [];
 
                 $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
                // $result["EntityGeometry"] = null;
 
-                $resultPropertyId = $result[0]["PropertyEstate"] ?? 0;
+                $resultPropertyId = $result["PropertyEstate"] ?? 0;
 
-                $resultPropertyFloor = $result[0]["PropertyFloor"] ?? 0;
+                $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
                 $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserPropertyBlocks b ON a.PropertyId = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
@@ -1771,15 +1771,15 @@ class UserProperty
             $metadata = [];
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
-                $geometry = $result[0]["EntityGeometry"] ?? [];
+                $geometry = $result["EntityGeometry"] ?? [];
 
                 $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
                // $result["EntityGeometry"] = null;
 
-                $resultPropertyId = $result[0]["PropertyId"];
+                $resultPropertyId = $result["PropertyId"];
 
-                $resultPropertyFloor = $result[0]["PropertyFloor"] ?? 0;
+                $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
                 $unitQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId, a.PropertyBlock FROM Properties.UserPropertyMetadataUnits a INNER JOIN Properties.UserPropertyUnits b ON a.PropertyId = b.PropertyId  WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 

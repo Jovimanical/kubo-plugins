@@ -251,7 +251,7 @@ class UserProperty
 
         }
 
-        $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
+        $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry));
 
         $linkedTimer = (int)time();
         $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',1,'$type')";
@@ -369,6 +369,7 @@ class UserProperty
 
             }
 
+            $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry));
             $linkedTimer = (int)time();
             $query = "BEGIN TRANSACTION;" .
                 "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,$blockChainAddress,'$geometry','$type')" .
@@ -3727,8 +3728,6 @@ class UserProperty
             }
 
             $queryInsertBlocks = implode(";", $queries);
-
-            return $queryInsertBlocks;
 
             $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
 

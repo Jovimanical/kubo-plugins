@@ -60,6 +60,6 @@ class Util
 
     public static function unserializeObject($str)
     {
-        return Utils\Util::unserializeObject($object);
+        return Utils\Util::unserializeObject($str);
     }
 }

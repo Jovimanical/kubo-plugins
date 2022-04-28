@@ -251,11 +251,7 @@ class UserProperty
 
         }
 
-        $query = "BEGIN TRANSACTION;" .
-                 "BEGIN TRY " .
-                 "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')" .
-                 "END TRY BEGIN CATCH SELECT ERROR_NUMBER() AS ErrorNumber,ERROR_MESSAGE() AS ErrorMessage; END CATCH " .
-                 "COMMIT TRANSACTION;";
+        $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')";
 
 
         return $query;

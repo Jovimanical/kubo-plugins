@@ -348,14 +348,14 @@ class UserProperty
     {
         try {
             // collecting parameters
-            $user = $data["user"];
+            $user = (int)$data["user"];
             $metadata = $data["property_metadata"] ?? [];
             $title = $data["property_title"];
-            $estateId = $data["property_estate_id"];
+            $estateId = (int)$data["property_estate_id"];
             $blockId = $data["property_block_id"];
             $blockChainAddress = ""; // $data["block_chain_address"];
             $geometry = $data["property_geometry"] ?? null;
-            $parent = $data["property_parent"] ?? null;
+            $parent = (int)$data["property_parent"] ?? null;
             $type = $data["property_type"];
             $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 

@@ -252,7 +252,7 @@ class UserProperty
         }
 
         $query = "BEGIN TRANSACTION;" .
-            "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')" .
+            "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,'$geometry',1,'$type')" .
             "COMMIT TRANSACTION;";
 
         return $query;
@@ -368,7 +368,7 @@ class UserProperty
             }
 
             $query = "BEGIN TRANSACTION;" .
-                "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,$blockId,$blockChainAddress,'$geometry',1,'$type')" .
+                "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, PropertyEstate, PropertyBlock, BlockChainAddress, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$estateId,$blockId,$blockChainAddress,'$geometry','$type')" .
                 "COMMIT TRANSACTION;";
 
             return $query;

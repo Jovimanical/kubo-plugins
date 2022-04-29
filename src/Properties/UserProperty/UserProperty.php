@@ -373,7 +373,7 @@ class UserProperty
 
             $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
             $linkedTimer = (int)time();
-            $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry','$type')";
+            $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
 
             return $query;
 

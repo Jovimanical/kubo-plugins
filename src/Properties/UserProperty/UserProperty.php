@@ -28,7 +28,7 @@ class UserProperty
 {
 
     // Redesigned newProperty 1
-    public static function newPropertyEstate(array $data)
+    public static function newPropertyEstateTest(array $data)
     {
         // collecting parameters
         $user = $data["user"];
@@ -97,7 +97,7 @@ class UserProperty
     }
 
     // Redesigned newProperty 1
-    public static function newPropertyEstateTest(array $data)
+    public static function newPropertyEstate(array $data)
     {
         // collecting parameters
         $user = $data["user"];
@@ -155,7 +155,7 @@ class UserProperty
     }
 
     // Redesigned newProperty 2
-    public static function newPropertyBlock(array $data)
+    public static function newPropertyBlockTest(array $data)
     {
         // collecting parameters
         $user = $data["user"];
@@ -231,7 +231,7 @@ class UserProperty
     }
 
     // Redesigned newProperty 2
-    public static function newPropertyBlockTest(array $data)
+    public static function newPropertyBlock(array $data)
     {
         // collecting parameters
         $user = $data["user"];
@@ -264,7 +264,7 @@ class UserProperty
     }
 
     // Redesigned newProperty 3
-    public static function newPropertyUnit(array $data)
+    public static function newPropertyUnitTest(array $data)
     {
         try {
             // collecting parameters
@@ -346,7 +346,7 @@ class UserProperty
     }
 
     // Redesigned newProperty 3
-    public static function newPropertyUnitTest(array $data)
+    public static function newPropertyUnit(array $data)
     {
         try {
             // collecting parameters
@@ -383,7 +383,7 @@ class UserProperty
     }
 
     // Redesigned newPropertyOnEntity
-    public static function newPropertyOnEntity(array $data)
+    public static function newPropertyOnEntityTest(array $data)
     {
         // Getting parameters
         $user = $data["user"] ?? 0;
@@ -508,7 +508,7 @@ class UserProperty
     }
 
     // Redesigned newPropertyOnEntity
-    public static function newPropertyOnEntityTest(array $data)
+    public static function newPropertyOnEntity(array $data)
     {
         // Getting parameters
         $user = $data["user"] ?? 0;
@@ -640,7 +640,7 @@ class UserProperty
     }
 
     // Redesigned viewProperties
-    public static function viewProperties(int $userId, array $data = [])
+    public static function viewPropertiesTest(int $userId, array $data = [])
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -787,7 +787,7 @@ class UserProperty
     }
 
     // Redesigned viewProperties
-    public static function viewPropertiesTest(int $userId, array $data = [])
+    public static function viewProperties(int $userId, array $data = [])
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -934,7 +934,7 @@ class UserProperty
     }
 
     // Redesigned viewProperty
-    public static function viewProperty(int $propertyId, array $data = [])
+    public static function viewPropertyTest(int $propertyId, array $data = [])
     {
 
         if (!isset($propertyId)) {
@@ -1007,7 +1007,7 @@ class UserProperty
     }
 
     // Redesigned viewProperty
-    public static function viewPropertyTest(int $propertyId, array $data = [])
+    public static function viewProperty(int $propertyId, array $data = [])
     {
 
         if (!isset($propertyId)) {
@@ -1080,7 +1080,7 @@ class UserProperty
     }
 
     // Redesigned listAllProperties
-    public static function listAllProperties(int $propertyId = 1, array $data)
+    public static function listAllPropertiesTest(int $propertyId = 1, array $data)
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -1163,7 +1163,7 @@ class UserProperty
     }
 
     // Redesigned listAllProperties
-    public static function listAllPropertiesTest(int $propertyId = 1, array $data)
+    public static function listAllProperties(int $propertyId = 1, array $data)
     {
         $fetch = "FIRST";
         $offset = 0;
@@ -1315,7 +1315,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyByName
-    public static function viewPropertyByName(array $data)
+    public static function viewPropertyByNameTest(array $data)
     {
         $name = $data["name"] ?? 0;
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
@@ -1332,7 +1332,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyByName
-    public static function viewPropertyByNameTest(array $data)
+    public static function viewPropertyByName(array $data)
     {
         $name = $data["name"] ?? 0;
         $query = "SELECT * FROM Properties.UserProperty WHERE PropertyTitle = '$name'";
@@ -1349,7 +1349,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildren
-    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
+    public static function viewPropertyChildrenTest(int $propertyId, array $floorData = [])
     {
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -1608,7 +1608,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildren
-    public static function viewPropertyChildrenTest(int $propertyId, array $floorData = [])
+    public static function viewPropertyChildren(int $propertyId, array $floorData = [])
     {
         if (!isset($propertyId)) {
             return "Parameter not set";
@@ -1879,7 +1879,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyMetadata
-    public static function viewPropertyMetadata(int $propertyId, array $data, int $floorLevel = 0)
+    public static function viewPropertyMetadataTest(int $propertyId, array $data, int $floorLevel = 0)
     {
         //  \KuboPlugin\Utils\Util::checkAuthorization();
 
@@ -1995,7 +1995,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyMetadata
-    public static function viewPropertyMetadataTest(int $propertyId, array $data, int $floorLevel = 0)
+    public static function viewPropertyMetadata(int $propertyId, array $data, int $floorLevel = 0)
     {
         //  \KuboPlugin\Utils\Util::checkAuthorization();
 
@@ -2225,7 +2225,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildrenMetadata
-    public static function viewPropertyChildrenMetadata(int $parentId, array $data, int $floorLevel = 0)
+    public static function viewPropertyChildrenMetadataTest(int $parentId, array $data, int $floorLevel = 0)
     {
         if (!isset($parentId)) {
             return "Parameter not set";
@@ -2314,7 +2314,7 @@ class UserProperty
     }
 
     // Redesigned viewPropertyChildrenMetadata
-    public static function viewPropertyChildrenMetadataTest(int $parentId, array $data, int $floorLevel = 0)
+    public static function viewPropertyChildrenMetadata(int $parentId, array $data, int $floorLevel = 0)
     {
         if (!isset($parentId)) {
             return "Parameter not set";
@@ -3317,7 +3317,7 @@ class UserProperty
     }
 
     // Redesigned uploadEstateData
-    public static function uploadEstateData(int $userId, array $data)
+    public static function uploadEstateDataTest(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3442,7 +3442,7 @@ class UserProperty
     }
 
     // Redesigned uploadEstateData
-    public static function uploadEstateDataTest(int $userId, array $data)
+    public static function uploadEstateData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3519,7 +3519,7 @@ class UserProperty
 
                                         try {
                                             // inserting ESTATE_BOUNDARY.geojson
-                                            $result = self::indexPropertyEstateTest($userId, $boundary_geojson, $foldername, $metaType, 0);
+                                            $result = self::indexPropertyEstate($userId, $boundary_geojson, $foldername, $metaType, 0);
                                         } catch (Exception $e) {
                                             return " Failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
                                         }
@@ -3567,7 +3567,7 @@ class UserProperty
     }
 
     // Redesigned uploadBlockData
-    public static function uploadBlockData(int $userId, array $data)
+    public static function uploadBlockDataTest(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3668,7 +3668,7 @@ class UserProperty
     }
 
     // Redesigned uploadBlockData
-    public static function uploadBlockDataTest(int $userId, array $data)
+    public static function uploadBlockData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3714,7 +3714,7 @@ class UserProperty
                     $geojson = str_replace("\"", "'", $geojson);
                     try {
                         $file = str_replace(".geojson", "", $file);
-                        $result[] = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, (int)$estateData['EstateId']); // edit last insert entityId of Estate
+                        $result[] = self::indexPropertyBlock($userId, $geojson, $file, $metaType, (int)$estateData['EstateId']); // edit last insert entityId of Estate
                         // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
 
                     } catch (Exception $e) {
@@ -3753,7 +3753,7 @@ class UserProperty
                         $geojson = str_replace("\"", "'", $geojson);
                         try {
                             $file = str_replace(".geojson", " $initials", $file);
-                            $resultExtra = self::indexPropertyBlockTest($userId, $geojson, $file, $metaType, (int)$estateData['EstateId']); // edit last insert entityId of Estate
+                            $resultExtra = self::indexPropertyBlock($userId, $geojson, $file, $metaType, (int)$estateData['EstateId']); // edit last insert entityId of Estate
                             // @todo no build $blocks array
                         } catch (Exception $e) {
                             return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -3780,7 +3780,7 @@ class UserProperty
     }
 
     // Redesigned uploadUnitData
-    public static function uploadUnitData(int $userId, array $data)
+    public static function uploadUnitDataTest(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3876,7 +3876,7 @@ class UserProperty
     }
 
     // Redesigned uploadUnitData
-    public static function uploadUnitDataTest(int $userId, array $data)
+    public static function uploadUnitData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -3924,7 +3924,7 @@ class UserProperty
                         $file = str_replace("name_", "$block (", $file);
                         $file = str_replace(".geojson", ")", $file);
                         // inserting values
-                        $result[] = self::indexPropertyUnitTest($userId, $geojson, $file, $metaType, (int)$estateId, $blockersIds[$block]);
+                        $result[] = self::indexPropertyUnit($userId, $geojson, $file, $metaType, (int)$estateId, $blockersIds[$block]);
 
                     } catch (Exception $e) {
                         return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
@@ -4013,7 +4013,7 @@ class UserProperty
         return $result;
     }
 
-    public static function deleteUploadData(int $userId, array $data)
+    public static function deleteUploadDataTest(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -4049,7 +4049,7 @@ class UserProperty
         return $result;
     }
 
-    public static function deleteUploadDataTest(int $userId, array $data)
+    public static function deleteUploadData(int $userId, array $data)
     {
 
         if ($userId == 0 or empty($data)) {
@@ -4148,7 +4148,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstate(array $login, string $geojson, string $title, string $metaType, int $parent = 0)
+    protected static function indexPropertyEstateTest(array $login, string $geojson, string $title, string $metaType, int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -4185,7 +4185,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty
-    protected static function indexPropertyEstateTest(int $userId, string $geojson, string $title, string $metaType, int $parent = 0)
+    protected static function indexPropertyEstate(int $userId, string $geojson, string $title, string $metaType, int $parent = 0)
     {
         $data = [
             "user" => $userId,
@@ -4203,7 +4203,7 @@ class UserProperty
     }
 
     // Redesigned indexBlock
-    protected static function indexPropertyBlock(array $login, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
+    protected static function indexPropertyBlockTest(array $login, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -4241,7 +4241,7 @@ class UserProperty
     }
 
     // Redesigned indexBlock
-    protected static function indexPropertyBlockTest(int $userId, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
+    protected static function indexPropertyBlock(int $userId, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
     {
         $data = [
             "user" => $userId,
@@ -4260,7 +4260,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty for units
-    protected static function indexPropertyUnit(array $login, string $geojson, string $title, string $metaType, int $estateId, array $blockId, int $parent = 0)
+    protected static function indexPropertyUnitTest(array $login, string $geojson, string $title, string $metaType, int $estateId, array $blockId, int $parent = 0)
     {
         $data = [
             "user" => $login["userId"],
@@ -4298,7 +4298,7 @@ class UserProperty
     }
 
     // Redesigned indexProperty for units
-    protected static function indexPropertyUnitTest(int $userId, string $geojson, string $title, string $metaType, int $estateId, string $blockId, int $parent = 0)
+    protected static function indexPropertyUnit(int $userId, string $geojson, string $title, string $metaType, int $estateId, string $blockId, int $parent = 0)
     {
         $data = [
             "user" => $userId,

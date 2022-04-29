@@ -118,6 +118,8 @@ class UserProperty
 
         }
 
+        $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
+
         //STEP 2: Index User Property
         $inputData = [
             "UserId" => $user,
@@ -609,13 +611,15 @@ class UserProperty
         }
 
         // getting previous unit data
-        $propertyChildren = self::viewPropertyChildrenTest((int) $propertyId, ["floorLevel" => (int) $floorLevel - 1, "floorSkip" => false, "propertyType" => "block"]);
+        $propertyChildren = self::viewPropertyChildrenTest((int) $propertyId, ["floor_level" => (int) $floorLevel - 1, "floorSkip" => false, "propertyType" => "block"]);
 
         foreach ($propertyChildren as $property) {
             $title = $property["PropertyTitle"] . " - F" . $floorLevel;
             $entityId = $property["LinkedEntity"];
             $geometry = $property["EntityGeometry"];
             $propertyUnitUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+            $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
 
             $inputDataExtra = [
                 "UserId" => $user,

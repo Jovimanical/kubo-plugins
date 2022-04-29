@@ -1625,7 +1625,7 @@ class UserProperty
 
             if (isset($floorData["floorLevel"])) {
                 $floorLevel = $floorData["floorLevel"];
-                $query .= " AND a.PropertyFloor = $floorLevel";
+                $query .= " AND PropertyFloor = $floorLevel";
             }
 
 
@@ -1755,7 +1755,7 @@ class UserProperty
             } else {
                 if (isset($floorData["floorLevel"])) {
                     $floorLevel = $floorData["floorLevel"];
-                    $query .= " AND a.PropertyFloor = $floorLevel";
+                    $query .= " AND PropertyFloor = $floorLevel";
                 }
             }
 

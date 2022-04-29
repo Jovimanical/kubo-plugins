@@ -354,7 +354,7 @@ class UserProperty
             $metadata = $data["property_metadata"] ?? [];
             $title = $data["property_title"];
             $estateId = (int)$data["property_estate_id"];
-            $blockId = $data["property_block_id"];
+            $blockId = (int)$data["property_block_id"];
             $blockChainAddress = ""; // $data["block_chain_address"];
             $geometry = $data["property_geometry"] ?? null;
             $parent = $data["property_parent"] ?? null;
@@ -4304,7 +4304,7 @@ class UserProperty
             "user" => $userId,
             "property_title" => $title,
             "property_estate_id" => $estateId,
-            "property_block_id" => $blockId,
+            "property_block_id" => (int)$blockId,
             "property_type" => $metaType,
             "property_geometry" => $geojson,
             "property_metadata" => [

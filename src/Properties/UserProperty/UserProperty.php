@@ -3941,6 +3941,8 @@ class UserProperty
 
             $queryInsertUnits = implode(";", $queries);
 
+            return $queryInsertUnits;
+
             $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertUnits);
         }
 

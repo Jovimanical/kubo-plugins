@@ -1642,14 +1642,13 @@ class UserProperty
             $blockQueries = [];
             $metadata = [];
 
-            return $results;
 
             // looping and building result set through complex chain queries
             foreach ($results as $key => $result) {
 
                 $geometry = $result["EntityGeometry"] ?? [];
 
-                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject(html_entity_decode($geometry));
+                $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($geometry);
 
                // $result["EntityGeometry"] = null;
 

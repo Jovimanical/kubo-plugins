@@ -118,7 +118,7 @@ class UserProperty
 
         }
 
-        $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
+        $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 
         //STEP 2: Index User Property
         $inputData = [
@@ -253,7 +253,7 @@ class UserProperty
 
         }
 
-        $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
+        $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 
         $linkedTimer = (int)time();
         $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',1,'$type')";
@@ -371,7 +371,7 @@ class UserProperty
 
             }
 
-            $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
+            $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
             $linkedTimer = (int)time();
             $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
 
@@ -619,7 +619,7 @@ class UserProperty
             $geometry = $property["EntityGeometry"];
             $propertyUnitUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
-            $geometry =  htmlentities(\KuboPlugin\Utils\Util::serializeObject($geometry), ENT_QUOTES);
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
 
             $inputDataExtra = [
                 "UserId" => $user,

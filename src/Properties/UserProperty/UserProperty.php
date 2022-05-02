@@ -118,6 +118,8 @@ class UserProperty
 
         }
 
+        $geometry = str_replace('"', '&#34;', $geometry);
+
         $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 
         //STEP 2: Index User Property
@@ -253,6 +255,8 @@ class UserProperty
 
         }
 
+        $geometry = str_replace('"', '&#34;', $geometry);
+
         $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 
         $linkedTimer = (int)time();
@@ -370,6 +374,8 @@ class UserProperty
                 }
 
             }
+
+            $geometry = str_replace('"', '&#34;', $geometry);
 
             $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
             $linkedTimer = (int)time();
@@ -618,6 +624,8 @@ class UserProperty
             $entityId = $property["LinkedEntity"];
             $geometry = $property["EntityGeometry"];
             $propertyUnitUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+            $geometry = str_replace('"', '&#34;', $geometry);
 
             $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
 

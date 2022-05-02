@@ -3727,7 +3727,7 @@ class UserProperty
             $queries = [];
 
             foreach ($result as $keyItem => $valueItem) {
-                $queries[] = self::newPropertyBlockTest($valueItem);
+                $queries[] = self::newPropertyBlock($valueItem);
             }
 
             $queryInsertBlocks = implode(";", $queries);
@@ -3936,7 +3936,7 @@ class UserProperty
             $queries = [];
 
             foreach ($result as $keyItem => $valueItem) {
-                $queries[] = self::newPropertyUnitTest($valueItem);
+                $queries[] = self::newPropertyUnit($valueItem);
             }
 
             $queryInsertUnits = implode(";", $queries);

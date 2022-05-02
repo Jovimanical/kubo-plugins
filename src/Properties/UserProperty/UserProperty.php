@@ -4198,7 +4198,7 @@ class UserProperty
             ],
         ];
 
-        return self::newPropertyEstateTest($data);
+        return self::newPropertyEstate($data);
 
     }
 

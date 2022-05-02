@@ -118,7 +118,7 @@ class UserProperty
 
         }
 
-       // $geometry = str_replace('"', '&#34;', $geometry);
+        $geometry = str_replace('"', '&#34;', $geometry);
 
         $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 

@@ -122,8 +122,6 @@ class UserProperty
 
         $geometry =  \KuboPlugin\Utils\Util::serializeObject($geometry);
 
-        return $geometry;
-
         //STEP 2: Index User Property
         $inputData = [
             "UserId" => $user,

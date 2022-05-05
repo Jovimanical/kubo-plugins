@@ -39,7 +39,7 @@ class UserAccount {
 
 			if (!UserAccount\Account::checkAccountExistsByEmail($data["email"])){
 				$return_result = ["status"=>false, "reason"=>"User account was not created"];
-				
+
 				$result = UserAccount\Account::newAccount($data["email"], $data["password"], $data["names"]);
 				if ($result["lastInsertId"]){
 					$accountId = $result["lastInsertId"];

@@ -12,6 +12,12 @@
 
 namespace KuboPlugin\User;
 
+
+use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
+use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
+use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
+
+
 /**
  * class KuboPlugin\User\UserAccount
  *

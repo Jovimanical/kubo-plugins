@@ -231,7 +231,7 @@ class UserProperty
         $foldername = $data["foldername"] ?? "";
         $initials = $data["initials"] ?? "";
 
-        $queryInsertBlockExtra = implode(";", $queriesExtra);
+        $queryInsertBlockExtra = implode(";", $queries);
 
         $resultSetExtra = DBConnectionFactory::getConnection()->exec($queryInsertBlockExtra);
 

@@ -89,7 +89,7 @@ class UserProperty
     }
 
     // newProperty Estate Long for PHP CLI
-    public function newPropertyEstateLong(array $data)
+    public static function newPropertyEstateLong(array $data)
     {
         // collecting parameters
         $user = $data["user"];

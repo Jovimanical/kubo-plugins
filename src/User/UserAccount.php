@@ -46,14 +46,35 @@ class UserAccount {
 					$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
 					$return_result = ["status"=>true, "accountDetails"=>["id"=>$accountId]];
-				}	
+				}
 			}
 		}
 
 		return $return_result;
 	}
 
-	public static function viewAccounts(){
+	public static function viewAccounts(array $data){
+		$fetch = "FIRST";
+        $offset = 0;
+        $limit = 10;
+
+        if ($data['offset'] != 0) {
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        if ($data['limit'] == "") {
+            $limit = 10;
+        } else {
+            $limit = $data['limit'] ?? 10;
+        }
+
+		$accountType = $data['accountType'] ?? 0;
+
+		$query = "SELECT UserId,UserEmail FROM Users.Account WHERE UserEmail = '$email' AND AccountType = $accountType ORDER BY UserId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result[0] ?? "Retrieval Error!";
 	}
 
 	/**

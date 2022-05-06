@@ -67,7 +67,8 @@ class Account {
 
 	}
 
-	public static function viewAccounts(){
+	public static function viewAccounts(int $accountType){
+		
 	}
 
 	/**

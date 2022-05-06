@@ -39,6 +39,7 @@ class UserProperty
         $type = $data["property_type"];
         $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
+
         if (self::isJSON($metadata)) { // checking for json data and converting to array
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
@@ -144,7 +145,7 @@ class UserProperty
 
         $result = DBConnectionFactory::getConnection()->exec($query);
 
-        $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $user AND FolderName = '$title' AND Initials = '$initials' AND UploadStatus = 'processing' OR UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'uploaded' OR UserId = $userId AND FolderName = '$foldername' AND Initials = '$initials' AND UploadStatus = 'uploading'";
+        $selectQuery = "SELECT UserId FROM Properties.MapDataUploadStata WHERE UserId = $user AND FolderName = '$title' AND Initials = '$initials' AND UploadStatus = 'processing' OR UserId = $user AND FolderName = '$title' AND Initials = '$initials' AND UploadStatus = 'uploaded' OR UserId = $user AND FolderName = '$title' AND Initials = '$initials' AND UploadStatus = 'uploading'";
         $selectExec = DBConnectionFactory::getConnection()->query($selectQuery)->fetchAll(\PDO::FETCH_ASSOC);
 
         if (count($selectExec) > 1) {

@@ -80,7 +80,7 @@ class UserAccount {
 		$query = "SELECT UserId,UserEmail FROM Users.Account WHERE UserId IN (SELECT UserId FROM Users.UserAccountType WHERE AccountType = $accountType) ORDER BY UserId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";
 		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
-		return $result[0] ?? "Retrieval Error!";
+		return $result ?? "Retrieval Error!";
 	}
 
 	/**

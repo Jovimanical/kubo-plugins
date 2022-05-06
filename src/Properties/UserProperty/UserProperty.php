@@ -205,6 +205,8 @@ class UserProperty
         $queries = $data["queries"] ?? [];
         $estateId = $data["estateId"] ?? 0;
 
+        $blockIds = [];
+
         $queryInsertBlocks = implode(";", $queries);
 
         $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);

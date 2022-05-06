@@ -101,7 +101,7 @@ class UserProperty
         $initials = $data["initials"] ?? null;
         $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
-        if (isJSON($metadata)) { // checking for json data and converting to array
+        if (self::isJSON($metadata)) { // checking for json data and converting to array
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);

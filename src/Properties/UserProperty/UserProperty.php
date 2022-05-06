@@ -202,6 +202,7 @@ class UserProperty
 
     public static function newPropertyBlockerLong(array $data)
     {
+        try {
         $queries = $data["queries"] ?? [];
         $estateId = $data["estateId"] ?? 0;
 
@@ -220,6 +221,9 @@ class UserProperty
         }
 
         return $blockIds;
+    } catch(\Exception $e){
+        return $e->getMessage();
+    }
     }
 
     public static function newPropertyBlockerExtraLong(array $data)

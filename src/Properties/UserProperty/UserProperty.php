@@ -1621,6 +1621,12 @@ class UserProperty
                 $value = json_encode($value);
 
             } else {
+                if ($key == "MapSnapshot") {
+
+                    $mapShotQuery = "UPDATE Properties.UserProperty SET MapSnapshot = '$value' WHERE PropertyId = $propertyId";
+
+                    $resultShot = DBConnectionFactory::getConnection()->exec($mapShotQuery);
+                }
                 if ($key == "propertyFeaturePhoto") {
 
                     if (file_exists($_FILES["propertyFeaturePhotoImg"]["tmp_name"])) {

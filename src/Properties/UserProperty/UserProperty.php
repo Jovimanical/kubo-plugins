@@ -202,16 +202,66 @@ class UserProperty
     public static function newPropertyBlockerLong(array $data)
     {
         try {
-            $query = $data["query"] ?? "";
-            $estateId = $data["estateId"] ?? 0;
 
-            $resultSet = DBConnectionFactory::getConnection()->exec($query);
+            // collecting parameters
+            $user = $data["userId"];
+            $resultBlock = json_decode($data["resultBlock"], true) ?? [];
+            $estateId = $data["estateId"];
 
-            // returning block data id
-            $queryBlockId = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
-            $resultBlockId = DBConnectionFactory::getConnection()->query($queryBlockId)->fetchAll(\PDO::FETCH_ASSOC);
+            $queries = [];
 
-            return $resultBlockId;
+            foreach ($resultBlock as $keyItem => $dataItem) {
+
+                // collecting parameters
+                $user = $dataItem["user"];
+                $metadata = $dataItem["property_metadata"] ?? [];
+                $title = $dataItem["property_title"];
+                $estateId = $dataItem["property_estate_id"];
+                $geometry = $dataItem["property_geometry"] ?? null;
+                $parent = $dataItem["property_parent"] ?? null;
+                $type = $dataItem["property_type"];
+                $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+                if (is_array($metadata)) {
+
+                } else {
+
+                    if (self::isJSON($metadata)) { // checking for json data and converting to array
+                        if (is_string($metadata)) {
+                            $metadata = str_replace('&#39;', '"', $metadata);
+                            $metadata = str_replace('&#34;', '"', $metadata);
+                            $metadata = html_entity_decode($metadata);
+                            $metadata = json_decode($metadata, true);
+                        }
+
+                    }
+                }
+
+                $geometry = str_replace('"', '&#34;', $geometry);
+                $geometry = str_replace("'", "&#39;", $geometry);
+
+                $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+                $linkedTimer = (int) time();
+                $queries[] = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',1,'$type')";
+
+            }
+
+            $blockIds = [];
+
+            $queryInsertBlocks = implode(";", $queries);
+
+            $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
+
+            // returning block data array
+            $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
+            $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($resultBlocks as $keyBlock => $blockValue) {
+                $blockIds[$blockValue["PropertyTitle"]] = $blockValue["PropertyId"];
+            }
+
+            return $blockIds;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -219,26 +269,64 @@ class UserProperty
 
     public static function newPropertyBlockerExtraLong(array $data)
     {
-        $query = $data["query"] ?? [];
-        $estateId = $data["estateId"] ?? 0;
 
-        $resultSetExtra = DBConnectionFactory::getConnection()->exec($query);
+        // collecting parameters
+        $user = $data["userId"];
+        $resultExtra = json_decode($data["resultExtra"], true) ?? [];
+        $estateId = $data["estateId"];
 
-        return $resultSetExtra;
-
-    }
-
-    public static function newPropertyBlockerExtraStatus(array $data)
-    {
         $userId = $data["userId"] ?? 0;
         $foldername = $data["foldername"] ?? "";
         $initials = $data["initials"] ?? "";
+
+        $queries = [];
+
+        foreach ($resultExtra as $keyItem => $dataItem) {
+
+            // collecting parameters
+            $user = $dataItem["user"];
+            $metadata = $dataItem["property_metadata"] ?? [];
+            $title = $dataItem["property_title"];
+            $estateId = $dataItem["property_estate_id"];
+            $geometry = $dataItem["property_geometry"] ?? null;
+            $parent = $dataItem["property_parent"] ?? null;
+            $type = $dataItem["property_type"];
+            $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+            if (is_array($metadata)) {
+
+            } else {
+
+                if (self::isJSON($metadata)) { // checking for json data and converting to array
+                    if (is_string($metadata)) {
+                        $metadata = str_replace('&#39;', '"', $metadata);
+                        $metadata = str_replace('&#34;', '"', $metadata);
+                        $metadata = html_entity_decode($metadata);
+                        $metadata = json_decode($metadata, true);
+                    }
+
+                }
+            }
+
+            $geometry = str_replace('"', '&#34;', $geometry);
+            $geometry = str_replace("'", "&#39;", $geometry);
+
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+            $linkedTimer = (int) time();
+            $queries[] = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',1,'$type')";
+
+        }
+
+        $queryInsertBlockExtra = implode(";", $queries);
+
+        $resultSetExtra = DBConnectionFactory::getConnection()->exec($queryInsertBlockExtra);
 
         // progress check
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
-        return $resultExec;
+        return $resultSetExtra;
 
     }
 
@@ -246,6 +334,62 @@ class UserProperty
     public static function newPropertyUnit(array $data)
     {
         try {
+
+            // collecting parameters
+            $user = $data["userId"];
+            $resultUnit = json_decode($data["resultUnit"], true) ?? [];
+            $estateId = $data["estateId"];
+
+            $queries = [];
+
+            foreach ($resultUnit as $keyItem => $dataItem) {
+                // collecting parameters
+                $user = (int) $data["user"];
+                $metadata = $data["property_metadata"] ?? [];
+                $title = $data["property_title"];
+                $estateId = (int) $data["property_estate_id"];
+                $blockId = (int) $data["property_block_id"];
+                $blockChainAddress = ""; // $data["block_chain_address"];
+                $geometry = $data["property_geometry"] ?? null;
+                $parent = $data["property_parent"] ?? null;
+                $type = $data["property_type"];
+                $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+                if (self::isJSON($metadata)) { // checking for json data and converting to array
+                    if (is_string($metadata)) {
+                        $metadata = str_replace('&#39;', '"', $metadata);
+                        $metadata = str_replace('&#34;', '"', $metadata);
+                        $metadata = html_entity_decode($metadata);
+                        $metadata = json_decode($metadata, true);
+                    }
+
+                }
+
+                $geometry = str_replace('"', '&#34;', $geometry);
+                $geometry = str_replace("'", "&#39;", $geometry);
+
+                $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+                $linkedTimer = (int) time();
+                $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
+
+            }
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function newPropertyUniterLong(array $data)
+    {
+
+        // collecting parameters
+        $user = $data["userId"];
+        $resultUnit = json_decode($data["resultUnit"], true) ?? [];
+        $estateId = $data["estateId"];
+
+        $queries = [];
+
+        foreach ($resultUnit as $keyItem => $dataItem) {
             // collecting parameters
             $user = (int) $data["user"];
             $metadata = $data["property_metadata"] ?? [];
@@ -273,19 +417,9 @@ class UserProperty
 
             $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
             $linkedTimer = (int) time();
-            $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
+            $queries[] = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
 
-            return $query;
-
-        } catch (\Exception $e) {
-            return $e->getMessage();
         }
-    }
-
-    public static function newPropertyUniterLong(array $data)
-    {
-        $queries = $data["queries"] ?? [];
-        $estateId = $data["estateId"] ?? 0;
 
         $queryInsertUnits = implode(";", $queries);
 

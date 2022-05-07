@@ -208,7 +208,7 @@ class UserProperty
 
             $resultDataBlock = str_replace("&#39;", "'", $data["resultBlock"]);
             $resultDataBlock = str_replace('&#34;', '"', $data["resultBlock"]);
-            
+
             // collecting parameters
             $user = $data["userId"];
             $resultBlock = json_decode($resultDataBlock, true) ?? [];
@@ -276,10 +276,10 @@ class UserProperty
     public static function newPropertyBlockerExtraLong(array $data)
     {
         $data = str_replace("&#39;", "'", $data);
-            $data = str_replace('&#34;', '"', $data);
+        $data = str_replace('&#34;', '"', $data);
 
-            $resultDataExtra = str_replace("&#39;", "'", $data["resultExtra"]);
-            $resultDataExtra = str_replace('&#34;', '"', $data["resultExtra"]);
+        $resultDataExtra = str_replace("&#39;", "'", $data["resultExtra"]);
+        $resultDataExtra = str_replace('&#34;', '"', $data["resultExtra"]);
 
         // collecting parameters
         $user = $data["userId"];
@@ -393,10 +393,10 @@ class UserProperty
     public static function newPropertyUniterLong(array $data)
     {
         $data = str_replace("&#39;", "'", $data);
-            $data = str_replace('&#34;', '"', $data);
+        $data = str_replace('&#34;', '"', $data);
 
-            $resultDataUnit = str_replace("&#39;", "'", $data["resultUnit"]);
-            $resultDataUnit = str_replace('&#34;', '"', $data["resultUnit"]);
+        $resultDataUnit = str_replace("&#39;", "'", $data["resultUnit"]);
+        $resultDataUnit = str_replace('&#34;', '"', $data["resultUnit"]);
 
         // collecting parameters
         $user = $data["userId"];
@@ -407,15 +407,15 @@ class UserProperty
 
         foreach ($resultUnit as $keyItem => $dataItem) {
             // collecting parameters
-            $user = (int) $data["user"];
-            $metadata = $data["property_metadata"] ?? [];
-            $title = $data["property_title"];
-            $estateId = (int) $data["property_estate_id"];
-            $blockId = (int) $data["property_block_id"];
-            $blockChainAddress = ""; // $data["block_chain_address"];
-            $geometry = $data["property_geometry"] ?? null;
-            $parent = $data["property_parent"] ?? null;
-            $type = $data["property_type"];
+            $user = (int) $dataItem["user"];
+            $metadata = $dataItem["property_metadata"] ?? [];
+            $title = $dataItem["property_title"];
+            $estateId = (int) $dataItem["property_estate_id"];
+            $blockId = (int) $dataItem["property_block_id"];
+            $blockChainAddress = ""; // $dataItem["block_chain_address"];
+            $geometry = $dataItem["property_geometry"] ?? null;
+            $parent = $dataItem["property_parent"] ?? null;
+            $type = $dataItem["property_type"];
             $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
             if (self::isJSON($metadata)) { // checking for json data and converting to array

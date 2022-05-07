@@ -213,6 +213,8 @@ class UserProperty
 
             $queries = [];
 
+            return $resultBlock;
+
             foreach ($resultBlock as $keyItem => $dataItem) {
 
                 // collecting parameters

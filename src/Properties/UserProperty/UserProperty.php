@@ -216,8 +216,6 @@ class UserProperty
 
             $queries = [];
 
-            return $resultBlock;
-
             foreach ($resultBlock as $keyItem => $dataItem) {
 
                 // collecting parameters
@@ -277,10 +275,15 @@ class UserProperty
 
     public static function newPropertyBlockerExtraLong(array $data)
     {
+        $data = str_replace("&#39;", "'", $data);
+            $data = str_replace('&#34;', '"', $data);
+
+            $resultDataExtra = str_replace("&#39;", "'", $data["resultExtra"]);
+            $resultDataExtra = str_replace('&#34;', '"', $data["resultExtra"]);
 
         // collecting parameters
         $user = $data["userId"];
-        $resultExtra = json_decode($data["resultExtra"], true) ?? [];
+        $resultExtra = json_decode($resultDataExtra, true) ?? [];
         $estateId = $data["estateId"];
 
         $userId = $data["userId"] ?? 0;
@@ -389,10 +392,15 @@ class UserProperty
 
     public static function newPropertyUniterLong(array $data)
     {
+        $data = str_replace("&#39;", "'", $data);
+            $data = str_replace('&#34;', '"', $data);
+
+            $resultDataUnit = str_replace("&#39;", "'", $data["resultUnit"]);
+            $resultDataUnit = str_replace('&#34;', '"', $data["resultUnit"]);
 
         // collecting parameters
         $user = $data["userId"];
-        $resultUnit = json_decode($data["resultUnit"], true) ?? [];
+        $resultUnit = json_decode($resultDataUnit, true) ?? [];
         $estateId = $data["estateId"];
 
         $queries = [];

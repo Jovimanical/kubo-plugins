@@ -202,7 +202,7 @@ class UserProperty
     public static function newPropertyBlockerLong(array $data)
     {
         try {
-            $queries = $data["queries"] ?? [];
+            $queries = json_decode($data["queries"],true) ?? [];
             $estateId = $data["estateId"] ?? 0;
 
             $blockIds = [];
@@ -227,7 +227,7 @@ class UserProperty
 
     public static function newPropertyBlockerExtraLong(array $data)
     {
-        $queries = $data["queries"] ?? [];
+        $queries = json_decode($data["queries"],true) ?? [];
         $estateId = $data["estateId"] ?? 0;
 
         $userId = $data["userId"] ?? 0;

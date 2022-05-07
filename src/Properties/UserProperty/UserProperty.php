@@ -202,24 +202,16 @@ class UserProperty
     public static function newPropertyBlockerLong(array $data)
     {
         try {
-            $queries = json_decode($data["queries"],true) ?? [];
+            $query = $data["query"] ?? "";
             $estateId = $data["estateId"] ?? 0;
 
-            $blockIds = [];
+            $resultSet = DBConnectionFactory::getConnection()->exec($query);
 
-            $queryInsertBlocks = implode(";", $queries);
+            // returning block data id
+            $queryBlockId = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
+            $resultBlockId = DBConnectionFactory::getConnection()->query($queryBlockId)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
-
-            // returning block data array
-            $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
-            $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
-
-            foreach ($resultBlocks as $keyBlock => $blockValue) {
-                $blockIds[$blockValue["PropertyTitle"]] = $blockValue["PropertyId"];
-            }
-
-            return $blockIds;
+            return $resultBlockId;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -227,22 +219,26 @@ class UserProperty
 
     public static function newPropertyBlockerExtraLong(array $data)
     {
-        $queries = json_decode($data["queries"],true) ?? [];
+        $query = $data["query"] ?? [];
         $estateId = $data["estateId"] ?? 0;
 
+        $resultSetExtra = DBConnectionFactory::getConnection()->exec($query);
+
+        return $resultSetExtra;
+
+    }
+
+    public static function newPropertyBlockerExtraStatus(array $data)
+    {
         $userId = $data["userId"] ?? 0;
         $foldername = $data["foldername"] ?? "";
         $initials = $data["initials"] ?? "";
-
-        $queryInsertBlockExtra = implode(";", $queries);
-
-        $resultSetExtra = DBConnectionFactory::getConnection()->exec($queryInsertBlockExtra);
 
         // progress check
         $insertQuery = "UPDATE Properties.MapDataUploadStata SET UploadStatus = 'uploading' WHERE UserId = $userId AND FolderName = '$foldername' AND Initials =  '$initials'";
         $resultExec = DBConnectionFactory::getConnection()->exec($insertQuery);
 
-        return $resultSetExtra;
+        return $resultExec;
 
     }
 

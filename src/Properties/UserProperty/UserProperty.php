@@ -203,7 +203,9 @@ class UserProperty
     {
         try {
 
-            $data = html_entity_decode($data);
+            $data = str_replace('&#39;', '"', $data);
+            $data = str_replace('&#34;', '"', $data);
+            
             // collecting parameters
             $user = $data["userId"];
             $resultBlock = json_decode($data["resultBlock"], true) ?? [];

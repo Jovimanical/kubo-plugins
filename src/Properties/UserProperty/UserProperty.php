@@ -213,8 +213,6 @@ class UserProperty
 
             $queries = [];
 
-            return $data;
-
             foreach ($resultBlock as $keyItem => $dataItem) {
 
                 // collecting parameters
@@ -255,8 +253,6 @@ class UserProperty
             $blockIds = [];
 
             $queryInsertBlocks = implode(";", $queries);
-
-            return $queries;
 
             $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
 

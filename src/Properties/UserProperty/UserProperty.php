@@ -39,7 +39,6 @@ class UserProperty
         $type = $data["property_type"];
         $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
-
         if (self::isJSON($metadata)) { // checking for json data and converting to array
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
@@ -203,29 +202,27 @@ class UserProperty
     public static function newPropertyBlockerLong(array $data)
     {
         try {
-        $queries = $data["queries"] ?? [];
-        $estateId = $data["estateId"] ?? 0;
+            $queries = $data["queries"] ?? [];
+            $estateId = $data["estateId"] ?? 0;
 
-        $blockIds = [];
+            $blockIds = [];
 
-        $queryInsertBlocks = implode(";", $queries);
+            $queryInsertBlocks = implode(";", $queries);
 
-        return $queryInsertBlocks;
+            $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
 
-        $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
+            // returning block data array
+            $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
+            $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
 
-        // returning block data array
-        $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
-        $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($resultBlocks as $keyBlock => $blockValue) {
+                $blockIds[$blockValue["PropertyTitle"]] = $blockValue["PropertyId"];
+            }
 
-        foreach ($resultBlocks as $keyBlock => $blockValue) {
-            $blockIds[$blockValue["PropertyTitle"]] = $blockValue["PropertyId"];
+            return $blockIds;
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
-
-        return $blockIds;
-    } catch(\Exception $e){
-        return $e->getMessage();
-    }
     }
 
     public static function newPropertyBlockerExtraLong(array $data)

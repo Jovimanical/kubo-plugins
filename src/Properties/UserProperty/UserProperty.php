@@ -210,7 +210,7 @@ class UserProperty
 
             $queries = [];
 
-            print_r($resultBlock);
+            return $resultBlock;
 
             foreach ($resultBlock as $keyItem => $dataItem) {
 

@@ -203,12 +203,15 @@ class UserProperty
     {
         try {
 
-            $data = str_replace('&#39;', '"', $data);
+            $data = str_replace("&#39;", "'", $data);
             $data = str_replace('&#34;', '"', $data);
+
+            $resultDataBlock = str_replace("&#39;", "'", $data["resultBlock"]);
+            $resultDataBlock = str_replace('&#34;', '"', $data["resultBlock"]);
             
             // collecting parameters
             $user = $data["userId"];
-            $resultBlock = json_decode($data["resultBlock"], true) ?? [];
+            $resultBlock = json_decode($resultDataBlock, true) ?? [];
             $estateId = $data["estateId"];
 
             $queries = [];

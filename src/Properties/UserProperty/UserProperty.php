@@ -251,7 +251,7 @@ class UserProperty
 
             $queryInsertBlocks = implode(";", $queries);
 
-            return $queryInsertBlocks;
+            return $queries;
 
             $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
 

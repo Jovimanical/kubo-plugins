@@ -353,7 +353,7 @@ class UserProperty
     }
 
     // Redesigned newProperty 3
-function newPropertyUnit(array $data)
+public static function newPropertyUnit(array $data)
 {
     try {
         // collecting parameters
@@ -368,7 +368,7 @@ function newPropertyUnit(array $data)
         $type = $data["property_type"];
         $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
 
-        if (isJSON($metadata)) { // checking for json data and converting to array
+        if (self::isJSON($metadata)) { // checking for json data and converting to array
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);
@@ -381,7 +381,7 @@ function newPropertyUnit(array $data)
         $geometry = str_replace('"', '&#34;', $geometry);
         $geometry = str_replace("'", "&#39;", $geometry);
 
-        $geometry = serializeObject($geometry);
+        $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
         $linkedTimer = (int) time();
         $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
 

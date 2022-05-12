@@ -176,6 +176,9 @@ class UserProperty
         $parent = $data["property_parent"] ?? null;
         $type = $data["property_type"];
         $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+        $extra = $data["extra"];
+        $floorLevel = $data["floorLevel"];
+        $floorCount = $data["floorCount"] ?? 1;
 
         if (self::isJSON($metadata)) { // checking for json data and converting to array
             if (is_string($metadata)) {
@@ -192,9 +195,17 @@ class UserProperty
 
         $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
 
-        $linkedTimer = (int) time();
-        $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',1,'$type')";
+        if($extra == 1){
+            $linkedTimer = (int) time();
+            $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType, PropertyFloor) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',$floorCount,'$type',$floorLevel)";
+    
+        } else {
+            $linkedTimer = (int) time();
+            $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry , PropertyFloorCount, PropertyType) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,'$geometry',$floorCount,'$type')";
+    
+        }
 
+        
         return $query;
 
     }
@@ -342,7 +353,47 @@ class UserProperty
     }
 
     // Redesigned newProperty 3
-    public static function newPropertyUnit(array $data)
+function newPropertyUnit(array $data)
+{
+    try {
+        // collecting parameters
+        $user = (int) $data["user"];
+        $metadata = $data["property_metadata"] ?? [];
+        $title = $data["property_title"];
+        $estateId = (int) $data["property_estate_id"];
+        $blockId = (int) $data["property_block_id"];
+        $blockChainAddress = ""; // $data["block_chain_address"];
+        $geometry = $data["property_geometry"] ?? null;
+        $parent = $data["property_parent"] ?? null;
+        $type = $data["property_type"];
+        $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+
+        if (isJSON($metadata)) { // checking for json data and converting to array
+            if (is_string($metadata)) {
+                $metadata = str_replace('&#39;', '"', $metadata);
+                $metadata = str_replace('&#34;', '"', $metadata);
+                $metadata = html_entity_decode($metadata);
+                $metadata = json_decode($metadata, true);
+            }
+
+        }
+
+        $geometry = str_replace('"', '&#34;', $geometry);
+        $geometry = str_replace("'", "&#39;", $geometry);
+
+        $geometry = serializeObject($geometry);
+        $linkedTimer = (int) time();
+        $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
+
+        return $query;
+
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+}
+
+    // Redesigned newProperty 3
+    public static function newPropertyUnitBackup(array $data)
     {
         try {
 
@@ -384,6 +435,282 @@ class UserProperty
                 $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$title','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
 
             }
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function addBlockGeojson(array $data)
+    {
+        try {
+
+            // collecting parameters
+            $user = $data["userId"] ?? 0;
+            $estateId = $data["estateId"] ?? 0;
+            $floorLevel = $data["floorLevel"] ?? 0;
+            $geometry = $data["blockGeometry"] ?? null;
+            $propertyTitle = $data["propertyTitle"] ?? "";
+            $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+            $linkedTimer = (int) time();
+
+            $geometry = str_replace('"', '&#34;', $geometry);
+            $geometry = str_replace("'", "&#39;", $geometry);
+
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+            $query = "INSERT INTO Properties.UserPropertyBlocks (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, EntityGeometry) VALUES ($user,'$propertyTitle','$propertyUUID',$linkedTimer,$estateId,'$geometry')";
+
+            $resultSet = DBConnectionFactory::getConnection()->exec($query);
+
+            return $resultSet;
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function addBlockChildrenGeojsons(array $data)
+    {
+        try {
+
+            // collecting parameters
+            $user = $data["userId"] ?? 0;
+            $estateId = $data["estateId"] ?? 0;
+            $floorLevel = $data["floorLevel"] ?? 0;
+            $startCounter = $data["startCounter"] ?? 1;
+            $floorCount = $data["floorCount"] ?? 1;
+
+            if (isset($_POST["uploadBtn"])) {
+
+                if ($_FILES["geojsons"]["name"] !== "") {
+
+                    $fileNameParts = explode(".", $_FILES["geojsons"]["name"]);
+                    if ($fileNameParts[1] == "zip") {
+                        if (file_exists("./tmp/data")) {
+
+                        } else {
+                            mkdir("tmp/data");
+                        }
+
+                        $path = "tmp/data/";
+                        $location = $path . $_FILES["geojsons"]["name"];
+
+                        // moved uploaded file
+                        if (move_uploaded_file($_FILES["geojsons"]["tmp_name"], $location)) {
+                            $zip = new \ZipArchive();
+                            if ($zip->open($location)) {
+                                $zip->extractTo($path);
+                                $zip->close();
+                            }
+
+
+                                $dir = "tmp/data/$foldername/BLOCKS/";
+                                $files = scandir($dir);
+                                $blocks = [];
+                                $blockIds = [];
+                                $result = [];
+                                if (count($files) > 0) {
+
+                                    // looping and inserting values
+                                    foreach ($files as $key => $file) {
+                                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                                            $geojson = file_get_contents($dir . $file);
+                                            $geojson = str_replace("\"", "'", $geojson);
+                                            try {
+                                                $file = str_replace(".geojson", "", $file);
+                                                $result[] = self::indexPropertyBlock($userId, $geojson, $file, $metaType, (int) $estateId, $floorCount, $floorLevel, 1); // edit last insert entityId of Estate
+                                                // $blocks["BLOCK $key"] = $result['contentData']['EntityId']; // @todo build $blocks array
+
+                                            } catch (Exception $e) {
+                                                return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                                            }
+
+                                        }
+                                    }
+
+                                    $queries = [];
+
+                                    foreach ($result as $keyItem => $valueItem) {
+                                        $queries[] = self::newPropertyBlock($valueItem);
+                                    }
+
+                                    $queryInsertBlocks = implode(";", $queries);
+
+                                    $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertBlocks);
+
+                                    // returning block data array
+                                    $queryBlocks = "SELECT PropertyTitle,PropertyId FROM Properties.UserPropertyBlocks WHERE PropertyEstate = " . (int) $estateId;
+                                    $resultBlocks = DBConnectionFactory::getConnection()->query($queryBlocks)->fetchAll(\PDO::FETCH_ASSOC);
+
+                                    foreach ($resultBlocks as $keyBlock => $blockValue) {
+                                        $blockIds[$blockValue["PropertyTitle"]] = $blockValue["PropertyId"];
+                                    }
+
+                                }
+
+                                for ($i = $startCounter; $i <= count($blockIds); $i++) {
+                                    $block = "BLOCK $i";
+                                    $dir = "tmp/data/$foldername/BLOCK NUMBERS/$block/";
+                                    $files = scandir($dir);
+                                    $result = [];
+                                    foreach ($files as $file) {
+                                        if (pathinfo($dir . $file, PATHINFO_EXTENSION) == "geojson") {
+                                            $geojson = file_get_contents($dir . $file);
+                                            $geojson = str_replace("\"", "'", $geojson);
+                                            try {
+                                                $file = str_replace("name_", "$block (", $file);
+                                                $file = str_replace(".geojson", ")", $file);
+                                                // inserting values
+                                                $result[] = self::indexPropertyUnit($userId, $geojson, $file, $metaType, (int) $estateId, $blockIds[$block]);
+                        
+                                            } catch (Exception $e) {
+                                                return $file . " failed  \n" . $e->getMessage(); // @todo  return the Exception error and/or terminate
+                                            }
+                        
+                                        }
+                                    }
+                        
+                                    $queries = [];
+                        
+                                    foreach ($result as $keyItem => $valueItem) {
+                                        $queries[] = self::newPropertyUnit($valueItem);
+                                    }
+                        
+                                    $queryInsertUnits = implode(";", $queries);
+                        
+                                    $resultSet = DBConnectionFactory::getConnection()->exec($queryInsertUnits);
+                                }
+                        
+                                // Deleting uploaded folder and zip file
+                                \KuboPlugin\Utils\Util::recurseRmdir("tmp/data/$foldername");
+                                unlink("tmp/data/$foldername" . ".zip");
+                        
+                                return "Successfully Uploaded";
+
+                            
+
+                        } else {
+                            return "File not Uploaded ! \n";
+                        }
+
+                    } else {
+                        return "File not Zip ! \n";
+                    }
+                } else {
+                    return "File Error ! \n";
+                }
+            } else {
+                return "No Data ! \n";
+            }
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function addUnitGeojson(array $data)
+    {
+        try {
+
+            // collecting parameters
+            $user = $data["userId"] ?? 0;
+            $estateId = $data["estateId"] ?? 0;
+            $blockId = $data["blockId"] ?? 0;
+            $floorLevel = $data["floorLevel"] ?? 0;
+            $geometry = $data["unitGeometry"] ?? null;
+            $propertyTitle = $data["propertyTitle"] ?? "";
+            $propertyUUID = str_replace(".", "z", uniqid(uniqid(), true));
+            $linkedTimer = (int) time();
+
+            $geometry = str_replace('"', '&#34;', $geometry);
+            $geometry = str_replace("'", "&#39;", $geometry);
+
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+            $query = "INSERT INTO Properties.UserPropertyUnits (UserId, PropertyTitle, PropertyUUID, LinkedEntity, PropertyEstate, PropertyBlock, EntityGeometry) VALUES ($user,'$propertyTitle','$propertyUUID',$linkedTimer,$estateId,$blockId,'$geometry')";
+
+            $resultSet = DBConnectionFactory::getConnection()->exec($query);
+
+            return $resultSet;
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function editEstateGeojson(array $data)
+    {
+        try {
+
+            // collecting parameters
+            $user = $data["userId"] ?? 0;
+            $estateId = $data["estateId"] ?? 0;
+            $floorLevel = $data["floorLevel"] ?? 0;
+            $geometry = $data["estateGeometry"] ?? null;
+
+            $geometry = str_replace('"', '&#34;', $geometry);
+            $geometry = str_replace("'", "&#39;", $geometry);
+
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+            $query = "UPDATE INTO Properties.UserProperty SET EntityGeometry = '$geometry' WHERE PropertyId = $estateId";
+
+            $resultSet = DBConnectionFactory::getConnection()->exec($query);
+
+            return $resultSet;
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function editBlockGeojson(array $data)
+    {
+        try {
+
+            // collecting parameters
+            $user = $data["userId"] ?? 0;
+            $blockId = $data["blockId"] ?? 0;
+            $floorLevel = $data["floorLevel"] ?? 0;
+            $geometry = $data["blockGeometry"] ?? null;
+
+            $geometry = str_replace('"', '&#34;', $geometry);
+            $geometry = str_replace("'", "&#39;", $geometry);
+
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+            $query = "UPDATE INTO Properties.UserPropertyBlocks SET EntityGeometry = '$geometry' WHERE PropertyId = $blockId";
+
+            $resultSet = DBConnectionFactory::getConnection()->exec($query);
+
+            return $resultSet;
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function editUnitGeojson(array $data)
+    {
+        try {
+
+            // collecting parameters
+            $user = $data["userId"] ?? 0;
+            $unitId = $data["propertyId"] ?? 0;
+            $floorLevel = $data["floorLevel"] ?? 0;
+            $geometry = $data["unitGeometry"] ?? null;
+
+            $geometry = str_replace('"', '&#34;', $geometry);
+            $geometry = str_replace("'", "&#39;", $geometry);
+
+            $geometry = \KuboPlugin\Utils\Util::serializeObject($geometry);
+
+            $query = "UPDATE INTO Properties.UserPropertyUnits SET EntityGeometry = '$geometry' WHERE PropertyId = $unitId";
+
+            $resultSet = DBConnectionFactory::getConnection()->exec($query);
+
+            return $resultSet;
 
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -2784,6 +3111,7 @@ class UserProperty
 
             $queries = [];
 
+
             foreach ($result as $keyItem => $valueItem) {
                 $queries[] = self::newPropertyUnit($valueItem);
             }
@@ -2979,7 +3307,7 @@ class UserProperty
     }
 
     // Redesigned indexBlock
-    protected static function indexPropertyBlock(int $userId, string $geojson, string $title, string $metaType, int $estateId, int $parent = 0)
+    protected static function indexPropertyBlock(int $userId, string $geojson, string $title, string $metaType, int $estateId, int $floorCount = 1,int $floorLevel = 0, int $extra = 0, int $parent = 0)
     {
         $data = [
             "user" => $userId,
@@ -2991,6 +3319,9 @@ class UserProperty
                 "property_description" => "",
                 "property_type" => $metaType,
             ],
+            "extra" => $extra,
+            "floorLevel" => $floorLevel,
+            "floorCount" => $floorCount,
         ];
 
         return $data;

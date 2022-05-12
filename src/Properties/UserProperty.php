@@ -63,6 +63,37 @@ class UserProperty
         return UserProperty\UserProperty::newPropertyUniterExtraLong($data);
     }
 
+    public static function addBlockGeojson(array $data)
+    {
+        return UserProperty\UserProperty::addBlockGeojson($data);
+    }
+
+    public static function addBlockChildrenGeojsons(array $data)
+    {
+        return UserProperty\UserProperty::addBlockChildrenGeojsons($data);
+    }
+
+    public static function addUnitGeojson(array $data)
+    {
+        return UserProperty\UserProperty::addUnitGeojson($data);
+    }
+
+    public static function editEstateGeojson(array $data)
+    {
+        return UserProperty\UserProperty::editEstateGeojson($data);
+    }
+
+    public static function editBlockGeojson(array $data)
+    {
+        return UserProperty\UserProperty::editBlockGeojson($data);
+    }
+
+    public static function editUnitGeojson(array $data)
+    {
+        return UserProperty\UserProperty::editUnitGeojson($data);
+    }
+
+
     public static function newPropertyOnEntity(array $data)
     {
         return UserProperty\UserProperty::newPropertyOnEntity($data);

@@ -52,4 +52,14 @@ class Util
     {
         return Utils\Util::checkAuthorization();
     }
+
+    public static function serializeObject($object)
+    {
+        return Utils\Util::serializeObject($object);
+    }
+
+    public static function unserializeObject($str)
+    {
+        return Utils\Util::unserializeObject($str);
+    }
 }

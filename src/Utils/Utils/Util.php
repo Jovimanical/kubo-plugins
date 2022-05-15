@@ -142,7 +142,7 @@ class Util
         $userIdHead = (int)$authHeaderValues[2];
 
         if(isset($_SESSION['userId']) && $_SESSION['userId'] == $userIdHead){
-            
+
         } else {
             die("Unauthorized access or ensure your login/token has not expired !");
         }
@@ -150,13 +150,26 @@ class Util
         $authCheck = \KuboPlugin\User\UserSession\Session::retrieveDecodedSession($userIdHead,$sessionIdHead);
 
         if($tokenHead == $authCheck['token']){
-            
+
         } else {
              die("Unauthorized access or ensure your login/token has not expired !");
         }
 
-        
+
     }
 
-    
+    public static function serializeObject($object){
+        return serialize($object);
+    }
+
+    public static function unserializeObject($str){
+        $data = html_entity_decode(unserialize($str));
+        $reps = ["\n"=>"",'\\'=>"", "&#39;"=>"\""];
+        foreach($reps as $dirt=>$val){
+            $data = str_replace($dirt, $val, $data);
+        }
+
+        return $data;
+    }
+
 }

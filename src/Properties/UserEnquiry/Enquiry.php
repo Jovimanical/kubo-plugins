@@ -69,7 +69,7 @@ class Enquiry {
             $offset = $data['offset'];
         }
 
-        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
+        $query = "SELECT * FROM Properties.Enquiries WHERE PropertyId IN (SELECT PropertyId FROM Properties.UserPropertyUnits WHERE UserId = $userId) ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY"; 
         $result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         if(empty($result)){
@@ -91,38 +91,23 @@ class Enquiry {
             //Fetching estate property data
             $resultPropertyId = $resultum['PropertyId'];
             $resultEstateId = $resultum['EstateId'];
+            
 
-            $queryFloor = "SELECT a.PropertyFloor,b.EntityName FROM Properties.UserProperty a INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId AND b.EntityId IN(SELECT LinkedEntity FROM Properties.UserProperty WHERE PropertyId = $resultPropertyId)";
-            $resultFloor = DBConnectionFactory::getConnection()->query($queryFloor)->fetchAll(\PDO::FETCH_ASSOC);
+            $queryData = "SELECT PropertyBlock FROM Properties.UserPropertyUnits WHERE PropertyId = $resultPropertyId";
+            $resultData = DBConnectionFactory::getConnection()->query($queryData)->fetchAll(\PDO::FETCH_ASSOC);
 
-            $resultFloorPoint = $resultFloor[0]['PropertyFloor'] ?? 0;
-            $resultFloorEntityName = $resultFloor[0]['EntityName'] ?? "No Data";
+            $resultBlockId = $resultData[0]['PropertyBlock'];
 
-            $propQuery[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, ('$resultFloorEntityName') as EntityName FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId WHERE a.PropertyId = $resultPropertyId";
+            $propQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadataUnits WHERE PropertyId = $resultPropertyId";
 
-            $blockQuery[] = "SELECT d.MetadataId, d.FieldName, d.FieldValue, c.PropertyId FROM Properties.UserPropertyMetadata d INNER JOIN Properties.UserProperty c ON d.PropertyId = c.PropertyId
-            WHERE d.PropertyId IN (SELECT PropertyId FROM Properties.UserProperty WHERE LinkedEntity IN (SELECT b.EntityParent FROM Properties.UserProperty a INNER JOIN
-                SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId WHERE a.PropertyId = $resultPropertyId)) AND c.PropertyFloor = $resultFloorPoint";
+            $blockQuery[] = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadataBlocks WHERE PropertyId = $resultBlockId";
 
             array_push($resultKey,$resultum['PropertyId']);
 
-            $totalQuery[] = "SELECT count(a.PropertyId) FROM Properties.UserProperty a
-            INNER JOIN SpatialEntities.Entities b ON a.LinkedEntity = b.EntityId
-            WHERE b.EntityType = 3 AND b.EntityParent
-            IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-            WHERE PropertyId = $resultEstateId))";
+            $totalQuery[] = "SELECT count(PropertyId) FROM Properties.UserPropertyUnits WHERE PropertyEstate = $resultEstateId";
 
-            $availQuery[] = "SELECT COUNT(EntityId) FROM SpatialEntities.Entities a
-            INNER JOIN Properties.UserProperty b ON a.EntityId = b.LinkedEntity
-            INNER JOIN Properties.UserPropertyMetadata c ON b.PropertyId = c.PropertyId
-            WHERE c.FieldName = 'property_status' AND c.FieldValue = 1 AND a.EntityParent IN(SELECT SpatialEntities.Entities.EntityId FROM SpatialEntities.Entities
-            WHERE SpatialEntities.Entities.EntityParent
-            IN(SELECT Properties.UserProperty.LinkedEntity FROM Properties.UserProperty
-            WHERE PropertyId = $resultEstateId))";
-
-            // $resultum["Property"] = UserProperty::viewPropertyInfo((int) $resultum["PropertyId"]);
+            $availQuery[] = "SELECT COUNT(a.PropertyId) FROM Properties.UserPropertyUnits a INNER JOIN Properties.UserPropertyMetadataUnits b ON a.PropertyId = b.PropertyId
+            WHERE b.FieldName = 'property_status' AND b.FieldValue = 1 AND a.PropertyEstate = $resultEstateId";
 
             $resultMsg = $resultum['MessageJson'];
 
@@ -230,19 +215,6 @@ class Enquiry {
              array_push($resultArr,$resultum);
 
         }
-
-        // die(var_dump($metadata));
-
-       // array_push($resultArr,$metadata);
-
-       // $result = $result[0] ?? [];
-       // if (count($result) > 0){
-       //    $result["Entity"] = \KuboPlugin\SpatialEntity\Entity\Entity::viewEntity(["entityId" => $result["PropertyId"]]);  // $result["LinkedEntity"]
-          // $result["Metadata"] = self::viewEnquiryMetadata((int)$result["EnquiryId"]);
-       // }
-
-       // die(var_dump($resultArr));
-
 
         return $resultArr;
     }

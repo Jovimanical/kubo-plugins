@@ -12,6 +12,12 @@
 
 namespace KuboPlugin\User;
 
+
+use EmmetBlue\Core\Factory\DatabaseConnectionFactory as DBConnectionFactory;
+use EmmetBlue\Core\Factory\DatabaseQueryFactory as DBQueryFactory;
+use EmmetBlue\Core\Builder\QueryBuilder\QueryBuilder as QB;
+
+
 /**
  * class KuboPlugin\User\UserAccount
  *
@@ -39,21 +45,42 @@ class UserAccount {
 
 			if (!UserAccount\Account::checkAccountExistsByEmail($data["email"])){
 				$return_result = ["status"=>false, "reason"=>"User account was not created"];
-				
+
 				$result = UserAccount\Account::newAccount($data["email"], $data["password"], $data["names"]);
 				if ($result["lastInsertId"]){
 					$accountId = $result["lastInsertId"];
 					$setType = UserAccount\AccountType::addAccountType((int)$accountId, (int)$data["accountType"]);
 
 					$return_result = ["status"=>true, "accountDetails"=>["id"=>$accountId]];
-				}	
+				}
 			}
 		}
 
 		return $return_result;
 	}
 
-	public static function viewAccounts(){
+	public static function viewAccounts(array $data){
+		$fetch = "FIRST";
+        $offset = 0;
+        $limit = 10;
+
+        if ($data['offset'] != 0) {
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        if ($data['limit'] == "") {
+            $limit = 10;
+        } else {
+            $limit = $data['limit'] ?? 10;
+        }
+
+		$accountType = $data['accountType'] ?? 0;
+
+		$query = "SELECT UserId,UserEmail FROM Users.Account WHERE UserId IN (SELECT UserId FROM Users.UserAccountType WHERE AccountType = $accountType) ORDER BY UserId DESC OFFSET $offset ROWS FETCH $fetch $limit ROWS ONLY";
+		$result = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $result ?? "Retrieval Error!";
 	}
 
 	/**

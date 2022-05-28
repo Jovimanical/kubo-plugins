@@ -1175,7 +1175,9 @@ public static function newPropertyUnit(array $data)
 
             $resultPropertyFloor = $result["PropertyFloor"] ?? 0;
 
-            $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
+           // $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
+
+           $blockQueries[] = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId AND PropertyFloor = $resultPropertyFloor";
 
             $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
         }
@@ -2674,6 +2676,86 @@ public static function newPropertyUnit(array $data)
     }
 
     public static function searchEstateClient(int $userId, array $data)
+    {
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        $fetch = "FIRST";
+        $offset = 0;
+        $searchTerm = $data['searchTerm'];
+        if ($data['offset'] != 0) {
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $resultArr = [];
+
+        // Getting all related estates data
+        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId AND PropertyId LIKE '%$searchTerm%' OR PropertyTitle LIKE '%$searchTerm%' ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+        $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($results as $result) {
+            // Getting all related properties metadata
+            $query1 = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $result";
+            $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
+            // Getting all Client Enquiry related data
+            $query2 = "SELECT Name,EmailAddress,PhoneNumber,MessageJson FROM Properties.Enquiries WHERE  PropertyId = $result AND Name LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+            $result2 = DBConnectionFactory::getConnection()->query($query2)->fetchAll(\PDO::FETCH_ASSOC);
+            // Getting all Client Mortgage related data
+            $query3 = "SELECT UserParams,PropertyName,MortgageeName FROM Properties.Mortgages WHERE  PropertyId = $result AND Name LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' ORDER BY MortgageId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+            $result3 = DBConnectionFactory::getConnection()->query($query3)->fetchAll(\PDO::FETCH_ASSOC);
+            // Returning all data
+            $resultArr[$result1["FieldName"]] = ["FieldValue" => $result1["FieldValue"]];
+            $resultArr["Client Enquirer"] = $result2;
+            $resultArr["Client Mortgagee"] = $result3;
+        }
+
+        return $resultArr;
+
+    }
+
+    public static function searchPropertyByLocation(int $userId, array $data)
+    {
+        if ($userId == 0 or empty($data)) {
+            return "Parameters not set";
+        }
+
+        $fetch = "FIRST";
+        $offset = 0;
+        $searchTerm = $data['searchTerm'];
+        if ($data['offset'] != 0) {
+            $fetch = "NEXT";
+            $offset = $data['offset'];
+        }
+
+        $resultArr = [];
+
+        // Getting all related estates data
+        $query = "SELECT PropertyId FROM Properties.UserProperty WHERE UserId = $userId AND PropertyId LIKE '%$searchTerm%' OR PropertyTitle LIKE '%$searchTerm%' ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+        $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($results as $result) {
+            // Getting all related properties metadata
+            $query1 = "SELECT MetadataId, FieldName, FieldValue FROM Properties.UserPropertyMetadata WHERE PropertyId = $result";
+            $result1 = DBConnectionFactory::getConnection()->query($query1)->fetchAll(\PDO::FETCH_ASSOC);
+            // Getting all Client Enquiry related data
+            $query2 = "SELECT Name,EmailAddress,PhoneNumber,MessageJson FROM Properties.Enquiries WHERE  PropertyId = $result AND Name LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' ORDER BY EnquiryId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+            $result2 = DBConnectionFactory::getConnection()->query($query2)->fetchAll(\PDO::FETCH_ASSOC);
+            // Getting all Client Mortgage related data
+            $query3 = "SELECT UserParams,PropertyName,MortgageeName FROM Properties.Mortgages WHERE  PropertyId = $result AND Name LIKE '%$searchTerm%' OR EmailAddress LIKE '%$searchTerm%' OR PhoneNumber LIKE '%$searchTerm%' ORDER BY MortgageId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+            $result3 = DBConnectionFactory::getConnection()->query($query3)->fetchAll(\PDO::FETCH_ASSOC);
+            // Returning all data
+            $resultArr[$result1["FieldName"]] = ["FieldValue" => $result1["FieldValue"]];
+            $resultArr["Client Enquirer"] = $result2;
+            $resultArr["Client Mortgagee"] = $result3;
+        }
+
+        return $resultArr;
+
+    }
+
+    public static function searchProperty(int $userId, array $data)
     {
         if ($userId == 0 or empty($data)) {
             return "Parameters not set";

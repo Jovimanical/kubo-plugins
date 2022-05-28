@@ -169,6 +169,16 @@ class UserProperty
         return UserProperty\UserProperty::searchEstateClient($userId, $data);
     }
 
+    public static function searchPropertyByLocation(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::searchPropertyByLocation($userId, $data);
+    }
+
+    public static function searchProperty(int $userId, array $data)
+    {
+        return UserProperty\UserProperty::searchProperty($userId, $data);
+    }
+
     public static function addAllocation(int $userId, array $data)
     {
         return UserProperty\UserProperty::addAllocation($userId, $data);

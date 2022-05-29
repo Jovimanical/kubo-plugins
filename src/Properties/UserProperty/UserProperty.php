@@ -1177,7 +1177,7 @@ public static function newPropertyUnit(array $data)
 
            // $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyEstate FROM Properties.UserPropertyMetadataBlocks a INNER JOIN Properties.UserProperty b ON a.PropertyEstate = b.PropertyId  WHERE a.PropertyEstate = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
-           $blockQueries[] = "SELECT MetadataId, FieldName, FieldValue, PropertyId FROM Properties.UserPropertyMetadata WHERE PropertyId = $resultPropertyId AND PropertyFloor = $resultPropertyFloor";
+           $blockQueries[] = "SELECT a.MetadataId, a.FieldName, a.FieldValue, a.PropertyId FROM Properties.UserPropertyMetadata a INNER JOIN Properties.UserProperty b ON a.PropertyId = b.PropertyId  WHERE a.PropertyId = $resultPropertyId AND b.PropertyFloor = $resultPropertyFloor";
 
             $results[$key]["EntityGeometry"] = \KuboPlugin\Utils\Util::unserializeObject($result["EntityGeometry"]);
         }

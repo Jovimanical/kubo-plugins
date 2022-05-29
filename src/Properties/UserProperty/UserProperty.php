@@ -1209,9 +1209,9 @@ public static function newPropertyUnit(array $data)
 
                 foreach ($valueSet as $keyItemId => $valueItemId) {
 
-                    if ($valueItemId["PropertyEstate"] == $valueSetId["PropertyId"]) {
+                    if ($valueItemId["PropertyId"] == $valueSetId["PropertyId"]) {
 
-                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyEstate"]];
+                        $results[$keySetId]["Metadata"][$valueItemId["FieldName"]] = ["FieldValue" => $valueItemId["FieldValue"], "MetadataId" => $valueItemId["MetadataId"], "PropertyId" => $valueItemId["PropertyId"]];
 
                     }
 

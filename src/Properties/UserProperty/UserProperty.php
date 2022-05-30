@@ -72,7 +72,7 @@ class UserProperty
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            if (is_array($values)) {
+            if (is_array($value)) {
                 $value = json_encode($value);
             }
             $values[] = "($propertyId, '$key', '$value')";
@@ -106,7 +106,7 @@ class UserProperty
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);
-                // $metadata = html_entity_decode($metadata);
+                $metadata = html_entity_decode($metadata);
                 $metadata = json_decode($metadata, true);
             }
 
@@ -135,7 +135,7 @@ class UserProperty
         //STEP 3: Index Metadata
         $values = [];
         foreach ($metadata as $key => $value) {
-            if (is_array($values)) {
+            if (is_array($value)) {
                 $value = json_encode($value);
             }
             $values[] = "($propertyId, '$key', '$value')";
@@ -185,7 +185,7 @@ class UserProperty
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);
-                // $metadata = html_entity_decode($metadata);
+                $metadata = html_entity_decode($metadata);
                 $metadata = json_decode($metadata, true);
             }
 
@@ -248,7 +248,7 @@ class UserProperty
                         if (is_string($metadata)) {
                             $metadata = str_replace('&#39;', '"', $metadata);
                             $metadata = str_replace('&#34;', '"', $metadata);
-                            // $metadata = html_entity_decode($metadata);
+                            $metadata = html_entity_decode($metadata);
                             $metadata = json_decode($metadata, true);
                         }
 
@@ -324,7 +324,7 @@ class UserProperty
                     if (is_string($metadata)) {
                         $metadata = str_replace('&#39;', '"', $metadata);
                         $metadata = str_replace('&#34;', '"', $metadata);
-                        // $metadata = html_entity_decode($metadata);
+                        $metadata = html_entity_decode($metadata);
                         $metadata = json_decode($metadata, true);
                     }
 
@@ -373,7 +373,7 @@ public static function newPropertyUnit(array $data)
             if (is_string($metadata)) {
                 $metadata = str_replace('&#39;', '"', $metadata);
                 $metadata = str_replace('&#34;', '"', $metadata);
-                // $metadata = html_entity_decode($metadata);
+                $metadata = html_entity_decode($metadata);
                 $metadata = json_decode($metadata, true);
             }
 
@@ -422,7 +422,7 @@ public static function newPropertyUnit(array $data)
                     if (is_string($metadata)) {
                         $metadata = str_replace('&#39;', '"', $metadata);
                         $metadata = str_replace('&#34;', '"', $metadata);
-                        // $metadata = html_entity_decode($metadata);
+                        $metadata = html_entity_decode($metadata);
                         $metadata = json_decode($metadata, true);
                     }
 

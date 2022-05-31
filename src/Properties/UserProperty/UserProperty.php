@@ -2737,11 +2737,11 @@ class UserProperty
 
         if ($latFrom != null and $lngFrom != null) {
             // Getting all related estates data
-            $query = "SELECT * FROM Properties.UserProperty a INNER JOIN Properties.UserPropertyMetadata b ON a.PropertyId = b.PropertyId WHERE PropertyLatitude < $userLatPlus AND PropertyLongitude < $userLngPlus AND PropertyLatitude > $userLatMinus AND PropertyLongitude > $userLngMinus ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+            $query = "SELECT * FROM Properties.UserProperty a INNER JOIN Properties.UserPropertyMetadata b ON a.PropertyId = b.PropertyId WHERE PropertyLatitude < $userLatPlus AND PropertyLongitude < $userLngPlus AND PropertyLatitude > $userLatMinus AND PropertyLongitude > $userLngMinus ORDER BY a.PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
 
         } else {
             // Getting all related estates data
-            $query = "SELECT * FROM Properties.UserProperty a INNER JOIN Properties.UserPropertyMetadata b ON a.PropertyId = b.PropertyId WHERE PropertyCountryCode = '$countryCode' ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+            $query = "SELECT * FROM Properties.UserProperty a INNER JOIN Properties.UserPropertyMetadata b ON a.PropertyId = b.PropertyId WHERE PropertyCountryCode = '$countryCode' ORDER BY a.PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
 
         }
 
@@ -2766,7 +2766,7 @@ class UserProperty
         }
 
         // Getting all related estates data old implementation
-        $query = "SELECT * FROM Properties.UserProperty a INNER JOIN Properties.UserPropertyMetadata b ON a.PropertyId = b.PropertyId WHERE a.PropertyId LIKE '%$searchTerm%' OR a.PropertyTitle LIKE '%$searchTerm%' OR b.FieldName = 'property_description' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_country' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_state' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_lga' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_city' AND b.FieldValue LIKE '%$searchTerm%' ORDER BY PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
+        $query = "SELECT * FROM Properties.UserProperty a INNER JOIN Properties.UserPropertyMetadata b ON a.PropertyId = b.PropertyId WHERE a.PropertyId LIKE '%$searchTerm%' OR a.PropertyTitle LIKE '%$searchTerm%' OR b.FieldName = 'property_description' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_country' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_state' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_lga' AND b.FieldValue LIKE '%$searchTerm%' OR b.FieldName = 'property_city' AND b.FieldValue LIKE '%$searchTerm%' ORDER BY a.PropertyId DESC OFFSET $offset ROWS FETCH $fetch 1000 ROWS ONLY";
         $results = DBConnectionFactory::getConnection()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         return $results;

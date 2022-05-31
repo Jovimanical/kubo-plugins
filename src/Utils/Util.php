@@ -62,4 +62,9 @@ class Util
     {
         return Utils\Util::unserializeObject($str);
     }
+    public static function getCoordinateDistance(float $latitudeFrom, float $longitudeFrom, float $latitudeTo, float $longitudeTo, int $earthRadius = 6371000)
+    {
+        return Utils\Util::getCoordinateDistance($latitudeFrom,$longitudeFrom,$latitudeTo,$longitudeTo);
+    }
+
 }

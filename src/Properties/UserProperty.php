@@ -169,9 +169,9 @@ class UserProperty
         return UserProperty\UserProperty::searchEstateClient($userId, $data);
     }
 
-    public static function searchPropertyByLocation(int $userId, array $data)
+    public static function searchByLocation(int $userId, array $data)
     {
-        return UserProperty\UserProperty::searchPropertyByLocation($userId, $data);
+        return UserProperty\UserProperty::searchByLocation($userId, $data);
     }
 
     public static function searchProperty(int $userId, array $data)
